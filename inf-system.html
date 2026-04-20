@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Об'єкти та моделювання</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f0f4f8;
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            height: 100vh;
+            width: 100vw;
+            padding: 2rem;
+            transition: all 0.5s ease;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            max-width: 900px;
+            width: 100%;
+            padding: 3rem;
+            position: relative;
+        }
+
+        .btn {
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+        }
+
+        .progress-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            height: 6px;
+            background: #3b82f6;
+            transition: width 0.3s ease;
+        }
+
+        .emoji-float {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        ul li {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        ul li::before {
+            content: "🔹";
+            margin-right: 10px;
+        }
+
+        .grid-item {
+            background: #eff6ff;
+            border-radius: 12px;
+            padding: 1rem;
+            border: 1px solid #dbeafe;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="slide1" class="slide active">
+        <div class="card text-center bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
+            <div class="emoji-float">💻</div>
+            <h1 class="text-4xl font-bold mb-4">Світ об'єктів та моделей</h1>
+            <p class="text-xl opacity-90">Урок інформатики для 5-6 класів</p>
+            <div class="mt-8 text-sm italic">Автор: Ваш вчитель інформатики</div>
+        </div>
+    </div>
+
+    <div id="slide2" class="slide">
+        <div class="card">
+            <h2 class="text-3xl font-bold text-blue-600 mb-6 border-b pb-2">Що таке об'єкт?</h2>
+            <div class="flex flex-col md:flex-row gap-8 items-center">
+                <div class="flex-1">
+                    <p class="text-lg mb-4"><strong>Об'єкт</strong> — це частина навколишнього світу.</p>
+                    <ul class="text-gray-700">
+                        <li>Предмети (книга, м'яч)</li>
+                        <li>Явища (дощ, веселка)</li>
+                        <li>Процеси (навчання, рух)</li>
+                        <li>Інформаційні об'єкти (файли, програми)</li>
+                    </ul>
+                </div>
+                <div class="bg-blue-50 p-6 rounded-xl text-4xl">🌍 📦 🖥️</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="slide3" class="slide">
+        <div class="card">
+            <h2 class="text-3xl font-bold text-blue-600 mb-6 border-b pb-2">Властивості об'єктів</h2>
+            <p class="mb-4">Кожен об'єкт має свої <strong>характеристики</strong>:</p>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="grid-item">
+                    <span class="font-bold">Назва:</span> Наприклад, "Мій ноутбук"
+                </div>
+                <div class="grid-item">
+                    <span class="font-bold">Колір:</span> Сріблястий або чорний
+                </div>
+                <div class="grid-item">
+                    <span class="font-bold">Розмір:</span> Діагональ екрана
+                </div>
+                <div class="grid-item">
+                    <span class="font-bold">Призначення:</span> Для навчання та ігор
+                </div>
+            </div>
+            <p class="mt-6 italic text-gray-600 text-sm">За властивостями ми відрізняємо один об'єкт від іншого!</p>
+        </div>
+    </div>
+
+    <div id="slide4" class="slide">
+        <div class="card">
+            <h2 class="text-3xl font-bold text-blue-600 mb-6 border-b pb-2">Що таке модель?</h2>
+            <div class="flex flex-col md:flex-row gap-8 items-center">
+                <div class="flex-1">
+                    <p class="text-lg leading-relaxed">
+                        <strong>Модель</strong> — це спрощене подання реального об'єкта. 
+                    </p>
+                    <div class="mt-4 p-4 bg-yellow-50 border-l-4 border-yellow-400">
+                        Ми створюємо моделі, коли оригінал занадто великий (планета), малий (атом) або небезпечний (вулкан).
+                    </div>
+                </div>
+                <div class="text-6xl">🚀</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="slide5" class="slide">
+        <div class="card">
+            <h2 class="text-3xl font-bold text-blue-600 mb-6 border-b pb-2">Комп'ютерне моделювання</h2>
+            <p class="mb-4">Це створення моделі за допомогою спеціальних програм.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="p-4 border rounded shadow-sm bg-gray-50">
+                    <h3 class="font-bold mb-2">3D-моделі</h3>
+                    <p class="text-sm">Створення тривимірних копій деталей, будинків чи персонажів.</p>
+                </div>
+                <div class="p-4 border rounded shadow-sm bg-gray-50">
+                    <h3 class="font-bold mb-2">Розрахункові моделі</h3>
+                    <p class="text-sm">Прогноз погоди або траєкторія польоту ракети.</p>
+                </div>
+            </div>
+            <div class="mt-6 text-center text-blue-500 font-bold">Це дозволяє проводити експерименти без ризику!</div>
+        </div>
+    </div>
+
+    <div id="slide6" class="slide">
+        <div class="card">
+            <h2 class="text-3xl font-bold text-purple-600 mb-6 border-b pb-2">Інформаційна мозаїка</h2>
+            <p class="mb-4 text-sm">Приклади того, що ми можемо вивчати за допомогою комп'ютерних моделей:</p>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs">
+                <div class="grid-item">📀 <strong>Оптичні приводи</strong>: як промінь лазера читає дані.</div>
+                <div class="grid-item">📸 <strong>Цифрова камера</strong>: будова матриці та об'єктива.</div>
+                <div class="grid-item">🖥️ <strong>Системний блок</strong>: де знаходиться процесор та пам'ять.</div>
+                <div class="grid-item">🔭 <strong>Оптичні прилади</strong>: робота лінз у мікроскопі.</div>
+                <div class="grid-item">💾 <strong>Носії інформації</strong>: як змінювались дискети на флешки.</div>
+                <div class="grid-item">🖨️ <strong>3D Друк</strong>: створення фізичного об'єкта з моделі.</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="slide7" class="slide">
+        <div class="card text-center">
+            <div class="emoji-float">🤔</div>
+            <h2 class="text-3xl font-bold text-blue-600 mb-6">Давайте обговоримо!</h2>
+            <div class="space-y-4 text-left inline-block">
+                <div class="p-4 bg-green-50 rounded-lg">1. Чи може людина бути об'єктом? А її ім'я?</div>
+                <div class="p-4 bg-blue-50 rounded-lg">2. Яку модель ви бачите кожного дня у школі (на уроці географії)?</div>
+                <div class="p-4 bg-purple-50 rounded-lg">3. Навіщо вченим комп'ютерні моделі вірусів?</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="fixed bottom-8 left-1/2 -translate-x-1/2 flex gap-4">
+        <button onclick="prevSlide()" class="btn bg-white px-6 py-2 rounded-full shadow-md font-bold text-gray-700 hover:bg-gray-100">Назад</button>
+        <button onclick="nextSlide()" class="btn bg-blue-600 px-6 py-2 rounded-full shadow-md font-bold text-white hover:bg-blue-700">Далі</button>
+    </div>
+
+    <div class="progress-bar" id="progressBar"></div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 7;
+
+        function updateProgress() {
+            const progress = (currentSlide / totalSlides) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function showSlide(n) {
+            document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+            const next = document.getElementById('slide' + n);
+            if(next) {
+                next.classList.add('active');
+                currentSlide = n;
+                updateProgress();
+            }
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                showSlide(currentSlide + 1);
+            } else {
+                showSlide(1); // Cycle back to start
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 1) {
+                showSlide(currentSlide - 1);
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        updateProgress();
+    </script>
+</body>
+</html>
