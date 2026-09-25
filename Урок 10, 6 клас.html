@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="uk" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Інтерактивний урок: Прикладне та сервісне ПЗ. Ліцензії</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Google Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+  <!-- Confetti JS for Quiz Victory -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f6ff',
+              100: '#e0edff',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              900: '#0f172a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      user-select: none;
+    }
+    .slide-fade-enter {
+      opacity: 0;
+      transform: translateY(12px) scale(0.99);
+    }
+    .slide-fade-active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.05);
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 h-full flex flex-col overflow-hidden font-sans">
+
+  <!-- Top Navigation Header -->
+  <header class="bg-slate-800/90 backdrop-blur border-b border-slate-700/60 px-6 py-3 flex items-center justify-between shrink-0 z-20">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/20 font-bold text-lg">
+        <i class="fa-solid fa-laptop-code"></i>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-blue-400 bg-blue-500/10 px-2.5 py-0.5 rounded-full border border-blue-500/20">Інформатика • 6 клас</span>
+          <span class="text-xs text-slate-400">Уроки 11-12</span>
+        </div>
+        <h1 class="text-base font-bold text-white tracking-tight leading-tight">Прикладне та сервісне ПЗ. Ліцензії програм</h1>
+      </div>
+    </div>
+
+    <!-- Quick Navigation / Stats -->
+    <div class="flex items-center gap-3">
+      <!-- Progress Bar Badge -->
+      <div class="hidden md:flex items-center gap-2 bg-slate-900/60 border border-slate-700/80 rounded-xl px-3 py-1.5 text-xs text-slate-300">
+        <i class="fa-solid fa-layer-group text-blue-400"></i>
+        <span>Слайд <strong id="current-slide-num" class="text-white">1</strong> з <span id="total-slides-num">8</span></span>
+      </div>
+
+      <!-- Mode Switchers -->
+      <button onclick="toggleSlideDrawer()" class="p-2.5 hover:bg-slate-700/70 text-slate-300 hover:text-white rounded-xl transition border border-transparent hover:border-slate-600 flex items-center gap-2 text-sm font-medium" title="Список слайдів">
+        <i class="fa-solid fa-list-ul"></i>
+        <span class="hidden sm:inline">Зміст</span>
+      </button>
+
+      <button onclick="jumpToSlide(6)" class="p-2.5 bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 rounded-xl transition flex items-center gap-2 text-sm font-medium">
+        <i class="fa-solid fa-[#fa5252] fa-puzzle-piece text-indigo-400"></i>
+        <span class="hidden sm:inline">Практика</span>
+      </button>
+
+      <button onclick="toggleFullscreen()" class="p-2.5 hover:bg-slate-700/70 text-slate-300 hover:text-white rounded-xl transition border border-transparent hover:border-slate-600 text-sm" title="Повний екран">
+        <i class="fa-solid fa-expand"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Presentation Area with Sidebar Navigation Drawer -->
+  <div class="relative flex-1 flex overflow-hidden">
+    
+    <!-- Slide Navigation Drawer (Hidden by default or toggleable) -->
+    <aside id="slide-drawer" class="absolute left-0 top-0 bottom-0 w-80 bg-slate-800/95 backdrop-blur z-30 border-r border-slate-700/80 transform -translate-x-full transition-transform duration-300 flex flex-col shadow-2xl">
+      <div class="p-4 border-b border-slate-700 flex items-center justify-between">
+        <h3 class="font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-book-open text-blue-400"></i> Навігація уроку
+        </h3>
+        <button onclick="toggleSlideDrawer()" class="text-slate-400 hover:text-white p-1">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-3 space-y-2 custom-scrollbar" id="drawer-slide-list">
+        <!-- Rendered via JS -->
+      </div>
+    </aside>
+
+    <!-- Slide Content Canvas Container -->
+    <main class="flex-1 relative bg-slate-950 flex items-center justify-center p-4 sm:p-6 lg:p-8 overflow-y-auto custom-scrollbar">
+      <div id="slide-viewport" class="w-full max-w-6xl aspect-[16/9] max-h-[82vh] bg-slate-900 rounded-2xl border border-slate-800 shadow-2xl overflow-hidden flex flex-col relative slide-fade-active">
+        <!-- Dynamic Slide Content Inserted Here -->
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Bottom Navigation Control Bar -->
+  <footer class="bg-slate-800/90 border-t border-slate-700/60 px-6 py-3 flex items-center justify-between shrink-0 z-20">
+    <div class="flex items-center gap-2">
+      <button id="prev-btn" onclick="prevSlide()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 disabled:opacity-40 disabled:hover:bg-slate-700 text-white font-medium rounded-xl transition flex items-center gap-2 text-sm shadow">
+        <i class="fa-solid fa-arrow-left"></i> Назад
+      </button>
+      <button id="next-btn" onclick="nextSlide()" class="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white font-semibold rounded-xl transition flex items-center gap-2 text-sm shadow-lg shadow-blue-600/30">
+        Далі <i class="fa-solid fa-arrow-right"></i>
+      </button>
+    </div>
+
+    <!-- Timeline Progress Dots -->
+    <div class="hidden md:flex items-center gap-1.5" id="dots-container">
+      <!-- Dots generated via JS -->
+    </div>
+
+    <div class="flex items-center gap-3">
+      <span class="text-xs text-slate-400">Клавіші: <kbd class="bg-slate-700 px-1.5 py-0.5 rounded text-slate-200">←</kbd> <kbd class="bg-slate-700 px-1.5 py-0.5 rounded text-slate-200">→</kbd></span>
+    </div>
+  </footer>
+
+  <!-- Application Logic -->
+  <script>
+    // Slide Master Data
+    const slidesData = [
+      {
+        id: 1,
+        title: "Вступ та цілі уроку",
+        category: "Титульний",
+        render: () => `
+          <div class="h-full w-full p-8 sm:p-12 flex flex-col justify-between bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white relative overflow-hidden">
+            <!-- Decorative Glow Background -->
+            <div class="absolute -top-20 -right-20 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-20 -left-20 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="flex items-center justify-between">
+              <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 text-xs font-bold tracking-wide">
+                <i class="fa-solid fa-shapes"></i> Світ програмного забезпечення
+              </span>
+              <span class="text-xs text-slate-400 font-medium">Інформатика 6 клас • НУШ</span>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center my-auto">
+              <div class="lg:col-span-7 space-y-4">
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-tight tracking-tight text-white">
+                  Прикладне та сервісне ПЗ. <br>
+                  <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-cyan-300">Типи ліцензій програм</span>
+                </h1>
+                <p class="text-slate-300 text-base sm:text-lg leading-relaxed font-normal">
+                  Сьогодні ми дізнаємося, як розрізняти інструменти для вирішення щоденних завдань, утиліти для обслуговування ПК та які цифрові права ми отримуємо.
+                </p>
+
+                <div class="pt-2 flex flex-wrap gap-3">
+                  <button onclick="nextSlide()" class="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg shadow-blue-600/30 transition flex items-center gap-2">
+                    <i class="fa-solid fa-play text-sm"></i> Розпочати вивчення
+                  </button>
+                  <button onclick="jumpToSlide(6)" class="px-5 py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold rounded-xl border border-slate-700 transition flex items-center gap-2">
+                    <i class="fa-solid fa-gamepad text-indigo-400"></i> Інтерактивна гра
+                  </button>
+                </div>
+              </div>
+
+              <!-- Interactive Feature Card Showcase -->
+              <div class="lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div class="p-4 rounded-xl bg-slate-800/80 border border-slate-700/70 hover:border-blue-500/50 transition shadow-lg">
+                  <div class="w-10 h-10 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-lg mb-3">
+                    <i class="fa-solid fa-window-restore"></i>
+                  </div>
+                  <h3 class="font-bold text-white text-sm mb-1">Прикладне ПЗ</h3>
+                  <p class="text-xs text-slate-400 leading-snug">Редактори, графічні системи, браузери та ігри.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-slate-800/80 border border-slate-700/70 hover:border-indigo-500/50 transition shadow-lg">
+                  <div class="w-10 h-10 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-lg mb-3">
+                    <i class="fa-solid fa-shield-halved"></i>
+                  </div>
+                  <h3 class="font-bold text-white text-sm mb-1">Сервісне ПЗ</h3>
+                  <p class="text-xs text-slate-400 leading-snug">Антивіруси, архіватори, утиліти очищення диска.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-slate-800/80 border border-slate-700/70 hover:border-emerald-500/50 transition shadow-lg sm:col-span-2">
+                  <div class="w-10 h-10 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-lg mb-3">
+                    <i class="fa-solid fa-file-contract"></i>
+                  </div>
+                  <h3 class="font-bold text-white text-sm mb-1">Ліцензії програм</h3>
+                  <p class="text-xs text-slate-400 leading-snug">Комерційні, Freeware, Shareware та Open Source рішення.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between border-t border-slate-800 pt-4 text-xs text-slate-400">
+              <span class="flex items-center gap-1.5"><i class="fa-solid fa-circle-check text-emerald-400"></i> Інтерактивний курс НУШ</span>
+              <span>Модуль 2 • Програми та Права</span>
+            </div>
+          </div>
+        `
+      },
+      {
+        id: 2,
+        title: "Класифікація ПЗ",
+        category: "Теорія",
+        render: () => `
+          <div class="h-full w-full p-6 sm:p-8 flex flex-col justify-between bg-slate-900 text-white">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <span class="text-xs font-bold text-blue-400 uppercase tracking-widest">Структура комп'ютерних програм</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Як поділяється програмне забезпечення?</h2>
+              </div>
+              <div class="px-3 py-1 bg-slate-800 border border-slate-700 rounded-lg text-xs text-slate-300">
+                <i class="fa-solid fa-diagram-project text-blue-400 mr-1.5"></i> Схема систем
+              </div>
+            </div>
+
+            <!-- Interactive 3 Column Layout -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-auto">
+              <!-- System Software -->
+              <div class="bg-slate-800/90 border border-slate-700/80 hover:border-slate-500 rounded-2xl p-5 transition flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center gap-3 mb-3">
+                    <div class="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold text-xl">
+                      <i class="fa-solid fa-gears"></i>
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-white text-base">Системне ПЗ</h3>
+                      <span class="text-xs text-purple-300 font-medium">Основа системи</span>
+                    </div>
+                  </div>
+                  <p class="text-xs text-slate-300 leading-relaxed mb-3">
+                    Керує роботою всього апаратного забезпечення (ОС Windows, Android, macOS, Linux).
+                  </p>
+                </div>
+                <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/50 text-[11px] text-slate-400">
+                  <strong class="text-purple-300">Приклад:</strong> Операційна система керує пам'яттю та процесором.
+                </div>
+              </div>
+
+              <!-- Applied Software (Focus) -->
+              <div class="bg-gradient-to-b from-blue-900/40 to-slate-800 border-2 border-blue-500/60 rounded-2xl p-5 transition flex flex-col justify-between shadow-lg shadow-blue-500/10 scale-[1.02]">
+                <div>
+                  <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 rounded-xl bg-blue-500 text-white flex items-center justify-center font-bold text-xl shadow-md shadow-blue-500/30">
+                        <i class="fa-solid fa-icons"></i>
+                      </div>
+                      <div>
+                        <h3 class="font-bold text-white text-base">Прикладне ПЗ</h3>
+                        <span class="text-xs text-blue-300 font-bold">Для завдань користувача</span>
+                      </div>
+                    </div>
+                    <span class="bg-blue-500/20 text-blue-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-blue-400/30">Головна тема</span>
+                  </div>
+                  <p class="text-xs text-slate-200 leading-relaxed mb-3">
+                    Програми, призначені для виконання конкретних завдань користувача: навчання, роботи, творчості та розваг.
+                  </p>
+                </div>
+                <div class="bg-blue-950/80 p-2.5 rounded-xl border border-blue-500/30 text-[11px] text-blue-200">
+                  <strong class="text-blue-300">Приклади:</strong> MS Word, Chrome, Paint, Scratch, PowerPoint.
+                </div>
+              </div>
+
+              <!-- Service Software -->
+              <div class="bg-slate-800/90 border border-slate-700/80 hover:border-slate-500 rounded-2xl p-5 transition flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center gap-3 mb-3">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xl">
+                      <i class="fa-solid fa-wrench"></i>
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-white text-base">Сервісне ПЗ</h3>
+                      <span class="text-xs text-emerald-300 font-medium">Обслуговування ПК</span>
+                    </div>
+                  </div>
+                  <p class="text-xs text-slate-300 leading-relaxed mb-3">
+                    Утиліти для перевірки, налаштування, оптимізації та захисту комп'ютера.
+                  </p>
+                </div>
+                <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/50 text-[11px] text-slate-400">
+                  <strong class="text-emerald-300">Приклади:</strong> Антивірус ESET, 7-Zip, CCleaner.
+                </div>
+              </div>
+            </div>
+
+            <div class="p-3 bg-slate-800/60 border border-slate-700/60 rounded-xl flex items-center gap-3 text-xs text-slate-300">
+              <i class="fa-solid fa-lightbulb text-yellow-400 text-base"></i>
+              <span>Запам'ятайте: <strong>Прикладні програми</strong> створені для людини, а <strong>сервісні</strong> — для ефективної та безпечної роботи самого комп'ютера!</span>
+            </div>
+          </div>
+        `
+      },
+      {
+        id: 3,
+        title: "Прикладне ПЗ: Типи та приклади",
+        category: "Теорія",
+        render: () => `
+          <div class="h-full w-full p-6 sm:p-8 flex flex-col justify-between bg-slate-900 text-white">
+            <div class="flex items-center justify-between mb-2">
+              <div>
+                <span class="text-xs font-bold text-blue-400 uppercase tracking-widest">Види прикладних програм</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Загальне та спеціальне призначення</h2>
+              </div>
+              <span class="px-3 py-1 bg-blue-500/10 border border-blue-500/30 text-blue-300 rounded-lg text-xs font-semibold">
+                Прикладний софт
+              </span>
+            </div>
+
+            <!-- Dynamic Category Switcher -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-auto">
+              <!-- General Purpose -->
+              <div class="bg-slate-800/90 border border-slate-700 p-5 rounded-2xl flex flex-col justify-between hover:border-blue-500/50 transition">
+                <div>
+                  <div class="flex items-center gap-3 mb-3">
+                    <div class="w-9 h-9 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold">
+                      <i class="fa-solid fa-users"></i>
+                    </div>
+                    <h3 class="font-bold text-white text-base">1. Загального призначення</h3>
+                  </div>
+                  <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                    Використовуються більшістю людей у повсякденній діяльності для роботи з текстом, графікою, таблицями та інтернетом.
+                  </p>
+
+                  <div class="space-y-2">
+                    <div class="p-2 bg-slate-900/80 rounded-lg border border-slate-700/60 flex items-center justify-between text-xs">
+                      <span class="flex items-center gap-2"><i class="fa-solid fa-file-word text-blue-400"></i> Текстові процесори</span>
+                      <span class="text-slate-400 text-[11px]">MS Word, Google Docs</span>
+                    </div>
+                    <div class="p-2 bg-slate-900/80 rounded-lg border border-slate-700/60 flex items-center justify-between text-xs">
+                      <span class="flex items-center gap-2"><i class="fa-solid fa-palette text-emerald-400"></i> Графічні редактори</span>
+                      <span class="text-slate-400 text-[11px]">Paint, Canva, Photoshop</span>
+                    </div>
+                    <div class="p-2 bg-slate-900/80 rounded-lg border border-slate-700/60 flex items-center justify-between text-xs">
+                      <span class="flex items-center gap-2"><i class="fa-solid fa-globe text-amber-400"></i> Веб-браузери</span>
+                      <span class="text-slate-400 text-[11px]">Chrome, Firefox, Edge</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Special Purpose -->
+              <div class="bg-slate-800/90 border border-slate-700 p-5 rounded-2xl flex flex-col justify-between hover:border-indigo-500/50 transition">
+                <div>
+                  <div class="flex items-center gap-3 mb-3">
+                    <div class="w-9 h-9 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold">
+                      <i class="fa-solid fa-user-gear"></i>
+                    </div>
+                    <h3 class="font-bold text-white text-base">2. Спеціального призначення</h3>
+                  </div>
+                  <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                    Призначені для виконання професійних завдань фахівцями вузьких галузей (архітектори, медики, бухгалтери).
+                  </p>
+
+                  <div class="space-y-2">
+                    <div class="p-2 bg-slate-900/80 rounded-lg border border-slate-700/60 flex items-center justify-between text-xs">
+                      <span class="flex items-center gap-2"><i class="fa-solid fa-calculator text-indigo-400"></i> Бухгалтерський облік</span>
+                      <span class="text-slate-400 text-[11px]">1С, BAS Бухгалтерія</span>
+                    </div>
+                    <div class="p-2 bg-slate-900/80 rounded-lg border border-slate-700/60 flex items-center justify-between text-xs">
+                      <span class="flex items-center gap-2"><i class="fa-solid fa-compass-drafting text-rose-400"></i> Проектування (САПР)</span>
+                      <span class="text-slate-400 text-[11px]">AutoCAD, Blender 3D</span>
+                    </div>
+                    <div class="p-2 bg-slate-900/80 rounded-lg border border-slate-700/60 flex items-center justify-between text-xs">
+                      <span class="flex items-center gap-2"><i class="fa-solid fa-heart-pulse text-cyan-400"></i> Медичні системи</span>
+                      <span class="text-slate-400 text-[11px]">Обробка Томограм</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-3 bg-slate-800/40 border border-slate-700/50 rounded-xl text-xs text-slate-400 text-center">
+              💡 Навчальні програми (клавіатурні тренажери, Scratch, електронні підручники) є різновидом прикладного ПЗ загального та навчального призначення.
+            </div>
+          </div>
+        `
+      },
+      {
+        id: 4,
+        title: "Сервісне ПЗ та утиліти",
+        category: "Теорія",
+        render: () => `
+          <div class="h-full w-full p-6 sm:p-8 flex flex-col justify-between bg-slate-900 text-white">
+            <div class="flex items-center justify-between mb-3">
+              <div>
+                <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest">Безпека та технічний догляд</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Навіщо потрібні сервісні програми?</h2>
+              </div>
+              <span class="px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 rounded-lg text-xs font-semibold">
+                Утиліти та захист
+              </span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-auto">
+              <!-- Antivirus -->
+              <div class="p-5 bg-slate-800/90 rounded-2xl border border-slate-700 hover:border-emerald-500/50 transition">
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xl mb-3">
+                  <i class="fa-solid fa-shield-virus"></i>
+                </div>
+                <h3 class="font-bold text-white text-base mb-2">Антивірусні програми</h3>
+                <p class="text-xs text-slate-300 leading-relaxed mb-3">
+                  Захищають систему від шкідливого коду, вірусів, хробаків та фішингових сайтів.
+                </p>
+                <div class="text-[11px] text-emerald-400 font-medium">Приклади: Windows Defender, Avast, ESET.</div>
+              </div>
+
+              <!-- Archivers -->
+              <div class="p-5 bg-slate-800/90 rounded-2xl border border-slate-700 hover:border-amber-500/50 transition">
+                <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-xl mb-3">
+                  <i class="fa-solid fa-file-zipper"></i>
+                </div>
+                <h3 class="font-bold text-white text-base mb-2">Архіватори</h3>
+                <p class="text-xs text-slate-300 leading-relaxed mb-3">
+                  Стискають інформацію у файли-архіви для зменшення їх розміру та зручної передачі.
+                </p>
+                <div class="text-[11px] text-amber-400 font-medium">Приклади: 7-Zip, WinRAR, PeaZip.</div>
+              </div>
+
+              <!-- Disk Maintenance -->
+              <div class="p-5 bg-slate-800/90 rounded-2xl border border-slate-700 hover:border-blue-500/50 transition">
+                <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-xl mb-3">
+                  <i class="fa-solid fa-broom"></i>
+                </div>
+                <h3 class="font-bold text-white text-base mb-2">Очищення та дефрагментація</h3>
+                <p class="text-xs text-slate-300 leading-relaxed mb-3">
+                  Видаляють «тимчасове сміття», оптимізують розміщення файлів на диску та прискорюють ПК.
+                </p>
+                <div class="text-[11px] text-blue-400 font-medium">Приклади: CCleaner, Disk Cleanup.</div>
+              </div>
+            </div>
+
+            <div class="p-4 bg-slate-800/80 border border-slate-700 rounded-2xl flex items-center gap-4">
+              <div class="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center shrink-0 font-bold">
+                <i class="fa-solid fa-microchip"></i>
+              </div>
+              <div class="text-xs text-slate-300">
+                <strong class="text-white">Драйвери пристроїв</strong> — це особливі сервісні програми, які вчать операційну систему правильно «спілкуватися» з відеокартою, принтером або мишкою.
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        id: 5,
+        title: "Ліцензії програм: Поняття та види",
+        category: "Теорія",
+        render: () => `
+          <div class="h-full w-full p-6 sm:p-8 flex flex-col justify-between bg-slate-900 text-white">
+            <div class="flex items-center justify-between mb-2">
+              <div>
+                <span class="text-xs font-bold text-amber-400 uppercase tracking-widest">Правові основи використання</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Що таке ліцензія на ПЗ?</h2>
+              </div>
+              <span class="px-3 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-300 rounded-lg text-xs font-semibold">
+                Закон і Права
+              </span>
+            </div>
+
+            <div class="bg-slate-800/80 border border-slate-700/80 p-4 rounded-2xl flex items-start gap-4 mb-3">
+              <div class="w-12 h-12 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-2xl shrink-0">
+                <i class="fa-solid fa-file-contract"></i>
+              </div>
+              <div class="text-xs leading-relaxed">
+                <h3 class="text-sm font-bold text-white mb-1">Ліцензійна угода (EULA)</h3>
+                <p class="text-slate-300">
+                  Це правовий договір між розробником програми та користувачем. Вона визначає правила: скільки пристроїв можна встановити, чи можна копіювати програму та чи потрібна оплата.
+                </p>
+              </div>
+            </div>
+
+            <!-- 4 Grid License Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 my-auto">
+              <!-- Commercial -->
+              <div class="bg-slate-800 p-4 rounded-xl border-t-4 border-rose-500 flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold text-rose-400 uppercase">Комерційна</span>
+                    <i class="fa-solid fa-dollar-sign text-rose-400 text-xs"></i>
+                  </div>
+                  <h4 class="font-bold text-white text-sm mb-1">Proprietary</h4>
+                  <p class="text-[11px] text-slate-300 leading-snug mb-2">
+                    Платне ПЗ. Ви купуєте право на використання. Код закритий.
+                  </p>
+                </div>
+                <span class="text-[10px] text-slate-400 bg-slate-900 p-1.5 rounded border border-slate-700/50">MS Office, Photoshop</span>
+              </div>
+
+              <!-- Freeware -->
+              <div class="bg-slate-800 p-4 rounded-xl border-t-4 border-emerald-500 flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold text-emerald-400 uppercase">Безкоштовна</span>
+                    <i class="fa-solid fa-gift text-emerald-400 text-xs"></i>
+                  </div>
+                  <h4 class="font-bold text-white text-sm mb-1">Freeware</h4>
+                  <p class="text-[11px] text-slate-300 leading-snug mb-2">
+                    Безкоштовне використання без обмеження часу. Код закритий.
+                  </p>
+                </div>
+                <span class="text-[10px] text-slate-400 bg-slate-900 p-1.5 rounded border border-slate-700/50">VLC Player, Scratch, Chrome</span>
+              </div>
+
+              <!-- Shareware -->
+              <div class="bg-slate-800 p-4 rounded-xl border-t-4 border-amber-500 flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold text-amber-400 uppercase">Умовно-безкоштовна</span>
+                    <i class="fa-solid fa-clock text-amber-400 text-xs"></i>
+                  </div>
+                  <h4 class="font-bold text-white text-sm mb-1">Shareware</h4>
+                  <p class="text-[11px] text-slate-300 leading-snug mb-2">
+                    Безкоштовний тестовий період або обмежені функції.
+                  </p>
+                </div>
+                <span class="text-[10px] text-slate-400 bg-slate-900 p-1.5 rounded border border-slate-700/50">WinRAR, пробні версії</span>
+              </div>
+
+              <!-- Open Source -->
+              <div class="bg-slate-800 p-4 rounded-xl border-t-4 border-purple-500 flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold text-purple-400 uppercase">Відкритий код</span>
+                    <i class="fa-solid fa-code-branch text-purple-400 text-xs"></i>
+                  </div>
+                  <h4 class="font-bold text-white text-sm mb-1">Open Source</h4>
+                  <p class="text-[11px] text-slate-300 leading-snug mb-2">
+                    Безкоштовне ПЗ з відкритим сирцевим кодом для модифікації.
+                  </p>
+                </div>
+                <span class="text-[10px] text-slate-400 bg-slate-900 p-1.5 rounded border border-slate-700/50">Linux, LibreOffice, Blender</span>
+              </div>
+            </div>
+
+            <div class="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl flex items-center gap-3 text-xs text-rose-200">
+              <i class="fa-solid fa-triangle-exclamation text-rose-400 text-lg"></i>
+              <span><strong>Увага!</strong> Використання неліцензійного («піратського») ПЗ є порушенням закону України про авторські права та загрожує зараженням ПК вірусами!</span>
+            </div>
+          </div>
+        `
+      },
+      {
+        id: 6,
+        title: "Інтерактивний сортувальник софту",
+        category: "Практика",
+        render: () => `
+          <div class="h-full w-full p-6 flex flex-col justify-between bg-slate-900 text-white">
+            <div class="flex items-center justify-between mb-2">
+              <div>
+                <span class="text-xs font-bold text-indigo-400 uppercase tracking-widest">Практичний тренажер</span>
+                <h2 class="text-xl sm:text-2xl font-extrabold text-white">Розподіли програми за типом ліцензії</h2>
+              </div>
+              <button onclick="resetSortingGame()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 rounded-lg border border-slate-700 transition flex items-center gap-1.5">
+                <i class="fa-solid fa-rotate-right"></i> Спочатку
+              </button>
+            </div>
+
+            <!-- Drag & Drop / Click-to-Assign Sorting Container -->
+            <div id="sorting-game-container" class="flex-1 flex flex-col justify-between gap-3 my-2">
+              <!-- Available Items Pool -->
+              <div class="bg-slate-800/90 p-3 rounded-xl border border-slate-700 min-h-[75px]">
+                <div class="text-[11px] text-slate-400 mb-2 font-medium">Клацніть на програму, а потім оберіть відповідну категорію:</div>
+                <div class="flex flex-wrap gap-2" id="items-pool">
+                  <!-- Dynamically populated -->
+                </div>
+              </div>
+
+              <!-- Target Categories -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 flex-1">
+                <div data-category="commercial" onclick="assignSelectedTo('commercial')" class="category-box bg-slate-800/60 border-2 border-dashed border-rose-500/40 rounded-xl p-3 flex flex-col justify-between hover:bg-rose-500/5 transition cursor-pointer">
+                  <div class="flex items-center justify-between border-b border-slate-700 pb-2 mb-2">
+                    <span class="text-xs font-bold text-rose-400">Комерційне (Платне)</span>
+                    <i class="fa-solid fa-cart-shopping text-rose-400/60 text-xs"></i>
+                  </div>
+                  <div class="box-items space-y-1.5 min-h-[80px]" id="box-commercial"></div>
+                </div>
+
+                <div data-category="freeware" onclick="assignSelectedTo('freeware')" class="category-box bg-slate-800/60 border-2 border-dashed border-emerald-500/40 rounded-xl p-3 flex flex-col justify-between hover:bg-emerald-500/5 transition cursor-pointer">
+                  <div class="flex items-center justify-between border-b border-slate-700 pb-2 mb-2">
+                    <span class="text-xs font-bold text-emerald-400">Freeware (Безкоштовне)</span>
+                    <i class="fa-solid fa-gift text-emerald-400/60 text-xs"></i>
+                  </div>
+                  <div class="box-items space-y-1.5 min-h-[80px]" id="box-freeware"></div>
+                </div>
+
+                <div data-category="shareware" onclick="assignSelectedTo('shareware')" class="category-box bg-slate-800/60 border-2 border-dashed border-amber-500/40 rounded-xl p-3 flex flex-col justify-between hover:bg-amber-500/5 transition cursor-pointer">
+                  <div class="flex items-center justify-between border-b border-slate-700 pb-2 mb-2">
+                    <span class="text-xs font-bold text-amber-400">Shareware (Умовно-безкоштовне)</span>
+                    <i class="fa-solid fa-clock text-amber-400/60 text-xs"></i>
+                  </div>
+                  <div class="box-items space-y-1.5 min-h-[80px]" id="box-shareware"></div>
+                </div>
+
+                <div data-category="opensource" onclick="assignSelectedTo('opensource')" class="category-box bg-slate-800/60 border-2 border-dashed border-purple-500/40 rounded-xl p-3 flex flex-col justify-between hover:bg-purple-500/5 transition cursor-pointer">
+                  <div class="flex items-center justify-between border-b border-slate-700 pb-2 mb-2">
+                    <span class="text-xs font-bold text-purple-400">Open Source (Відкритий код)</span>
+                    <i class="fa-solid fa-code text-purple-400/60 text-xs"></i>
+                  </div>
+                  <div class="box-items space-y-1.5 min-h-[80px]" id="box-opensource"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Status Footer -->
+            <div class="flex items-center justify-between bg-slate-800/80 p-2.5 rounded-xl border border-slate-700 text-xs">
+              <span id="sorting-feedback" class="text-slate-300 font-medium">Оберіть програму зі списку вище.</span>
+              <button onclick="checkSortingGame()" class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg transition shadow">
+                Перевірити відповіді
+              </button>
+            </div>
+          </div>
+        `
+      },
+      {
+        id: 7,
+        title: "Експрес-тест знань",
+        category: "Контроль",
+        render: () => `
+          <div class="h-full w-full p-6 sm:p-8 flex flex-col justify-between bg-slate-900 text-white">
+            <div class="flex items-center justify-between mb-2">
+              <div>
+                <span class="text-xs font-bold text-cyan-400 uppercase tracking-widest">Перевірка засвоєння</span>
+                <h2 class="text-2xl font-extrabold text-white">Інтерактивний Експрес-Тест</h2>
+              </div>
+              <span id="quiz-score-badge" class="px-3 py-1 bg-slate-800 border border-slate-700 text-slate-300 rounded-lg text-xs font-bold">
+                Питання <span id="quiz-current-step">1</span> з 4
+              </span>
+            </div>
+
+            <!-- Quiz Main View Container -->
+            <div id="quiz-container" class="my-auto bg-slate-800/80 border border-slate-700/80 p-6 rounded-2xl">
+              <!-- Rendered via JS -->
+            </div>
+
+            <div class="flex items-center justify-between pt-2">
+              <span class="text-xs text-slate-400">Оберіть правильну відповідь та натисніть «Далі»</span>
+              <button id="quiz-next-btn" onclick="submitQuizAnswer()" class="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl transition shadow">
+                Відповісти <i class="fa-solid fa-arrow-right ml-1"></i>
+              </button>
+            </div>
+          </div>
+        `
+      },
+      {
+        id: 8,
+        title: "Підсумок та рефлексія",
+        category: "Підсумок",
+        render: () => `
+          <div class="h-full w-full p-6 sm:p-10 flex flex-col justify-between bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950 text-white">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest">Цифрова культура</span>
+              <span class="px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 rounded-lg text-xs font-bold">
+                Завершення уроку
+              </span>
+            </div>
+
+            <div class="max-w-3xl mx-auto w-full space-y-6 my-auto">
+              <div class="text-center space-y-2">
+                <h2 class="text-3xl font-extrabold text-white">Пам'ятка відповідального користувача</h2>
+                <p class="text-slate-300 text-sm">3 правила ефективної та безпечної роботи з програмним забезпеченням</p>
+              </div>
+
+              <div class="space-y-3">
+                <div class="p-4 bg-slate-800/90 border border-slate-700/80 rounded-2xl flex items-center gap-4">
+                  <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-lg shrink-0">
+                    1
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-white text-sm">Обирай програму відповідно до завдання</h4>
+                    <p class="text-xs text-slate-300">Для текстів — текстовий процесор, для малювання — графічний редактор.</p>
+                  </div>
+                </div>
+
+                <div class="p-4 bg-slate-800/90 border border-slate-700/80 rounded-2xl flex items-center gap-4">
+                  <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-lg shrink-0">
+                    2
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-white text-sm">Дбай про захист ПК за допомогою сервісних утиліт</h4>
+                    <p class="text-xs text-slate-300">Використовуй оновлений антивірус та регулярно очищай систему від сміття.</p>
+                  </div>
+                </div>
+
+                <div class="p-4 bg-slate-800/90 border border-slate-700/80 rounded-2xl flex items-center gap-4">
+                  <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-lg shrink-0">
+                    3
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-white text-sm">Поважай авторські права та ліцензії</h4>
+                    <p class="text-xs text-slate-300">Завантажуй програми лише з офіційних джерел та обирай безкоштовні аналоги (Freeware/Open Source).</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between border-t border-slate-800 pt-4 text-xs text-slate-400">
+              <span>Дякую за активну участь на уроці!</span>
+              <button onclick="jumpToSlide(1)" class="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg border border-slate-700 transition">
+                <i class="fa-solid fa-rotate-left mr-1"></i> Спочатку
+              </button>
+            </div>
+          </div>
+        `
+      }
+    ];
+
+    // State
+    let currentSlideIndex = 0;
+    let selectedSortingItem = null;
+
+    // Sorting Game Data
+    const initialSortingItems = [
+      { id: 'item1', name: 'Microsoft Office 365', category: 'commercial' },
+      { id: 'item2', name: 'Google Chrome', category: 'freeware' },
+      { id: 'item3', name: 'WinRAR (40 днів)', category: 'shareware' },
+      { id: 'item4', name: 'LibreOffice', category: 'opensource' },
+      { id: 'item5', name: 'Adobe Photoshop', category: 'commercial' },
+      { id: 'item6', name: 'VLC Media Player', category: 'freeware' },
+      { id: 'item7', name: 'Linux OS', category: 'opensource' },
+      { id: 'item8', name: 'Total Commander (Demo)', category: 'shareware' }
+    ];
+
+    let currentSortingState = [];
+
+    // Quiz Questions Data
+    const quizQuestions = [
+      {
+        question: "Яке програмне забезпечення призначене безпосередньо для виконання завдань користувача (наприклад, написання тексту чи малювання)?",
+        options: [
+          "Системне ПЗ",
+          "Прикладне ПЗ",
+          "Сервісне ПЗ",
+          "Драйвери пристроїв"
+        ],
+        correct: 1
+      },
+      {
+        question: "До якої категорії належить антивірусна програма та архіватор 7-Zip?",
+        options: [
+          "Прикладне ПЗ загального призначення",
+          "Системне ПЗ (Операційні системи)",
+          "Сервісне ПЗ (Утиліти)",
+          "Комерційне ПЗ спеціального призначення"
+        ],
+        correct: 2
+      },
+      {
+        question: "Як називається ліцензія, що надає програму безкоштовно та з відкритим сирцевим кодом для модифікації?",
+        options: [
+          "Proprietary (Комерційна)",
+          "Shareware (Умовно-безкоштовна)",
+          "Freeware",
+          "Open Source (Відкритий код)"
+        ],
+        correct: 3
+      },
+      {
+        question: "Що з перерахованого є прикладом умовно-безкоштовної (Shareware) програми?",
+        options: [
+          "Програма з безкоштовним пробним періодом на 30 днів",
+          "Програма з повністю відкритим кодом у GitHub",
+          "Платний графічний пакет без будь-якого демо-режиму",
+          "Безкоштовний браузер без обмежень часу"
+        ],
+        correct: 0
+      }
+    ];
+
+    let currentQuizStep = 0;
+    let quizSelectedOption = null;
+    let quizScore = 0;
+
+    // Initialize UI
+    document.addEventListener('DOMContentLoaded', () => {
+      renderDrawerList();
+      renderDots();
+      loadSlide(currentSlideIndex);
+
+      // Keyboard Listener
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === 'Space') {
+          nextSlide();
+        } else if (e.key === 'ArrowLeft') {
+          prevSlide();
+        }
+      });
+    });
+
+    // Render Drawer List
+    function renderDrawerList() {
+      const drawerList = document.getElementById('drawer-slide-list');
+      drawerList.innerHTML = slidesData.map((slide, idx) => `
+        <button onclick="jumpToSlide(${slide.id})" class="w-full text-left p-3 rounded-xl transition flex items-center justify-between border ${idx === currentSlideIndex ? 'bg-blue-600/20 border-blue-500/50 text-white font-bold' : 'bg-slate-900/40 border-slate-800 text-slate-300 hover:bg-slate-800'}">
+          <div class="flex items-center gap-3">
+            <span class="w-6 h-6 rounded-lg ${idx === currentSlideIndex ? 'bg-blue-500 text-white' : 'bg-slate-800 text-slate-400'} flex items-center justify-center text-xs font-bold">
+              ${slide.id}
+            </span>
+            <div class="text-xs">
+              <div class="font-medium">${slide.title}</div>
+              <div class="text-[10px] text-slate-500">${slide.category}</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-chevron-right text-[10px] text-slate-500"></i>
+        </button>
+      `).join('');
+    }
+
+    // Render Dots
+    function renderDots() {
+      const container = document.getElementById('dots-container');
+      container.innerHTML = slidesData.map((_, idx) => `
+        <button onclick="jumpToSlide(${idx + 1})" class="w-2.5 h-2.5 rounded-full transition-all ${idx === currentSlideIndex ? 'bg-blue-500 w-6' : 'bg-slate-700 hover:bg-slate-600'}"></button>
+      `).join('');
+    }
+
+    // Load Slide Content
+    function loadSlide(index) {
+      if (index < 0 || index >= slidesData.length) return;
+
+      currentSlideIndex = index;
+      const viewport = document.getElementById('slide-viewport');
+
+      // Update Controls
+      document.getElementById('current-slide-num').innerText = index + 1;
+      document.getElementById('total-slides-num').innerText = slidesData.length;
+      document.getElementById('prev-btn').disabled = (index === 0);
+      document.getElementById('next-btn').disabled = (index === slidesData.length - 1);
+
+      // Render Content
+      viewport.innerHTML = slidesData[index].render();
+
+      renderDrawerList();
+      renderDots();
+
+      // Slide-specific initialization
+      if (slidesData[index].id === 6) {
+        initSortingGame();
+      } else if (slidesData[index].id === 7) {
+        initQuiz();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlideIndex > 0) loadSlide(currentSlideIndex - 1);
+    }
+
+    function nextSlide() {
+      if (currentSlideIndex < slidesData.length - 1) loadSlide(currentSlideIndex + 1);
+    }
+
+    function jumpToSlide(slideId) {
+      const targetIdx = slidesData.findIndex(s => s.id === slideId);
+      if (targetIdx !== -1) {
+        loadSlide(targetIdx);
+        toggleSlideDrawer(false);
+      }
+    }
+
+    function toggleSlideDrawer(forceState) {
+      const drawer = document.getElementById('slide-drawer');
+      if (forceState !== undefined) {
+        if (forceState) drawer.classList.remove('-translate-x-full');
+        else drawer.classList.add('-translate-x-full');
+      } else {
+        drawer.classList.toggle('-translate-x-full');
+      }
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    /* --- SORTING GAME LOGIC --- */
+    function initSortingGame() {
+      currentSortingState = JSON.parse(JSON.stringify(initialSortingItems));
+      selectedSortingItem = null;
+      renderSortingGame();
+    }
+
+    function resetSortingGame() {
+      initSortingGame();
+      document.getElementById('sorting-feedback').innerText = 'Гра скинута. Оберіть програму зі списку.';
+      document.getElementById('sorting-feedback').className = 'text-slate-300 font-medium';
+    }
+
+    function renderSortingGame() {
+      const pool = document.getElementById('items-pool');
+      const boxCommercial = document.getElementById('box-commercial');
+      const boxFreeware = document.getElementById('box-freeware');
+      const boxShareware = document.getElementById('box-shareware');
+      const boxOpenSource = document.getElementById('box-opensource');
+
+      if (!pool) return;
+
+      pool.innerHTML = '';
+      boxCommercial.innerHTML = '';
+      boxFreeware.innerHTML = '';
+      boxShareware.innerHTML = '';
+      boxOpenSource.innerHTML = '';
+
+      currentSortingState.forEach(item => {
+        const isSelected = selectedSortingItem === item.id;
+        const itemEl = document.createElement('div');
+        itemEl.className = `px-3 py-1.5 rounded-lg border text-xs font-semibold cursor-pointer transition flex items-center gap-1.5 ${
+          isSelected 
+            ? 'bg-blue-600 text-white border-blue-400 ring-2 ring-blue-400/50 scale-105' 
+            : 'bg-slate-700 hover:bg-slate-600 text-slate-200 border-slate-600'
+        }`;
+        itemEl.innerHTML = `<i class="fa-solid fa-cube text-[10px] text-blue-400"></i> ${item.name}`;
+        itemEl.onclick = (e) => {
+          e.stopPropagation();
+          selectSortingItem(item.id);
+        };
+
+        if (!item.currentBox) {
+          pool.appendChild(itemEl);
+        } else {
+          const targetBox = document.getElementById(`box-${item.currentBox}`);
+          if (targetBox) targetBox.appendChild(itemEl);
+        }
+      });
+    }
+
+    function selectSortingItem(id) {
+      selectedSortingItem = (selectedSortingItem === id) ? null : id;
+      renderSortingGame();
+      const feedback = document.getElementById('sorting-feedback');
+      if (selectedSortingItem) {
+        const item = currentSortingState.find(i => i.id === selectedSortingItem);
+        feedback.innerText = `Обрано: "${item.name}". Тепер клацніть на блок категорії для розподілу.`;
+        feedback.className = 'text-blue-300 font-semibold';
+      } else {
+        feedback.innerText = 'Оберіть програму зі списку.';
+        feedback.className = 'text-slate-300 font-medium';
+      }
+    }
+
+    function assignSelectedTo(categoryKey) {
+      if (!selectedSortingItem) return;
+      const item = currentSortingState.find(i => i.id === selectedSortingItem);
+      if (item) {
+        item.currentBox = categoryKey;
+        selectedSortingItem = null;
+        renderSortingGame();
+        document.getElementById('sorting-feedback').innerText = `Програму "${item.name}" переміщено.`;
+        document.getElementById('sorting-feedback').className = 'text-emerald-300 font-medium';
+      }
+    }
+
+    function checkSortingGame() {
+      let unassigned = currentSortingState.filter(i => !i.currentBox);
+      if (unassigned.length > 0) {
+        document.getElementById('sorting-feedback').innerText = `Будь ласка, розподіліть всі 8 програм за категоріями!`;
+        document.getElementById('sorting-feedback').className = 'text-amber-400 font-bold';
+        return;
+      }
+
+      let correctCount = 0;
+      currentSortingState.forEach(i => {
+        if (i.currentBox === i.category) correctCount++;
+      });
+
+      const feedback = document.getElementById('sorting-feedback');
+      if (correctCount === currentSortingState.length) {
+        feedback.innerText = `Чудово! Всі ${correctCount} із 8 програм розподілено абсолютно правильно! 🎉`;
+        feedback.className = 'text-emerald-400 font-bold text-sm';
+        confetti({ particleCount: 80, spread: 60, origin: { y: 0.7 } });
+      } else {
+        feedback.innerText = `Результат: ${correctCount} із 8 правильних. Спробуйте ще раз виправити помилки!`;
+        feedback.className = 'text-rose-400 font-bold';
+      }
+    }
+
+    /* --- QUIZ LOGIC --- */
+    function initQuiz() {
+      currentQuizStep = 0;
+      quizScore = 0;
+      quizSelectedOption = null;
+      renderQuizQuestion();
+    }
+
+    function renderQuizQuestion() {
+      const container = document.getElementById('quiz-container');
+      const stepBadge = document.getElementById('quiz-current-step');
+      const nextBtn = document.getElementById('quiz-next-btn');
+
+      if (!container) return;
+
+      if (currentQuizStep >= quizQuestions.length) {
+        // Quiz Complete Screen
+        container.innerHTML = `
+          <div class="text-center py-6 space-y-4">
+            <div class="w-16 h-16 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center text-3xl mx-auto font-bold">
+              <i class="fa-solid fa-trophy"></i>
+            </div>
+            <h3 class="text-2xl font-extrabold text-white">Тест успішно завершено!</h3>
+            <p class="text-base text-slate-300">
+              Ваш результат: <strong class="text-emerald-400 text-xl">${quizScore}</strong> з <strong class="text-white text-xl">${quizQuestions.length}</strong> правильних відповідей.
+            </p>
+            <div class="pt-2">
+              <button onclick="initQuiz()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition">
+                <i class="fa-solid fa-rotate-right mr-1.5"></i> Пройти тест знову
+              </button>
+            </div>
+          </div>
+        `;
+        if (stepBadge) stepBadge.innerText = quizQuestions.length;
+        if (nextBtn) nextBtn.style.display = 'none';
+        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        return;
+      }
+
+      if (nextBtn) nextBtn.style.display = 'inline-flex';
+      if (stepBadge) stepBadge.innerText = currentQuizStep + 1;
+
+      const q = quizQuestions[currentQuizStep];
+      container.innerHTML = `
+        <h3 class="text-lg font-bold text-white mb-4 leading-snug">${currentQuizStep + 1}. ${q.question}</h3>
+        <div class="space-y-2.5">
+          ${q.options.map((opt, idx) => `
+            <button onclick="selectQuizOption(${idx})" class="w-full text-left p-3.5 rounded-xl border text-xs font-semibold transition flex items-center justify-between ${
+              quizSelectedOption === idx 
+                ? 'bg-blue-600 border-blue-400 text-white ring-2 ring-blue-400/40' 
+                : 'bg-slate-900/60 border-slate-700 text-slate-200 hover:bg-slate-700/80'
+            }">
+              <span>${opt}</span>
+              <div class="w-5 h-5 rounded-full border ${quizSelectedOption === idx ? 'border-white bg-white text-blue-600' : 'border-slate-500'} flex items-center justify-center text-[10px]">
+                ${quizSelectedOption === idx ? '<i class="fa-solid fa-check"></i>' : ''}
+              </div>
+            </button>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function selectQuizOption(idx) {
+      quizSelectedOption = idx;
+      renderQuizQuestion();
+    }
+
+    function submitQuizAnswer() {
+      if (quizSelectedOption === null) {
+        alert('Будь ласка, оберіть варіант відповіді!');
+        return;
+      }
+
+      if (quizSelectedOption === quizQuestions[currentQuizStep].correct) {
+        quizScore++;
+      }
+
+      currentQuizStep++;
+      quizSelectedOption = null;
+      renderQuizQuestion();
+    }
+  </script>
+</body>
+</html>
