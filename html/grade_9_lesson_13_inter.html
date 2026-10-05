@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Симулятор Інтерфейсу Бази Даних</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- React & ReactDOM CDN -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  
+  <!-- Babel Standalone for JSX compilation -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    
+    /* Custom subtle animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+  <!-- Root React Container -->
+  <div id="root" class="min-h-screen flex flex-col"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useMemo } = React;
+
+    // --- SVG Icon Components ---
+    const IconDatabase = () => (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path>
+      </svg>
+    );
+
+    const IconLayout = () => (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h3a1 1 0 011 1v6a1 1 0 01-1 1h-3a1 1 0 01-1-1v-6z"></path>
+      </svg>
+    );
+
+    const IconPlay = () => (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+    );
+
+    const IconCheckCircle = () => (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+    );
+
+    const IconXCircle = () => (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+    );
+
+    const IconLock = () => (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+      </svg>
+    );
+
+    const IconPlus = () => (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path>
+      </svg>
+    );
+
+    const IconTrash = () => (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+      </svg>
+    );
+
+    const IconSearch = () => (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+      </svg>
+    );
+
+    const IconFilter = () => (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+      </svg>
+    );
+
+    const IconCode = () => (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+      </svg>
+    );
+
+    const IconSparkles = () => (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+      </svg>
+    );
+
+    const IconShield = () => (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+      </svg>
+    );
+
+    const IconInfo = () => (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+    );
+
+    const IconRefresh = () => (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+      </svg>
+    );
+
+    // --- PRESET SCENARIOS ---
+    const SCENARIOS = {
+      library: {
+        id: 'library',
+        name: '📚 Шкільна Бібліотека',
+        tableName: 'Books',
+        columns: [
+          { key: 'id', name: 'ID', type: 'number' },
+          { key: 'title', name: 'Назва книги', type: 'string' },
+          { key: 'author', name: 'Автор', type: 'string' },
+          { key: 'genre', name: 'Жанр', type: 'category' },
+          { key: 'year', name: 'Рік видання', type: 'number' },
+          { key: 'available', name: 'В наявності', type: 'boolean' }
+        ],
+        genres: ['Фантастика', 'Класика', 'Підручник', 'Пригоди', 'Детектив'],
+        initialData: [
+          { id: 101, title: 'Кобзар', author: 'Тарас Шевченко', genre: 'Класика', year: 1840, available: true },
+          { id: 102, title: 'Тіні забутих предків', author: 'Михайло Коцюбинський', genre: 'Класика', year: 1911, available: true },
+          { id: 103, title: 'Місто', author: 'Валер\'ян Підмогильний', genre: 'Класика', year: 1928, available: false },
+          { id: 104, title: 'Захар Беркут', author: 'Іван Франко', genre: 'Пригоди', year: 1883, available: true },
+          { id: 105, title: 'Інформатика 9 клас', author: 'О. О. Бондаренко', genre: 'Підручник', year: 2022, available: true },
+          { id: 106, title: 'Зоряний мандрівник', author: 'Олесь Бердник', genre: 'Фантастика', year: 1971, available: false }
+        ]
+      },
+      journal: {
+        id: 'journal',
+        name: '🏫 Електронний Журнал',
+        tableName: 'Grades',
+        columns: [
+          { key: 'id', name: 'ID', type: 'number' },
+          { key: 'student', name: 'Учень / Учениця', type: 'string' },
+          { key: 'subject', name: 'Предмет', type: 'category' },
+          { key: 'grade', name: 'Оцінка (1-12)', type: 'number' },
+          { key: 'date', name: 'Дата', type: 'string' }
+        ],
+        subjects: ['Інформатика', 'Математика', 'Фізика', 'Українська мова'],
+        initialData: [
+          { id: 1, student: 'Коваленко Софія', subject: 'Інформатика', grade: 12, date: '2026-10-01' },
+          { id: 2, student: 'Мельник Артем', subject: 'Інформатика', grade: 10, date: '2026-10-01' },
+          { id: 3, student: 'Шевченко Богдан', subject: 'Математика', grade: 8, date: '2026-10-02' },
+          { id: 4, student: 'Коваленко Софія', subject: 'Фізика', grade: 11, date: '2026-10-03' },
+          { id: 5, student: 'Бондар Марія', subject: 'Інформатика', grade: 9, date: '2026-10-04' }
+        ]
+      }
+    };
+
+    // --- AVAILABLE UI COMPONENTS TO BUILD WITH ---
+    const AVAILABLE_UI_ELEMENTS = [
+      {
+        type: 'search',
+        name: 'Поле пошуку за назвою/текстом',
+        category: 'Пошук і фільтри',
+        icon: '🔍',
+        defaultProps: { targetColumn: 'title', placeholder: 'Введіть текст для пошуку...' }
+      },
+      {
+        type: 'category_filter',
+        name: 'Випадаючий фільтр (Жанр / Предмет)',
+        category: 'Пошук і фільтри',
+        icon: '🗂️',
+        defaultProps: { targetColumn: 'genre' }
+      },
+      {
+        type: 'add_form',
+        name: 'Форма додавання нових записів',
+        category: 'Форми та дії',
+        icon: '➕',
+        defaultProps: {
+          requireYearValidation: true,
+          minYear: 1900,
+          maxYear: 2026,
+          requiredRoles: ['admin', 'librarian', 'teacher']
+        }
+      },
+      {
+        type: 'role_switcher',
+        name: 'Перемикач ролей користувачів',
+        category: 'Права доступу',
+        icon: '🛡️',
+        defaultProps: { defaultRole: 'guest' }
+      },
+      {
+        type: 'report_stat',
+        name: 'Панель швидкої аналітики / Звіт',
+        category: 'Аналітика',
+        icon: '📊',
+        defaultProps: { statType: 'total_count' }
+      }
+    ];
+
+    // --- EDUCATIONAL CHALLENGES (МІСІЇ) ---
+    const CHALLENGES = [
+      {
+        id: 'c1',
+        title: 'Місія 1: Пошуковий функціонал',
+        description: 'Додайте на панель інтерфейсу «Поле пошуку», щоб користувачі могли відбирати потрібні записи за назвою книги чи іменем.',
+        check: (elements) => elements.some(el => el.type === 'search'),
+        hint: 'Перетягніть або натисніть «+ Додати» біля компонента «Поле пошуку» у списку зліва.'
+      },
+      {
+        id: 'c2',
+        title: 'Місія 2: Фільтрація за категорією',
+        description: 'Додайте «Випадаючий фільтр», щоб дозволити відбирати дані за категорією (наприклад, Жанр чи Предмет).',
+        check: (elements) => elements.some(el => el.type === 'category_filter'),
+        hint: 'Додайте компонент «Випадаючий фільтр» у ваш інтерфейс.'
+      },
+      {
+        id: 'c3',
+        title: 'Місія 3: Безпека та права доступу',
+        description: 'Додайте компонент «Перемикач ролей користувачів» та «Форму додавання записів», щоб продемонструвати як система обмежує редагування для звичайних гостей.',
+        check: (elements) => elements.some(el => el.type === 'role_switcher') && elements.some(el => el.type === 'add_form'),
+        hint: 'Додайте і Перемикач ролей, і Форму додавання.'
+      },
+      {
+        id: 'c4',
+        title: 'Місія 4: Аналітика та звіти',
+        description: 'Додайте «Панель швидкої аналітики / Звіт» для автоматичного підрахунку кількості записів у базі даних.',
+        check: (elements) => elements.some(el => el.type === 'report_stat'),
+        hint: 'Додайте компонент «Панель швидкої аналітики».'
+      }
+    ];
+
+    function App() {
+      // Current active scenario
+      const [scenarioKey, setScenarioKey] = useState('library');
+      const activeScenario = SCENARIOS[scenarioKey];
+
+      // Interactive UI Layout setup
+      const [builtElements, setBuiltElements] = useState([
+        { id: 'el-1', type: 'search', targetColumn: activeScenario.columns[1].key, placeholder: 'Шукати...' },
+        { id: 'el-2', type: 'role_switcher', defaultRole: 'admin' }
+      ]);
+
+      // State during Testing Mode (Interactive Sandbox)
+      const [activeTab, setActiveTab] = useState('builder'); // 'builder', 'sandbox', 'challenges'
+      const [currentRole, setCurrentRole] = useState('admin'); // 'admin', 'guest', 'student'
+      const [searchQuery, setSearchQuery] = useState('');
+      const [selectedCategory, setSelectedCategory] = useState('ALL');
+      const [dbRecords, setDbRecords] = useState(activeScenario.initialData);
+      const [lastSqlQuery, setLastSqlQuery] = useState(`SELECT * FROM ${activeScenario.tableName};`);
+      const [toastMsg, setToastMsg] = useState(null);
+
+      // Form input states for adding a record
+      const [newRecordData, setNewRecordData] = useState({ title: '', author: '', genre: 'Класика', year: '2023' });
+      const [formError, setFormError] = useState('');
+
+      // Completed challenges
+      const [completedChallenges, setCompletedChallenges] = useState([]);
+
+      // Reset data when scenario changes
+      useEffect(() => {
+        setDbRecords(activeScenario.initialData);
+        setSearchQuery('');
+        setSelectedCategory('ALL');
+        // adjust default built element search target
+        setBuiltElements([
+          { id: 'el-1', type: 'search', targetColumn: activeScenario.columns[1].key, placeholder: 'Введіть для пошуку...' },
+          { id: 'el-2', type: 'role_switcher', defaultRole: 'admin' }
+        ]);
+      }, [scenarioKey]);
+
+      // Notification handler
+      const showToast = (msg, type = 'info') => {
+        setToastMsg({ msg, type });
+        setTimeout(() => setToastMsg(null), 3500);
+      };
+
+      // Check challenges completion automatically
+      useEffect(() => {
+        CHALLENGES.forEach(ch => {
+          if (!completedChallenges.includes(ch.id) && ch.check(builtElements)) {
+            setCompletedChallenges(prev => [...prev, ch.id]);
+            showToast(`🎉 Ви виконали: ${ch.title}`, 'success');
+          }
+        });
+      }, [builtElements]);
+
+      // Add UI element to custom builder layout
+      const addElementToLayout = (item) => {
+        const newEl = {
+          id: `el-${Date.now()}-${Math.floor(Math.random()*1000)}`,
+          type: item.type,
+          ...item.defaultProps
+        };
+        // Update target column if category filter
+        if (item.type === 'category_filter') {
+          newEl.targetColumn = scenarioKey === 'library' ? 'genre' : 'subject';
+        } else if (item.type === 'search') {
+          newEl.targetColumn = scenarioKey === 'library' ? 'title' : 'student';
+        }
+        setBuiltElements(prev => [...prev, newEl]);
+        showToast(`Додано елемент: ${item.name}`, 'info');
+      };
+
+      // Remove UI element
+      const removeElementFromLayout = (id) => {
+        setBuiltElements(prev => prev.filter(el => el.id !== id));
+      };
+
+      // Simulated SQL query builder generator
+      useEffect(() => {
+        let sql = `SELECT * FROM ${activeScenario.tableName}`;
+        const conditions = [];
+
+        if (searchQuery.trim()) {
+          const searchCol = builtElements.find(e => e.type === 'search')?.targetColumn || 'title';
+          conditions.push(`${searchCol} LIKE '%${searchQuery.trim()}%'`);
+        }
+
+        if (selectedCategory && selectedCategory !== 'ALL') {
+          const catCol = builtElements.find(e => e.type === 'category_filter')?.targetColumn || (scenarioKey === 'library' ? 'genre' : 'subject');
+          conditions.push(`${catCol} = '${selectedCategory}'`);
+        }
+
+        if (conditions.length > 0) {
+          sql += ` WHERE ` + conditions.join(' AND ');
+        }
+
+        sql += `;`;
+        setLastSqlQuery(sql);
+      }, [searchQuery, selectedCategory, builtElements, scenarioKey, activeScenario]);
+
+      // Filtered records in live sandbox view
+      const filteredRecords = useMemo(() => {
+        return dbRecords.filter(rec => {
+          let matchesSearch = true;
+          let matchesCat = true;
+
+          const searchElement = builtElements.find(e => e.type === 'search');
+          if (searchElement && searchQuery.trim()) {
+            const col = searchElement.targetColumn || (scenarioKey === 'library' ? 'title' : 'student');
+            const val = String(rec[col] || '').toLowerCase();
+            matchesSearch = val.includes(searchQuery.toLowerCase());
+          }
+
+          const catElement = builtElements.find(e => e.type === 'category_filter');
+          if (catElement && selectedCategory !== 'ALL') {
+            const col = catElement.targetColumn || (scenarioKey === 'library' ? 'genre' : 'subject');
+            matchesCat = rec[col] === selectedCategory;
+          }
+
+          return matchesSearch && matchesCat;
+        });
+      }, [dbRecords, searchQuery, selectedCategory, builtElements, scenarioKey]);
+
+      // Handle Adding new record with validation
+      const handleAddRecord = (e) => {
+        e.preventDefault();
+        setFormError('');
+
+        // Access control validation
+        if (currentRole === 'guest' || currentRole === 'student') {
+          setFormError('⛔ Помилка доступу: Роль «Гість» або «Учень» не має прав запису до БД!');
+          return;
+        }
+
+        if (!newRecordData.title || !newRecordData.author) {
+          setFormError('Будь ласка, заповніть усі необхідні текстові поля!');
+          return;
+        }
+
+        const yearNum = parseInt(newRecordData.year, 10);
+        if (isNaN(yearNum) || yearNum < 1800 || yearNum > 2026) {
+          setFormError('⚠️ Помилка перевірки коректності даних: Рік видання повинен бути в межах 1800–2026!');
+          return;
+        }
+
+        const newEntry = {
+          id: Date.now(),
+          title: newRecordData.title,
+          author: newRecordData.author,
+          genre: newRecordData.genre || 'Класика',
+          year: yearNum,
+          available: true,
+          student: newRecordData.title,
+          subject: newRecordData.genre || 'Інформатика',
+          grade: Math.min(12, Math.max(1, yearNum % 12 || 12)),
+          date: '2026-10-05'
+        };
+
+        setDbRecords(prev => [newEntry, ...prev]);
+        setNewRecordData({ title: '', author: '', genre: 'Класика', year: '2023' });
+        showToast('✅ Новий запис успішно додано в базу даних!', 'success');
+      };
+
+      // Handle Delete Record with Access Validation
+      const handleDeleteRecord = (id) => {
+        if (currentRole === 'guest' || currentRole === 'student') {
+          showToast('⛔ Помилка доступу: Недостатньо прав для видалення записів з БД!', 'error');
+          return;
+        }
+
+        setDbRecords(prev => prev.filter(r => r.id !== id));
+        showToast('🗑️ Запис видалено з бази даних', 'info');
+      };
+
+      return (
+        <div className="flex-1 flex flex-col font-sans">
+          {/* Header Bar */}
+          <header className="bg-slate-900 border-b border-slate-800 sticky top-0 z-40 backdrop-blur-md bg-opacity-90">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 bg-indigo-600/20 border border-indigo-500/30 rounded-xl text-indigo-400">
+                  <IconDatabase />
+                </div>
+                <div>
+                  <h1 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                    Конструктор Інтерфейсів Бази Даних
+                    <span className="text-xs font-normal px-2 py-0.5 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-full">
+                      9 клас
+                    </span>
+                  </h1>
+                  <p className="text-xs text-slate-400">Інтерактивна навчальна симуляція створення та тестування UI для БД</p>
+                </div>
+              </div>
+
+              {/* Mode Navigation Tabs */}
+              <div className="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs sm:text-sm font-medium">
+                <button
+                  onClick={() => setActiveTab('builder')}
+                  className={`px-3.5 py-1.5 rounded-lg flex items-center gap-2 transition ${
+                    activeTab === 'builder'
+                      ? 'bg-indigo-600 text-white shadow-md'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  <IconLayout />
+                  <span>Конструктор (Builder)</span>
+                </button>
+                <button
+                  onClick={() => setActiveTab('sandbox')}
+                  className={`px-3.5 py-1.5 rounded-lg flex items-center gap-2 transition relative ${
+                    activeTab === 'sandbox'
+                      ? 'bg-indigo-600 text-white shadow-md'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  <IconPlay />
+                  <span>Тестування (Sandbox)</span>
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                </button>
+                <button
+                  onClick={() => setActiveTab('challenges')}
+                  className={`px-3.5 py-1.5 rounded-lg flex items-center gap-2 transition ${
+                    activeTab === 'challenges'
+                      ? 'bg-indigo-600 text-white shadow-md'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  <IconSparkles />
+                  <span>Місії ({completedChallenges.length}/{CHALLENGES.length})</span>
+                </button>
+              </div>
+            </div>
+          </header>
+
+          {/* Toast Notification Floating Banner */}
+          {toastMsg && (
+            <div className="fixed bottom-6 right-6 z-50 animate-fade-in">
+              <div className={`px-4 py-3 rounded-xl shadow-2xl border text-sm font-medium flex items-center gap-3 ${
+                toastMsg.type === 'success' ? 'bg-emerald-950/90 border-emerald-500/40 text-emerald-200' :
+                toastMsg.type === 'error' ? 'bg-rose-950/90 border-rose-500/40 text-rose-200' :
+                'bg-indigo-950/90 border-indigo-500/40 text-indigo-200'
+              }`}>
+                {toastMsg.type === 'success' && <IconCheckCircle />}
+                {toastMsg.type === 'error' && <IconXCircle />}
+                {toastMsg.type === 'info' && <IconInfo />}
+                <span>{toastMsg.msg}</span>
+              </div>
+            </div>
+          )}
+
+          {/* Main Content Body */}
+          <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-6">
+
+            {/* TAB 1: VISUAL INTERFACE BUILDER */}
+            {activeTab === 'builder' && (
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 animate-fade-in">
+                {/* Left Panel: Scenarios & Component Palette */}
+                <div className="lg:col-span-4 space-y-6">
+                  {/* Scenario Selection Card */}
+                  <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2 block">
+                      1. Оберіть Предметну Галузь (Базу даних):
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        onClick={() => setScenarioKey('library')}
+                        className={`p-3 rounded-xl border text-left text-xs font-semibold transition flex flex-col gap-1 ${
+                          scenarioKey === 'library'
+                            ? 'bg-indigo-600/20 border-indigo-500 text-white'
+                            : 'bg-slate-950 border-slate-800 text-slate-400 hover:bg-slate-800/50'
+                        }`}
+                      >
+                        <span className="text-sm">📚 Бібліотека</span>
+                        <span className="text-[10px] text-slate-400 font-normal">Таблиця: Books</span>
+                      </button>
+                      <button
+                        onClick={() => setScenarioKey('journal')}
+                        className={`p-3 rounded-xl border text-left text-xs font-semibold transition flex flex-col gap-1 ${
+                          scenarioKey === 'journal'
+                            ? 'bg-indigo-600/20 border-indigo-500 text-white'
+                            : 'bg-slate-950 border-slate-800 text-slate-400 hover:bg-slate-800/50'
+                        }`}
+                      >
+                        <span className="text-sm">🏫 Журнал</span>
+                        <span className="text-[10px] text-slate-400 font-normal">Таблиця: Grades</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Components Palette Card */}
+                  <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
+                    <div>
+                      <h2 className="text-sm font-bold text-white flex items-center justify-between">
+                        <span>2. Компоненти Інтерфейсу</span>
+                        <span className="text-xs font-normal text-indigo-400">Натисніть «+»</span>
+                      </h2>
+                      <p className="text-xs text-slate-400 mt-1">Додайте потрібні елементи до макету справа</p>
+                    </div>
+
+                    <div className="space-y-2.5">
+                      {AVAILABLE_UI_ELEMENTS.map((item, index) => (
+                        <div
+                          key={index}
+                          className="p-3 bg-slate-950 hover:bg-slate-800/80 border border-slate-800 rounded-xl flex items-center justify-between gap-3 transition group"
+                        >
+                          <div className="flex items-center gap-3">
+                            <span className="text-lg p-2 bg-slate-900 rounded-lg border border-slate-800">{item.icon}</span>
+                            <div>
+                              <div className="text-xs font-semibold text-slate-200">{item.name}</div>
+                              <div className="text-[10px] text-slate-400">{item.category}</div>
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => addElementToLayout(item)}
+                            className="px-2.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-medium flex items-center gap-1 shadow-sm transition shrink-0"
+                          >
+                            <IconPlus /> Додати
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Panel: Interactive Canvas & Layout Preview */}
+                <div className="lg:col-span-8 flex flex-col gap-6">
+                  <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl flex-1 flex flex-col">
+                    <div className="flex items-center justify-between pb-4 border-b border-slate-800 mb-6">
+                      <div>
+                        <h2 className="text-base font-bold text-white flex items-center gap-2">
+                          <span>📐 Макет Користувацького Інтерфейсу</span>
+                          <span className="text-xs px-2 py-0.5 bg-slate-800 text-slate-300 rounded-md">
+                            {builtElements.length} елементів
+                          </span>
+                        </h2>
+                        <p className="text-xs text-slate-400">Формування кнопок, полів пошуку та форм для роботи з БД</p>
+                      </div>
+
+                      <button
+                        onClick={() => setActiveTab('sandbox')}
+                        className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl flex items-center gap-2 shadow-lg shadow-emerald-600/20 transition"
+                      >
+                        <IconPlay /> Протестувати Інтерфейс
+                      </button>
+                    </div>
+
+                    {/* Canvas Area */}
+                    <div className="flex-1 bg-slate-950 border-2 border-dashed border-slate-800 rounded-xl p-4 sm:p-6 flex flex-col gap-4 relative min-h-[360px]">
+                      {builtElements.length === 0 ? (
+                        <div className="m-auto text-center p-8 text-slate-500 space-y-3">
+                          <div className="w-12 h-12 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center mx-auto text-slate-400 text-xl">
+                            🎨
+                          </div>
+                          <p className="text-sm font-medium">Макет порожній</p>
+                          <p className="text-xs max-w-xs mx-auto">Додайте елементи з панелі зліва, щоб сформувати інтерфейс користувача для бази даних.</p>
+                        </div>
+                      ) : (
+                        <div className="space-y-4">
+                          {/* Built elements cards */}
+                          {builtElements.map((el, idx) => (
+                            <div
+                              key={el.id}
+                              className="p-4 bg-slate-900 border border-indigo-500/30 rounded-xl shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative group"
+                            >
+                              <div className="flex items-start sm:items-center gap-3">
+                                <span className="w-6 h-6 rounded-full bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 text-xs font-bold flex items-center justify-center shrink-0">
+                                  {idx + 1}
+                                </span>
+                                <div>
+                                  <div className="text-xs font-bold text-slate-200 flex items-center gap-2">
+                                    {el.type === 'search' && '🔍 Поле Введення Пошуку'}
+                                    {el.type === 'category_filter' && '🗂️ Випадаючий Фільтр'}
+                                    {el.type === 'add_form' && '➕ Форма Додавання Записів'}
+                                    {el.type === 'role_switcher' && '🛡️ Перемикач Ролей'}
+                                    {el.type === 'report_stat' && '📊 Панель Звітів'}
+                                  </div>
+                                  <div className="text-[11px] text-slate-400 mt-0.5">
+                                    {el.type === 'search' && `Прив'язано до поля таблиці: "${el.targetColumn || 'title'}"`}
+                                    {el.type === 'category_filter' && `Прив'язано до поля: "${el.targetColumn || 'genre'}"`}
+                                    {el.type === 'add_form' && `Перевірка дати: ${el.requireYearValidation ? 'Увімкнено (1800-2026)' : 'Вимкнено'}`}
+                                    {el.type === 'role_switcher' && 'Керує правами доступу (Гість / Адмін)'}
+                                    {el.type === 'report_stat' && 'Автоматично виводить COUNT(*)'}
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-2 self-end sm:self-center">
+                                <button
+                                  onClick={() => removeElementFromLayout(el.id)}
+                                  className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg border border-transparent hover:border-rose-500/20 transition"
+                                  title="Видалити елемент"
+                                >
+                                  <IconTrash />
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+
+                          {/* Mandatory Data Table Representation */}
+                          <div className="p-4 bg-slate-900/60 border border-slate-800 rounded-xl text-center text-xs text-slate-400">
+                            📋 <span className="font-semibold text-slate-300">Таблиця результатів ({activeScenario.tableName})</span> завжди присутня за замовчуванням для відображення записів.
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB 2: LIVE TESTING SANDBOX */}
+            {activeTab === 'sandbox' && (
+              <div className="space-y-6 animate-fade-in">
+                {/* Simulated UI Bar constructed by user */}
+                <div className="bg-slate-900 border border-indigo-500/30 rounded-2xl p-5 shadow-2xl space-y-4">
+                  <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+                      <h2 className="text-sm font-bold text-white">Інтерактивний Інтерфейс у Дії (Live Preview)</h2>
+                    </div>
+                    <div className="text-xs text-slate-400">
+                      База даних: <span className="text-indigo-400 font-semibold">{activeScenario.name}</span>
+                    </div>
+                  </div>
+
+                  {/* Dynamic Render of Components built by student */}
+                  {builtElements.length === 0 ? (
+                    <div className="p-4 bg-amber-950/20 border border-amber-500/30 rounded-xl text-amber-300 text-xs flex items-center gap-3">
+                      <IconInfo />
+                      <span>Ви ще не додали жодного компонента керування. Поверніться у режим «Конструктор» та додайте елементи!</span>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {builtElements.map(el => (
+                        <div key={el.id} className="bg-slate-950 p-3.5 rounded-xl border border-slate-800 flex flex-col justify-between">
+                          <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 block">
+                            {el.type === 'search' && '🔍 Пошук у базі даних'}
+                            {el.type === 'category_filter' && '🗂️ Фільтр Категорій'}
+                            {el.type === 'role_switcher' && '🛡️ Права Доступу (Роль)'}
+                            {el.type === 'report_stat' && '📊 Загалом записів'}
+                            {el.type === 'add_form' && '➕ Форма Додавання'}
+                          </label>
+
+                          {el.type === 'search' && (
+                            <div className="relative">
+                              <input
+                                type="text"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                placeholder={el.placeholder || 'Введіть текст...'}
+                                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500"
+                              />
+                              {searchQuery && (
+                                <button
+                                  onClick={() => setSearchQuery('')}
+                                  className="absolute right-2 top-2 text-slate-400 hover:text-white text-xs"
+                                >
+                                  ✕
+                                </button>
+                              )}
+                            </div>
+                          )}
+
+                          {el.type === 'category_filter' && (
+                            <select
+                              value={selectedCategory}
+                              onChange={(e) => setSelectedCategory(e.target.value)}
+                              className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500 cursor-pointer"
+                            >
+                              <option value="ALL">Всі категорії (Усі)</option>
+                              {(activeScenario.genres || activeScenario.subjects || []).map((cat, idx) => (
+                                <option key={idx} value={cat}>{cat}</option>
+                              ))}
+                            </select>
+                          )}
+
+                          {el.type === 'role_switcher' && (
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => setCurrentRole('admin')}
+                                className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-semibold transition border ${
+                                  currentRole === 'admin'
+                                    ? 'bg-indigo-600 border-indigo-500 text-white'
+                                    : 'bg-slate-900 border-slate-800 text-slate-400'
+                                }`}
+                              >
+                                👑 Адмін
+                              </button>
+                              <button
+                                onClick={() => setCurrentRole('guest')}
+                                className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-semibold transition border ${
+                                  currentRole === 'guest'
+                                    ? 'bg-amber-600 border-amber-500 text-white'
+                                    : 'bg-slate-900 border-slate-800 text-slate-400'
+                                }`}
+                              >
+                                👤 Гість
+                              </button>
+                            </div>
+                          )}
+
+                          {el.type === 'report_stat' && (
+                            <div className="text-xl font-extrabold text-indigo-400 flex items-center justify-between">
+                              <span>{filteredRecords.length} записів</span>
+                              <span className="text-xs font-normal text-slate-500">з {dbRecords.length} загалом</span>
+                            </div>
+                          )}
+
+                          {el.type === 'add_form' && (
+                            <div className="text-xs text-slate-400">
+                              Форма активна нижче на сторінці під таблицею.
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Database Table View */}
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                      <span>📋 Результати запиту з таблиці «{activeScenario.tableName}»</span>
+                      <span className="text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-400 font-mono">
+                        {filteredRecords.length} рядків
+                      </span>
+                    </h3>
+
+                    {currentRole === 'guest' && (
+                      <span className="text-xs px-2.5 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-300 rounded-md flex items-center gap-1">
+                        <IconLock /> Режим перегляду (Гість)
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="overflow-x-auto rounded-xl border border-slate-800">
+                    <table className="w-full text-left text-xs text-slate-300">
+                      <thead className="bg-slate-950 text-slate-400 uppercase font-semibold text-[10px] tracking-wider border-b border-slate-800">
+                        <tr>
+                          {activeScenario.columns.map(col => (
+                            <th key={col.key} className="px-4 py-3">{col.name}</th>
+                          ))}
+                          <th className="px-4 py-3 text-right">Дії</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-800/60 bg-slate-900/40">
+                        {filteredRecords.length === 0 ? (
+                          <tr>
+                            <td colSpan={activeScenario.columns.length + 1} className="px-4 py-8 text-center text-slate-500">
+                              За даними критеріями записів не знайдено.
+                            </td>
+                          </tr>
+                        ) : (
+                          filteredRecords.map((row) => (
+                            <tr key={row.id} className="hover:bg-slate-800/40 transition">
+                              {activeScenario.columns.map(col => (
+                                <td key={col.key} className="px-4 py-3 font-medium text-slate-200">
+                                  {col.key === 'available' ? (
+                                    row[col.key] ? (
+                                      <span className="text-emerald-400 font-semibold">Так</span>
+                                    ) : (
+                                      <span className="text-rose-400 font-semibold">Ні</span>
+                                    )
+                                  ) : (
+                                    row[col.key]
+                                  )}
+                                </td>
+                              ))}
+                              <td className="px-4 py-3 text-right">
+                                <button
+                                  onClick={() => handleDeleteRecord(row.id)}
+                                  className={`p-1.5 rounded-lg transition ${
+                                    currentRole === 'admin'
+                                      ? 'text-slate-400 hover:text-rose-400 hover:bg-rose-500/10'
+                                      : 'text-slate-600 cursor-not-allowed'
+                                  }`}
+                                  title={currentRole === 'admin' ? 'Видалити' : 'У вас немає прав для видалення'}
+                                >
+                                  <IconTrash />
+                                </button>
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Add Record Form Component (if added by student in builder) */}
+                {builtElements.some(e => e.type === 'add_form') && (
+                  <div className="bg-slate-900 border border-indigo-500/30 rounded-2xl p-5 shadow-xl space-y-4">
+                    <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                      <span>➕ Форма Додавання Запису в БД</span>
+                      {currentRole === 'guest' && (
+                        <span className="text-xs font-normal text-rose-400 bg-rose-500/10 border border-rose-500/20 px-2 py-0.5 rounded">
+                          Заблоковано для ролі «Гість»
+                        </span>
+                      )}
+                    </h3>
+
+                    {formError && (
+                      <div className="p-3 bg-rose-950/60 border border-rose-500/40 rounded-xl text-rose-200 text-xs flex items-center gap-2">
+                        <IconXCircle />
+                        <span>{formError}</span>
+                      </div>
+                    )}
+
+                    <form onSubmit={handleAddRecord} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                      <div>
+                        <label className="text-[11px] font-semibold text-slate-400 block mb-1">
+                          {scenarioKey === 'library' ? 'Назва книги' : 'Учень / Учениця'}
+                        </label>
+                        <input
+                          type="text"
+                          value={newRecordData.title}
+                          onChange={(e) => setNewRecordData({ ...newRecordData, title: e.target.value })}
+                          placeholder="Введіть значення..."
+                          disabled={currentRole === 'guest'}
+                          className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500 disabled:opacity-50"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[11px] font-semibold text-slate-400 block mb-1">
+                          {scenarioKey === 'library' ? 'Автор' : 'Дата'}
+                        </label>
+                        <input
+                          type="text"
+                          value={newRecordData.author}
+                          onChange={(e) => setNewRecordData({ ...newRecordData, author: e.target.value })}
+                          placeholder={scenarioKey === 'library' ? 'Ім\'я автора...' : '2026-10-05'}
+                          disabled={currentRole === 'guest'}
+                          className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500 disabled:opacity-50"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[11px] font-semibold text-slate-400 block mb-1">Категорія</label>
+                        <select
+                          value={newRecordData.genre}
+                          onChange={(e) => setNewRecordData({ ...newRecordData, genre: e.target.value })}
+                          disabled={currentRole === 'guest'}
+                          className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500 disabled:opacity-50 cursor-pointer"
+                        >
+                          {(activeScenario.genres || activeScenario.subjects || []).map((cat, i) => (
+                            <option key={i} value={cat}>{cat}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="text-[11px] font-semibold text-slate-400 block mb-1">
+                          {scenarioKey === 'library' ? 'Рік видання (Валідація)' : 'Оцінка'}
+                        </label>
+                        <input
+                          type="number"
+                          value={newRecordData.year}
+                          onChange={(e) => setNewRecordData({ ...newRecordData, year: e.target.value })}
+                          disabled={currentRole === 'guest'}
+                          className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500 disabled:opacity-50"
+                        />
+                      </div>
+
+                      <div className="sm:col-span-2 lg:col-span-4 flex justify-end">
+                        <button
+                          type="submit"
+                          disabled={currentRole === 'guest'}
+                          className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-indigo-600/20 transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
+                        >
+                          <IconPlus /> Зберегти у базу даних
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                )}
+
+                {/* Under the Hood Query Inspector */}
+                <div className="bg-slate-950 border border-slate-800 rounded-2xl p-4 font-mono text-xs text-slate-400 space-y-2">
+                  <div className="flex items-center gap-2 text-indigo-400 font-sans font-bold">
+                    <IconCode />
+                    <span>Запит СУБД під капотом (Generated SQL):</span>
+                  </div>
+                  <div className="p-3 bg-slate-900 rounded-xl text-emerald-400 border border-slate-800 overflow-x-auto select-all">
+                    {lastSqlQuery}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB 3: GUIDED EDUCATIONAL CHALLENGES */}
+            {activeTab === 'challenges' && (
+              <div className="space-y-6 animate-fade-in max-w-4xl mx-auto w-full">
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                        <IconSparkles />
+                        <span>Навчальні Місії та Завдання</span>
+                      </h2>
+                      <p className="text-xs text-slate-400">Створіть повноцінний інтерфейс, виконавши наступні кроки</p>
+                    </div>
+
+                    <div className="text-right">
+                      <span className="text-2xl font-black text-indigo-400">
+                        {completedChallenges.length} / {CHALLENGES.length}
+                      </span>
+                      <span className="block text-[10px] text-slate-500 uppercase font-bold">Виконано</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4 pt-2">
+                    {CHALLENGES.map((ch, idx) => {
+                      const isDone = completedChallenges.includes(ch.id);
+                      return (
+                        <div
+                          key={ch.id}
+                          className={`p-5 rounded-2xl border transition flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
+                            isDone
+                              ? 'bg-emerald-950/20 border-emerald-500/30'
+                              : 'bg-slate-950 border-slate-800'
+                          }`}
+                        >
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-2">
+                              <span className={`text-xs font-bold px-2 py-0.5 rounded-md ${
+                                isDone ? 'bg-emerald-500/20 text-emerald-300' : 'bg-slate-800 text-slate-400'
+                              }`}>
+                                Крок #{idx + 1}
+                              </span>
+                              <h3 className="text-sm font-bold text-white">{ch.title}</h3>
+                            </div>
+                            <p className="text-xs text-slate-300 leading-relaxed">{ch.description}</p>
+                            <p className="text-[11px] text-indigo-400 flex items-center gap-1 pt-1">
+                              💡 <span className="font-semibold">Підказка:</span> {ch.hint}
+                            </p>
+                          </div>
+
+                          <div className="shrink-0 self-start sm:self-center">
+                            {isDone ? (
+                              <div className="px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold rounded-xl flex items-center gap-1.5">
+                                <IconCheckCircle /> Виконано
+                              </div>
+                            ) : (
+                              <button
+                                onClick={() => setActiveTab('builder')}
+                                className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl border border-slate-700 transition"
+                              >
+                                Перейти в конструктор
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+
+          </main>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
