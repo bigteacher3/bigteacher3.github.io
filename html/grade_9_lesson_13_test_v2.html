@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Інтерфейс бази даних — Інтерактивний тест (9 клас)</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- React & ReactDOM CDN -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  
+  <!-- Babel for rendering JSX in browser -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+  <div id="root" class="min-h-screen flex flex-col"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // SVG Icons
+    const IconBookOpen = () => (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+      </svg>
+    );
+
+    const IconClock = () => (
+      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+    );
+
+    const IconSparkles = () => (
+      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+      </svg>
+    );
+
+    const IconChevronLeft = () => (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
+      </svg>
+    );
+
+    const IconChevronRight = () => (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
+      </svg>
+    );
+
+    const IconCheckSquare = () => (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+    );
+
+    const IconAward = () => (
+      <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+      </svg>
+    );
+
+    const IconRotateCcw = () => (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+      </svg>
+    );
+
+    const IconBarChart = () => (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+      </svg>
+    );
+
+    const IconCheckCircle = () => (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+    );
+
+    const IconXCircle = () => (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+    );
+
+    const IconHelpCircle = () => (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+    );
+
+    const QUIZ_QUESTIONS = [
+      {
+        id: 1,
+        type: 'single',
+        question: 'Що таке інтерфейс бази даних?',
+        description: 'Оберіть одну правильну відповідь, що найточніше визначає поняття.',
+        options: [
+          'Засіб взаємодії користувача з базою даних для опрацювання інформації.',
+          'Автоматичний сервер для збереження коду програми.',
+          'Тільки таблиця з даними в Microsoft Excel.',
+          'Мова програмування для створення баз даних.'
+        ],
+        correctAnswer: 'Засіб взаємодії користувача з базою даних для опрацювання інформації.',
+        explanation: 'Інтерфейс бази даних — це спосіб, за допомогою якого люди взаємодіють із БД, щоб додавати, отримувати, переглядати, змінювати чи видаляти інформацію без знання програмування.'
+      },
+      {
+        id: 2,
+        type: 'matching',
+        question: 'Установіть правильну відповідність між типом інтерфейсу та прикладом його використання:',
+        pairs: [
+          { id: '1', label: '1. Графічний інтерфейс' },
+          { id: '2', label: '2. Вебінтерфейс' },
+          { id: '3', label: '3. Мобільний інтерфейс' }
+        ],
+        targetsOptions: [
+          { id: 'А', label: 'А. Програма доставки їжі на смартфоні' },
+          { id: 'Б', label: 'Б. Microsoft Access' },
+          { id: 'В', label: 'В. Шкільний електронний щоденник у браузері' }
+        ],
+        correctAnswer: '1-Б, 2-В, 3-А',
+        explanation: 'Графічний: MS Access; Вебінтерфейс: електронний щоденник через браузер; Мобільний: застосунок доставки їжі.'
+      },
+      {
+        id: 3,
+        type: 'single',
+        question: 'У чому полягає відмінність між фільтрацією та сортуванням даних через інтерфейс бази даних?',
+        options: [
+          'Фільтрація відбирає записи за умовами, а сортування впорядковує їх.',
+          'Фільтрація змінює назви стовпчиків, а сортування видаляє інформацію.',
+          'Сортування створює нові таблиці, а фільтрація редагує код.',
+          'Між ними немає жодної відмінності.'
+        ],
+        correctAnswer: 'Фільтрація відбирає записи за умовами, а сортування впорядковує їх.',
+        explanation: 'Фільтрація дозволяє відбирати лише ті записи, які відповідають заданим критеріям, а сортування змінює порядок їх відображення.'
+      },
+      {
+        id: 4,
+        type: 'multiple',
+        question: 'Учениця працює з базою даних шкільної бібліотеки. Які з наведених дій належать до стандартних можливостей користувацького інтерфейсу БД?',
+        items: [
+          '1. Пошук книги за автором або назвою',
+          '2. Зміна структури та назви таблиць',
+          '3. Вилучення втрачених книг із бази',
+          '4. Додавання нового поля «Жанр»'
+        ],
+        options: [
+          'Тільки варіанти 1 та 3',
+          'Тільки варіанти 2 та 4',
+          'Усі варіанти від 1 до 4',
+          'Тільки варіант 1'
+        ],
+        correctAnswer: 'Тільки варіанти 1 та 3',
+        explanation: 'Пошук і вилучення записів — це стандартні операції користувача. Зміна структури вимагає прав розробника.'
+      },
+      {
+        id: 5,
+        type: 'single',
+        question: 'У комп\'ютерній програмі бібліотеки меню є заплутаним, а кнопки занадто дрібними, що ускладнює пошук. Про яке обмеження йдеться?',
+        options: [
+          'Залежність від дизайну інтерфейсу',
+          'Технічні обмеження',
+          'Обмеження прав доступу',
+          'Помилки користувача'
+        ],
+        correctAnswer: 'Залежність від дизайну інтерфейсу',
+        explanation: 'Якщо інтерфейс погано спроєктований, користувачеві складно працювати з даними незалежно від якості самої БД.'
+      },
+      {
+        id: 6,
+        type: 'single',
+        question: 'У шкільному журналі учні можуть переглядати свої оцінки, але не мають можливості їх редагувати. Яке це обмеження?',
+        options: [
+          'Обмеження прав доступу залежно від ролі',
+          'Залежність від дизайну інтерфейсу',
+          'Помилки користувача',
+          'Технічні обмеження'
+        ],
+        correctAnswer: 'Обмеження прав доступу залежно від ролі',
+        explanation: 'Система розрізняє ролі (учень, вчитель) і надає відповідний рівень доступу.'
+      },
+      {
+        id: 7,
+        type: 'single',
+        question: 'Випадково ввели рік народження учня як 1925 замість 2010, і система зберегла цей запис. Яка причина цієї ситуації?',
+        options: [
+          'Інтерфейс не завжди перевіряє змістову коректність введених даних',
+          'Комп\'ютер застарів і завис',
+          'Користувач не мав прав доступу до бази',
+          'База даних автоматично змінила дані'
+        ],
+        correctAnswer: 'Інтерфейс не завжди перевіряє змістову коректність введених даних',
+        explanation: 'Інтерфейси перевіряють тип даних, але не завжди можуть перевірити їх змістову логіку.'
+      },
+      {
+        id: 8,
+        type: 'matching',
+        question: 'Установіть відповідність між прикладом ситуації та типом обмеження інтерфейсу БД:',
+        pairs: [
+          { id: '1', label: '1. У формі пошуку немає фільтра за кольором товару' },
+          { id: '2', label: '2. Програма працює лише на старому комп\'ютері, який зависає' },
+          { id: '3', label: '3. Вчитель може редагувати оцінки, а учень — тільки переглядати' }
+        ],
+        targetsOptions: [
+          { id: 'А', label: 'А. Обмежений доступ до даних' },
+          { id: 'Б', label: 'Б. Обмеження прав доступу' },
+          { id: 'В', label: 'В. Технічні обмеження' }
+        ],
+        correctAnswer: '1-А, 2-В, 3-Б',
+        explanation: 'Відсутність фільтра = обмежений доступ; застаріле залізо = технічні обмеження; відмінність у правах = обмеження прав доступу.'
+      },
+      {
+        id: 9,
+        type: 'single',
+        question: 'Користувач бажає додати нове поле «Жанр» та змінити логіку пошуку. Чому це неможливо зробити через готовий інтерфейс?',
+        options: [
+          'Інтерфейс дає змогу працювати лише з запрограмованими функціями та структурою',
+          'Через відсутність інтернет-з\'єднання',
+          'Тому що поле «Жанр» заборонене законом',
+          'Для цього потрібно видалити всі книги з бази'
+        ],
+        correctAnswer: 'Інтерфейс дає змогу працювати лише з запрограмованими функціями та структурою',
+        explanation: 'Готовий інтерфейс користувача обмежується лише попередньо налаштованими полями й кнопками.'
+      },
+      {
+        id: 10,
+        type: 'single',
+        question: 'Менеджер бажає отримати узагальнені дані про найпопулярніші страви за тиждень. Яка можливість БД використовується?',
+        options: [
+          'Створення звітів та аналітика',
+          'Видалення даних',
+          'Зміна структури бази даних',
+          'Сортування записів за абеткою'
+        ],
+        correctAnswer: 'Створення звітів та аналітика',
+        explanation: 'Аналітика та створення звітів дає змогу узагальнювати великі масиви даних у зручні підсумкові таблиці чи графіки.'
+      }
+    ];
+
+    const shuffleArray = (arr) => {
+      const newArr = [...arr];
+      for (let i = newArr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+      }
+      return newArr;
+    };
+
+    const prepareQuestions = () => {
+      return QUIZ_QUESTIONS.map((q) => {
+        const qCopy = { ...q };
+        if (qCopy.options) {
+          qCopy.options = shuffleArray(qCopy.options);
+        }
+        if (qCopy.targetsOptions) {
+          qCopy.targetsOptions = shuffleArray(qCopy.targetsOptions);
+        }
+        return qCopy;
+      });
+    };
+
+    const calculateGrade12 = (correctCount) => {
+      const grades = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+      return grades[correctCount] || 1;
+    };
+
+    function App() {
+      const [questions, setQuestions] = useState(() => prepareQuestions());
+      const [currentIdx, setCurrentIdx] = useState(0);
+      const [userAnswers, setUserAnswers] = useState({});
+      const [matchingSelections, setMatchingSelections] = useState({});
+      const [isSubmitted, setIsSubmitted] = useState(false);
+      const [elapsedTime, setElapsedTime] = useState(0);
+
+      useEffect(() => {
+        let timer;
+        if (!isSubmitted) {
+          timer = setInterval(() => setElapsedTime((prev) => prev + 1), 1000);
+        }
+        return () => clearInterval(timer);
+      }, [isSubmitted]);
+
+      const currentQ = questions[currentIdx];
+
+      const handleSingleSelect = (option) => {
+        setUserAnswers((prev) => ({ ...prev, [currentQ.id]: option }));
+      };
+
+      const handleMatchingSelect = (pairId, targetKey) => {
+        const updated = {
+          ...matchingSelections,
+          [currentQ.id]: { ...(matchingSelections[currentQ.id] || {}), [pairId]: targetKey }
+        };
+        setMatchingSelections(updated);
+
+        const currentMatches = updated[currentQ.id] || {};
+        const formatted = ['1', '2', '3']
+          .map((num) => `${num}-${currentMatches[num] || '?'}`)
+          .join(', ');
+
+        setUserAnswers((prev) => ({ ...prev, [currentQ.id]: formatted }));
+      };
+
+      const calculateScore = () => {
+        let correct = 0;
+        questions.forEach((q) => {
+          if (userAnswers[q.id] === q.correctAnswer) correct++;
+        });
+        return correct;
+      };
+
+      const handleRestart = () => {
+        setQuestions(prepareQuestions());
+        setCurrentIdx(0);
+        setUserAnswers({});
+        setMatchingSelections({});
+        setIsSubmitted(false);
+        setElapsedTime(0);
+      };
+
+      const formatTime = (seconds) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+      };
+
+      const totalCorrect = calculateScore();
+      const finalGrade = calculateGrade12(totalCorrect);
+
+      return (
+        <div className="flex-1 flex flex-col font-sans">
+          {/* Header */}
+          <header className="bg-slate-800/90 backdrop-blur-md border-b border-slate-700 sticky top-0 z-50">
+            <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-indigo-600 rounded-lg text-white shadow-lg shadow-indigo-500/20">
+                  <IconBookOpen />
+                </div>
+                <div>
+                  <h1 className="text-sm md:text-base font-bold text-white">
+                    Інтерфейс бази даних: Можливості та обмеження
+                  </h1>
+                  <p className="text-xs text-slate-400">Інформатика • 9 клас (Урок 13)</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 text-xs">
+                <div className="flex items-center gap-1.5 bg-slate-900 px-3 py-1.5 rounded-full border border-slate-700 text-slate-300">
+                  <IconClock />
+                  <span>{formatTime(elapsedTime)}</span>
+                </div>
+              </div>
+            </div>
+          </header>
+
+          {/* Main Content */}
+          <main className="flex-1 max-w-4xl w-full mx-auto p-4 md:p-6 flex flex-col">
+            {!isSubmitted ? (
+              <div className="flex-1 flex flex-col gap-6">
+                {/* Progress Bar */}
+                <div className="bg-slate-800 p-4 rounded-xl border border-slate-700">
+                  <div className="flex justify-between items-center text-xs font-semibold text-slate-400 mb-2">
+                    <span>Запитання {currentIdx + 1} з {questions.length}</span>
+                    <span>{Math.round(((currentIdx + 1) / questions.length) * 100)}%</span>
+                  </div>
+                  <div className="w-full bg-slate-700 h-2 rounded-full overflow-hidden">
+                    <div 
+                      className="bg-indigo-500 h-full transition-all duration-300"
+                      style={{ width: `${((currentIdx + 1) / questions.length) * 100}%` }}
+                    ></div>
+                  </div>
+                </div>
+
+                {/* Question Card */}
+                <div className="bg-slate-800 rounded-2xl p-6 border border-slate-700 flex-1 flex flex-col justify-between">
+                  <div>
+                    <div className="mb-3">
+                      <span className="px-2.5 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-xs font-bold rounded-md">
+                        {currentQ.type === 'single' && 'Одинарний вибір'}
+                        {currentQ.type === 'multiple' && 'Вибір варіанта'}
+                        {currentQ.type === 'matching' && 'Встановлення відповідності'}
+                      </span>
+                    </div>
+
+                    <h2 className="text-lg md:text-xl font-bold text-white mb-2">
+                      {currentQ.question}
+                    </h2>
+                    {currentQ.description && (
+                      <p className="text-sm text-slate-400 mb-4">{currentQ.description}</p>
+                    )}
+
+                    {currentQ.items && (
+                      <div className="bg-slate-900/60 border border-slate-700 rounded-xl p-4 mb-5 space-y-2 text-sm text-slate-300">
+                        {currentQ.items.map((item, idx) => (
+                          <div key={idx} className="flex items-start gap-2">
+                            <span className="text-indigo-400 font-bold">•</span>
+                            <span>{item}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {currentQ.options && (
+                      <div className="space-y-3 mt-4">
+                        {currentQ.options.map((opt, idx) => {
+                          const isSelected = userAnswers[currentQ.id] === opt;
+                          return (
+                            <button
+                              key={idx}
+                              onClick={() => handleSingleSelect(opt)}
+                              className={`w-full text-left p-4 rounded-xl border transition flex items-center justify-between ${
+                                isSelected
+                                  ? 'bg-indigo-600/20 border-indigo-500 text-white'
+                                  : 'bg-slate-900/40 border-slate-700/60 text-slate-300 hover:bg-slate-700/30'
+                              }`}
+                            >
+                              <span className="text-sm md:text-base font-medium pr-4">{opt}</span>
+                              <div className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ${
+                                isSelected ? 'border-indigo-400 bg-indigo-500' : 'border-slate-600'
+                              }`}>
+                                {isSelected && <div className="w-2 h-2 rounded-full bg-white" />}
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    {currentQ.type === 'matching' && (
+                      <div className="space-y-4 mt-4">
+                        {currentQ.pairs.map((pair) => {
+                          const selectedVal = (matchingSelections[currentQ.id] || {})[pair.id] || '';
+                          return (
+                            <div key={pair.id} className="bg-slate-900/60 p-4 rounded-xl border border-slate-700 flex flex-col md:flex-row md:items-center justify-between gap-3">
+                              <span className="text-sm md:text-base font-medium text-slate-200">
+                                {pair.label}
+                              </span>
+                              <select
+                                value={selectedVal}
+                                onChange={(e) => handleMatchingSelect(pair.id, e.target.value)}
+                                className="bg-slate-800 border border-slate-600 text-slate-100 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                              >
+                                <option value="">-- Оберіть відповідність --</option>
+                                {currentQ.targetsOptions.map((target) => (
+                                  <option key={target.id} value={target.id}>
+                                    {target.label}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Nav controls */}
+                  <div className="flex items-center justify-between mt-8 pt-4 border-t border-slate-700/60">
+                    <button
+                      onClick={() => setCurrentIdx((prev) => Math.max(0, prev - 1))}
+                      disabled={currentIdx === 0}
+                      className="px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-2 border border-slate-700 text-slate-300 disabled:opacity-40 hover:bg-slate-700 transition"
+                    >
+                      <IconChevronLeft /> Назад
+                    </button>
+
+                    {currentIdx < questions.length - 1 ? (
+                      <button
+                        onClick={() => setCurrentIdx((prev) => prev + 1)}
+                        className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm flex items-center gap-2 transition"
+                      >
+                        Далі <IconChevronRight />
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => setIsSubmitted(true)}
+                        className="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm flex items-center gap-2 transition"
+                      >
+                        Завершити тест <IconCheckSquare />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                <div className="bg-slate-800 border border-slate-700 rounded-2xl p-6 text-center relative overflow-hidden">
+                  <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-indigo-500 to-emerald-500"></div>
+                  
+                  <div className="inline-flex p-3 bg-indigo-500/10 text-indigo-400 rounded-2xl mb-3">
+                    <IconAward />
+                  </div>
+
+                  <h2 className="text-2xl font-extrabold text-white mb-1">
+                    Тест завершено!
+                  </h2>
+                  <p className="text-slate-400 text-sm mb-6">
+                    Час виконання: <span className="text-indigo-300 font-semibold">{formatTime(elapsedTime)}</span>
+                  </p>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-xl mx-auto mb-6">
+                    <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-700">
+                      <span className="text-xs text-slate-400 block mb-1">Правильних відповідей</span>
+                      <span className="text-2xl font-bold text-emerald-400">{totalCorrect} / {questions.length}</span>
+                    </div>
+                    <div className="bg-slate-900/80 p-4 rounded-xl border border-slate-700">
+                      <span className="text-xs text-slate-400 block mb-1">Відсоток успішності</span>
+                      <span className="text-2xl font-bold text-indigo-400">{Math.round((totalCorrect / questions.length) * 100)}%</span>
+                    </div>
+                    <div className="bg-slate-900/80 p-4 rounded-xl border border-indigo-500/30 bg-indigo-950/20">
+                      <span className="text-xs text-indigo-300 block mb-1">Оцінка (12 балів)</span>
+                      <span className="text-3xl font-black text-amber-400">{finalGrade} балів</span>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={handleRestart}
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm transition"
+                  >
+                    <IconRotateCcw /> Пройти тест ще раз
+                  </button>
+                </div>
+
+                {/* Question review */}
+                <div className="bg-slate-800 border border-slate-700 rounded-2xl p-6 space-y-6">
+                  <div className="flex items-center gap-2 pb-4 border-b border-slate-700">
+                    <IconBarChart />
+                    <h3 className="text-lg font-bold text-white">Аналіз відповідей</h3>
+                  </div>
+
+                  <div className="space-y-6">
+                    {questions.map((q, idx) => {
+                      const userAns = userAnswers[q.id] || 'Не надано';
+                      const isCorrect = userAns === q.correctAnswer;
+
+                      return (
+                        <div 
+                          key={q.id} 
+                          className={`p-5 rounded-xl border ${
+                            isCorrect ? 'bg-emerald-950/20 border-emerald-500/30' : 'bg-rose-950/20 border-rose-500/30'
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-3 mb-3">
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs font-bold px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 border border-slate-700">
+                                #{idx + 1}
+                              </span>
+                              <h4 className="text-base font-semibold text-slate-100">{q.question}</h4>
+                            </div>
+                            {isCorrect ? (
+                              <div className="flex items-center gap-1 text-emerald-400 text-xs font-bold bg-emerald-500/10 px-2.5 py-1 rounded-md border border-emerald-500/20 shrink-0">
+                                <IconCheckCircle /> Правильно
+                              </div>
+                            ) : (
+                              <div className="flex items-center gap-1 text-rose-400 text-xs font-bold bg-rose-500/10 px-2.5 py-1 rounded-md border border-rose-500/20 shrink-0">
+                                <IconXCircle /> Помилка
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="space-y-1.5 text-sm mb-3 pl-2 border-l-2 border-slate-700">
+                            <p className="text-slate-300">
+                              <span className="text-slate-400">Ваша відповідь: </span>
+                              <span className={isCorrect ? 'text-emerald-300 font-medium' : 'text-rose-300 font-medium'}>
+                                {userAns}
+                              </span>
+                            </p>
+                            {!isCorrect && (
+                              <p className="text-slate-300">
+                                <span className="text-slate-400">Правильна відповідь: </span>
+                                <span className="text-emerald-400 font-medium">{q.correctAnswer}</span>
+                              </p>
+                            )}
+                          </div>
+
+                          <div className="mt-3 bg-slate-900/60 p-3 rounded-lg border border-slate-800 text-xs text-slate-400 flex items-start gap-2">
+                            <IconHelpCircle />
+                            <div>
+                              <span className="font-semibold text-indigo-300 block mb-0.5">Пояснення з підручника:</span>
+                              {q.explanation}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+          </main>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
