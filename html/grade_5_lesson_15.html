@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Майстер Текстових Документів | Інтерактивна Вправа (5 клас НУШ)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);
+            min-height: 100vh;
+            color: #f8fafc;
+        }
+        .font-heading {
+            font-family: 'Comfortaa', cursive;
+        }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.85);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #6366f1;
+            border-radius: 4px;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        .floating {
+            animation: float 4s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen text-slate-100 p-3 md:p-6 custom-scrollbar">
+
+    <header class="max-w-5xl w-full mx-auto flex justify-between items-center mb-6 glass-panel rounded-2xl p-4">
+        <div class="flex items-center space-x-3">
+            <div class="w-12 h-12 rounded-xl bg-indigo-600 flex items-center justify-center text-2xl text-white shadow-lg shadow-indigo-500/50 floating">
+                <i class="fa-solid fa-file-lines"></i>
+            </div>
+            <div>
+                <h1 class="font-heading text-lg md:text-xl font-bold text-indigo-300">Майстер Тексту 5.0</h1>
+                <p class="text-xs text-slate-400">Інформатика • 5 клас НУШ</p>
+            </div>
+        </div>
+        <div id="player-badge" class="hidden flex items-center bg-indigo-950/80 border border-indigo-500/30 px-3 py-1.5 rounded-full">
+            <i class="fa-solid fa-user-astronaut text-indigo-400 mr-2"></i>
+            <span id="display-player-name" class="font-bold text-sm text-indigo-200">Гравець</span>
+        </div>
+    </header>
+
+    <main class="max-w-5xl w-full mx-auto flex-grow flex flex-col justify-center">
+
+        <!-- STEP 0: WELCOME SCREEN -->
+        <section id="screen-welcome" class="glass-panel rounded-3xl p-6 md:p-10 text-center max-w-2xl mx-auto w-full">
+            <div class="w-20 h-20 bg-indigo-500/20 text-indigo-400 rounded-3xl flex items-center justify-center mx-auto mb-6 text-4xl border border-indigo-500/30 floating">
+                <i class="fa-solid fa-laptop-code"></i>
+            </div>
+            <h2 class="font-heading text-2xl md:text-3xl font-bold mb-3 text-white">
+                Лабораторія Текстознавства 🚀
+            </h2>
+            <p class="text-slate-300 mb-6 text-sm md:text-base leading-relaxed">
+                Перевір свої знання з теми <br class="hidden md:block">
+                <span class="text-indigo-300 font-semibold">«Текстовий документ, його об’єкти та збереження»</span>.<br>
+                Пройди 5 цікавих місій, збери всі бали та отримай свій <strong>Офіційний Сертифікат НУШ</strong>!
+            </p>
+            
+            <div class="mb-6 text-left bg-slate-900/60 p-4 rounded-2xl border border-slate-700/50">
+                <label for="student-name" class="block text-sm font-semibold text-indigo-300 mb-2">
+                    <i class="fa-solid fa-id-card mr-1"></i> Введи своє ім'я та прізвище:
+                </label>
+                <input type="text" id="student-name" placeholder="наприклад, Софія Коваленко" 
+                    class="w-full bg-slate-800 border border-slate-600 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition">
+                <p id="name-error" class="text-rose-400 text-xs mt-1 hidden">Будь ласка, введи ім'я для створення сертифіката!</p>
+            </div>
+
+            <button onclick="startGame()" class="w-full py-4 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-bold text-lg rounded-xl shadow-lg shadow-indigo-500/30 transition duration-300 flex items-center justify-center space-x-2">
+                <span>Розпочати Місію</span>
+                <i class="fa-solid fa-rocket"></i>
+            </button>
+        </section>
+
+        <div id="game-progress-bar" class="hidden mb-6 glass-panel rounded-2xl p-4">
+            <div class="flex justify-between items-center mb-2 text-xs font-semibold text-slate-300">
+                <span id="stage-title">Місія 1 з 5</span>
+                <span id="score-counter" class="text-amber-400 font-bold"><i class="fa-solid fa-star mr-1"></i> 0 балів</span>
+            </div>
+            <div class="w-full bg-slate-800 h-3 rounded-full overflow-hidden p-0.5 border border-slate-700">
+                <div id="progress-fill" class="bg-gradient-to-r from-indigo-500 to-purple-500 h-full rounded-full transition-all duration-500" style="width: 20%;"></div>
+            </div>
+        </div>
+
+        <!-- STAGE 1: MATCHING OBJECTS -->
+        <section id="stage-1" class="hidden glass-panel rounded-3xl p-6 md:p-8">
+            <div class="flex items-center space-x-3 mb-6">
+                <div class="w-10 h-10 bg-indigo-500/20 text-indigo-400 rounded-xl flex items-center justify-center font-bold">1</div>
+                <div>
+                    <h3 class="font-heading text-xl font-bold text-white">Провідник об'єктів документа</h3>
+                    <p class="text-xs text-slate-300">Обери назву об'єкта, а потім натисни відповідний йому опис з підручника.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6" id="stage1-container">
+                <!-- Dynamic cards -->
+            </div>
+
+            <div class="flex justify-between items-center pt-4 border-t border-slate-700/50">
+                <span class="text-xs text-slate-400">Натисни елемент зліва, потім його опис справа.</span>
+                <button onclick="checkStage1()" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-md transition">
+                    Перевірити <i class="fa-solid fa-arrow-right ml-1"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- STAGE 2: KEYBOARD KNOWLEDGE -->
+        <section id="stage-2" class="hidden glass-panel rounded-3xl p-6 md:p-8">
+            <div class="flex items-center space-x-3 mb-6">
+                <div class="w-10 h-10 bg-indigo-500/20 text-indigo-400 rounded-xl flex items-center justify-center font-bold">2</div>
+                <div>
+                    <h3 class="font-heading text-xl font-bold text-white">Знавець Клавіатури</h3>
+                    <p class="text-xs text-slate-300">Обери правильну клавішу для виконання зазначеної дії в текстовому процесорі.</p>
+                </div>
+            </div>
+
+            <div id="keyboard-questions" class="space-y-6">
+                <!-- Dynamically generated questions -->
+            </div>
+
+            <div class="flex justify-end pt-6 border-t border-slate-700/50 mt-6">
+                <button onclick="checkStage2()" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-md transition">
+                    Наступна Місія <i class="fa-solid fa-arrow-right ml-1"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- STAGE 3: EDITING VS FORMATTING -->
+        <section id="stage-3" class="hidden glass-panel rounded-3xl p-6 md:p-8">
+            <div class="flex items-center space-x-3 mb-6">
+                <div class="w-10 h-10 bg-indigo-500/20 text-indigo-400 rounded-xl flex items-center justify-center font-bold">3</div>
+                <div>
+                    <h3 class="font-heading text-xl font-bold text-white">Редагування vs Форматування</h3>
+                    <p class="text-xs text-slate-300">Розподіли операції над документом за правильними категоріями.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div class="bg-slate-900/60 p-4 rounded-2xl border border-blue-500/30">
+                    <h4 class="font-bold text-blue-400 mb-3 flex items-center">
+                        <i class="fa-solid fa-pen-to-square mr-2"></i> Редагування
+                    </h4>
+                    <p class="text-xs text-slate-400 mb-3">Зміна ВМІСТУ: виправлення помилок, видалення, копіювання, переміщення.</p>
+                    <div id="drop-editing" class="min-h-[140px] bg-slate-800/50 rounded-xl p-2 border border-dashed border-slate-600 space-y-2"></div>
+                </div>
+
+                <div class="bg-slate-900/60 p-4 rounded-2xl border border-purple-500/30">
+                    <h4 class="font-bold text-purple-400 mb-3 flex items-center">
+                        <i class="fa-solid fa-palette mr-2"></i> Форматування
+                    </h4>
+                    <p class="text-xs text-slate-400 mb-3">Зміна ВИГЛЯДУ: кольору, шрифту, вирівнювання, розміру.</p>
+                    <div id="drop-formatting" class="min-h-[140px] bg-slate-800/50 rounded-xl p-2 border border-dashed border-slate-600 space-y-2"></div>
+                </div>
+            </div>
+
+            <div class="bg-slate-900/40 p-4 rounded-2xl border border-slate-700/50 mb-6">
+                <h5 class="text-xs font-semibold text-slate-300 mb-3">Доступні операції (натисни кнопку для розподілу):</h5>
+                <div id="action-items-pool" class="flex flex-col md:flex-row flex-wrap gap-2"></div>
+            </div>
+
+            <div class="flex justify-end pt-4 border-t border-slate-700/50">
+                <button onclick="checkStage3()" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-md transition">
+                    Перевірити <i class="fa-solid fa-arrow-right ml-1"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- STAGE 4: FILE FORMATS -->
+        <section id="stage-4" class="hidden glass-panel rounded-3xl p-6 md:p-8">
+            <div class="flex items-center space-x-3 mb-6">
+                <div class="w-10 h-10 bg-indigo-500/20 text-indigo-400 rounded-xl flex items-center justify-center font-bold">4</div>
+                <div>
+                    <h3 class="font-heading text-xl font-bold text-white">Лабіринт Форматів Файлів</h3>
+                    <p class="text-xs text-slate-300">Визнач, яке розширення відповідає кожному типу текстового документа згідно з підручником.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6" id="formats-grid">
+                <!-- Formats populated dynamically -->
+            </div>
+
+            <div class="flex justify-end pt-4 border-t border-slate-700/50">
+                <button onclick="checkStage4()" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-md transition">
+                    До останньої місії <i class="fa-solid fa-arrow-right ml-1"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- STAGE 5: SAVING ALGORITHM -->
+        <section id="stage-5" class="hidden glass-panel rounded-3xl p-6 md:p-8">
+            <div class="flex items-center space-x-3 mb-6">
+                <div class="w-10 h-10 bg-indigo-500/20 text-indigo-400 rounded-xl flex items-center justify-center font-bold">5</div>
+                <div>
+                    <h3 class="font-heading text-xl font-bold text-white">Алгоритм Збереження Документа</h3>
+                    <p class="text-xs text-slate-300">Впорядкуй 5 кроків збереження документа у правильній послідовності.</p>
+                </div>
+            </div>
+
+            <div id="algorithm-container" class="space-y-3 mb-6">
+                <!-- Dynamic algorithm steps -->
+            </div>
+
+            <div class="flex justify-between items-center pt-4 border-t border-slate-700/50">
+                <span class="text-xs text-slate-400">Використовуй кнопки ▲/▼ для зміни порядку кроків.</span>
+                <button onclick="checkStage5()" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-lg shadow-emerald-600/30 transition">
+                    Завершити місію та отримати оцінку <i class="fa-solid fa-award ml-1"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- RESULTS SCREEN -->
+        <section id="screen-results" class="hidden glass-panel rounded-3xl p-6 md:p-10 text-center max-w-3xl mx-auto w-full">
+            <div class="inline-block p-4 bg-indigo-500/20 rounded-full text-indigo-400 text-5xl mb-4 floating">
+                <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+            
+            <h2 class="font-heading text-2xl md:text-3xl font-bold mb-2 text-white">Результати Навчальної Місії</h2>
+            <p class="text-slate-300 text-sm mb-6">Офіційна підсумкова карта успішності з інформатики</p>
+
+            <!-- Certificate Card -->
+            <div class="bg-slate-900/90 border-2 border-indigo-500/50 rounded-2xl p-6 text-left mb-6 relative overflow-hidden shadow-2xl">
+                <div class="absolute -right-10 -bottom-10 text-indigo-900/20 text-9xl pointer-events-none">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+
+                <div class="flex justify-between items-start border-b border-slate-700 pb-4 mb-4">
+                    <div>
+                        <span class="text-xs uppercase font-bold tracking-wider text-indigo-400 block">Сертифікат досягнень НУШ</span>
+                        <h3 id="cert-student-name" class="font-heading text-2xl font-bold text-amber-300">Учень/Учениця</h3>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs text-slate-400 block">Тема: Текстові документи</span>
+                        <span id="cert-date" class="text-xs text-indigo-300">--.--.----</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700 text-center">
+                        <span class="text-xs text-slate-400 block mb-1">Точність виконання</span>
+                        <span id="cert-score-percent" class="text-2xl font-black text-emerald-400">100%</span>
+                    </div>
+                    <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700 text-center">
+                        <span class="text-xs text-slate-400 block mb-1">Набрано балів</span>
+                        <span id="cert-score-points" class="text-2xl font-black text-amber-400">100 / 100</span>
+                    </div>
+                    <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700 text-center">
+                        <span class="text-xs text-slate-400 block mb-1">Рівень досягнень</span>
+                        <span id="cert-level" class="text-lg font-bold text-indigo-300">Високий</span>
+                    </div>
+                </div>
+
+                <!-- VERBAL ASSESSMENT SECTION -->
+                <div class="bg-indigo-950/40 border border-indigo-500/30 rounded-xl p-4">
+                    <h4 class="font-bold text-indigo-300 text-sm mb-2 flex items-center">
+                        <i class="fa-solid fa-comment-dots text-indigo-400 mr-2"></i> Вербальне оцінювання вчителя:
+                    </h4>
+                    <p id="verbal-feedback-text" class="text-sm text-slate-200 leading-relaxed italic">
+                        Завантаження відгуку...
+                    </p>
+                    
+                    <div class="mt-4 pt-3 border-t border-indigo-900/60 flex flex-col md:flex-row justify-between text-xs text-slate-400 space-y-2 md:space-y-0">
+                        <span><strong class="text-slate-300">Сильні сторони:</strong> <span id="strengths-list">—</span></span>
+                        <span><strong class="text-slate-300">Рекомендація:</strong> <span id="recommendation-text">—</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3">
+                <button onclick="window.print()" class="flex-1 py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold rounded-xl transition flex items-center justify-center space-x-2 border border-slate-600">
+                    <i class="fa-solid fa-print"></i>
+                    <span>Роздрукувати / Зберегти PDF</span>
+                </button>
+                <button onclick="restartGame()" class="flex-1 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-bold rounded-xl transition flex items-center justify-center space-x-2 shadow-lg shadow-indigo-500/30">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span>Пройти ще раз</span>
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="max-w-5xl w-full mx-auto text-center py-4 text-xs text-slate-400 mt-6">
+        Розроблено відповідно до модельної навчальної програми «Інформатика 5-6 клас» (НУШ)
+    </footer>
+
+    <script>
+        // State management
+        const gameState = {
+            playerName: '',
+            currentStage: 1,
+            scores: { stage1: 0, stage2: 0, stage3: 0, stage4: 0, stage5: 0 }
+        };
+
+        // Data for Stage 1
+        const stage1Data = [
+            { id: '1', name: 'Символ', desc: 'Літера, цифра, знак пунктуації, знак арифметичної операції чи спеціальний знак.' },
+            { id: '2', name: 'Слово', desc: 'Послідовність символів, зазвичай відокремлена пробілами.' },
+            { id: '3', name: 'Речення', desc: 'Послідовність слів, що починається з великої літери.' },
+            { id: '4', name: 'Абзац', desc: 'Частина тексту, друк якого закінчується натисканням клавіші Enter.' }
+        ];
+        let selectedObjCard = null;
+        let selectedDescCard = null;
+        let stage1Pairs = {};
+
+        // Data for Stage 2
+        const stage2Questions = [
+            {
+                q: 'Яку клавішу потрібно натиснути для видалення символу ЛІВОРУЧ від курсору?',
+                options: [
+                    { text: 'Backspace', correct: true },
+                    { text: 'Delete', correct: false },
+                    { text: 'Enter', correct: false },
+                    { text: 'Shift', correct: false }
+                ]
+            },
+            {
+                q: 'Яку клавішу натискають для видалення символу ПРАВОРУЧ від курсору?',
+                options: [
+                    { text: 'Backspace', correct: false },
+                    { text: 'Delete', correct: true },
+                    { text: 'Space', correct: false },
+                    { text: 'Home', correct: false }
+                ]
+            },
+            {
+                q: 'Яку клавішу використовують для переходу на НОВИЙ АБЗАЦ?',
+                options: [
+                    { text: 'Shift', correct: false },
+                    { text: 'Caps Lock', correct: false },
+                    { text: 'Enter', correct: true },
+                    { text: 'Tab', correct: false }
+                ]
+            },
+            {
+                q: 'Яка клавіша переміщує курсор на ПОЧАТОК РЯДКА?',
+                options: [
+                    { text: 'End', correct: false },
+                    { text: 'Home', correct: true },
+                    { text: 'Page Up', correct: false },
+                    { text: 'Insert', correct: false }
+                ]
+            }
+        ];
+        let s2Answers = {};
+
+        // Data for Stage 3
+        const stage3Items = [
+            { id: 1, text: 'Виправлення помилок у слові', cat: 'editing' },
+            { id: 2, text: 'Зміна кольору та розміру шрифту', cat: 'formatting' },
+            { id: 3, text: 'Видалення зайвого речення', cat: 'editing' },
+            { id: 4, text: 'Вирівнювання абзацу по центру', cat: 'formatting' },
+            { id: 5, text: 'Копіювання фрагмента тексту', cat: 'editing' },
+            { id: 6, text: 'Зміна фону або орієнтації сторінки', cat: 'formatting' }
+        ];
+        let stage3Assignments = {};
+
+        // Data for Stage 4
+        const stage4Data = [
+            { ext: '.docx', correctDesc: 'Текстовий документ із форматуванням і вставленими об’єктами' },
+            { ext: '.pdf', correctDesc: 'Формат для перегляду та друкування з незмінним виглядом' },
+            { ext: '.txt', correctDesc: 'Текстовий документ із поділом на абзаци без форматування' },
+            { ext: '.rtf', correctDesc: 'Текстовий документ із розширеним форматуванням' }
+        ];
+        let stage4UserSelections = {};
+
+        // Data for Stage 5
+        const stage5OriginalSteps = [
+            { id: 1, text: 'Обрати пункт меню «Файл»' },
+            { id: 2, text: 'Обрати команду «Зберегти як»' },
+            { id: 3, text: 'Обрати папку, в якій буде розташований файл' },
+            { id: 4, text: 'Вказати ім’я файлу та обрати його формат (.docx, .pdf)' },
+            { id: 5, text: 'Натиснути кнопку «Зберегти» у вікні збереження' }
+        ];
+        let stage5Steps = [];
+
+        function startGame() {
+            const nameInput = document.getElementById('student-name');
+            const nameError = document.getElementById('name-error');
+
+            if (!nameInput.value.trim()) {
+                nameError.classList.remove('hidden');
+                nameInput.focus();
+                return;
+            }
+
+            nameError.classList.add('hidden');
+            gameState.playerName = nameInput.value.trim();
+            document.getElementById('display-player-name').innerText = gameState.playerName;
+            document.getElementById('player-badge').classList.remove('hidden');
+
+            document.getElementById('screen-welcome').classList.add('hidden');
+            document.getElementById('game-progress-bar').classList.remove('hidden');
+
+            loadStage(1);
+        }
+
+        function updateProgressBar(stageNum) {
+            document.getElementById('stage-title').innerText = `Місія ${stageNum} з 5`;
+            document.getElementById('progress-fill').style.width = `${(stageNum / 5) * 100}%`;
+            
+            const totalCurrentScore = Object.values(gameState.scores).reduce((a, b) => a + b, 0);
+            document.getElementById('score-counter').innerHTML = `<i class="fa-solid fa-star mr-1"></i> ${totalCurrentScore} балів`;
+        }
+
+        function loadStage(stageNum) {
+            gameState.currentStage = stageNum;
+            updateProgressBar(stageNum);
+
+            for (let i = 1; i <= 5; i++) {
+                document.getElementById(`stage-${i}`).classList.add('hidden');
+            }
+
+            document.getElementById(`stage-${stageNum}`).classList.remove('hidden');
+
+            if (stageNum === 1) initStage1();
+            if (stageNum === 2) initStage2();
+            if (stageNum === 3) initStage3();
+            if (stageNum === 4) initStage4();
+            if (stageNum === 5) initStage5();
+        }
+
+        function initStage1() {
+            const container = document.getElementById('stage1-container');
+            container.innerHTML = '';
+            stage1Pairs = {};
+
+            const shuffledObjs = [...stage1Data].sort(() => Math.random() - 0.5);
+            const shuffledDescs = [...stage1Data].sort(() => Math.random() - 0.5);
+
+            let html = `<div class="space-y-3"><h4 class="text-xs font-bold text-indigo-300 uppercase tracking-wider mb-2">Об'єкти</h4>`;
+            shuffledObjs.forEach(item => {
+                html += `
+                    <div id="s1-obj-${item.id}" onclick="selectS1Obj('${item.id}')" 
+                        class="p-3 bg-slate-800/80 border border-slate-700 hover:border-indigo-500 rounded-xl cursor-pointer transition text-center font-bold text-slate-200">
+                        ${item.name}
+                    </div>
+                `;
+            });
+            html += `</div><div class="space-y-3"><h4 class="text-xs font-bold text-indigo-300 uppercase tracking-wider mb-2">Описи з підручника</h4>`;
+            
+            shuffledDescs.forEach(item => {
+                html += `
+                    <div id="s1-desc-${item.id}" onclick="selectS1Desc('${item.id}')" 
+                        class="p-3 bg-slate-800/80 border border-slate-700 hover:border-indigo-500 rounded-xl cursor-pointer transition text-xs text-slate-300">
+                        ${item.desc}
+                    </div>
+                `;
+            });
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+
+        function selectS1Obj(id) {
+            stage1Data.forEach(item => {
+                const el = document.getElementById(`s1-obj-${item.id}`);
+                if (el && stage1Pairs[item.id] === undefined) {
+                    el.classList.remove('border-amber-400', 'bg-amber-500/20');
+                }
+            });
+            selectedObjCard = id;
+            document.getElementById(`s1-obj-${id}`).classList.add('border-amber-400', 'bg-amber-500/20');
+            tryPairS1();
+        }
+
+        function selectS1Desc(id) {
+            stage1Data.forEach(item => {
+                const el = document.getElementById(`s1-desc-${item.id}`);
+                if (el && Object.values(stage1Pairs).indexOf(item.id) === -1) {
+                    el.classList.remove('border-amber-400', 'bg-amber-500/20');
+                }
+            });
+            selectedDescCard = id;
+            document.getElementById(`s1-desc-${id}`).classList.add('border-amber-400', 'bg-amber-500/20');
+            tryPairS1();
+        }
+
+        function tryPairS1() {
+            if (selectedObjCard && selectedDescCard) {
+                stage1Pairs[selectedObjCard] = selectedDescCard;
+                
+                const objEl = document.getElementById(`s1-obj-${selectedObjCard}`);
+                const descEl = document.getElementById(`s1-desc-${selectedDescCard}`);
+
+                objEl.classList.remove('border-amber-400', 'bg-amber-500/20');
+                descEl.classList.remove('border-amber-400', 'bg-amber-500/20');
+
+                objEl.classList.add('border-indigo-500', 'bg-indigo-900/40');
+                descEl.classList.add('border-indigo-500', 'bg-indigo-900/40');
+
+                selectedObjCard = null;
+                selectedDescCard = null;
+            }
+        }
+
+        function checkStage1() {
+            let correctCount = 0;
+            stage1Data.forEach(item => {
+                if (stage1Pairs[item.id] === item.id) {
+                    correctCount++;
+                }
+            });
+
+            gameState.scores.stage1 = correctCount * 5;
+            loadStage(2);
+        }
+
+        function initStage2() {
+            const container = document.getElementById('keyboard-questions');
+            container.innerHTML = '';
+            s2Answers = {};
+
+            stage2Questions.forEach((item, qIdx) => {
+                let html = `
+                    <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-700/60">
+                        <p class="font-semibold text-sm text-slate-200 mb-3">${qIdx + 1}. ${item.q}</p>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                `;
+
+                item.options.forEach((opt, oIdx) => {
+                    html += `
+                        <button onclick="selectS2Answer(${qIdx}, ${oIdx})" id="s2-btn-${qIdx}-${oIdx}"
+                            class="s2-opt-${qIdx} p-2.5 bg-slate-800 border border-slate-600 hover:border-indigo-400 rounded-xl text-xs font-medium text-slate-300 transition text-center">
+                            ${opt.text}
+                        </button>
+                    `;
+                });
+
+                html += `</div></div>`;
+                container.innerHTML += html;
+            });
+        }
+
+        function selectS2Answer(qIdx, oIdx) {
+            document.querySelectorAll(`.s2-opt-${qIdx}`).forEach(btn => {
+                btn.classList.remove('bg-indigo-600', 'border-indigo-400', 'text-white');
+                btn.classList.add('bg-slate-800', 'text-slate-300');
+            });
+
+            const selectedBtn = document.getElementById(`s2-btn-${qIdx}-${oIdx}`);
+            selectedBtn.classList.remove('bg-slate-800', 'text-slate-300');
+            selectedBtn.classList.add('bg-indigo-600', 'border-indigo-400', 'text-white');
+
+            s2Answers[qIdx] = oIdx;
+        }
+
+        function checkStage2() {
+            let correctCount = 0;
+            stage2Questions.forEach((q, qIdx) => {
+                if (s2Answers[qIdx] !== undefined && q.options[s2Answers[qIdx]].correct) {
+                    correctCount++;
+                }
+            });
+
+            gameState.scores.stage2 = correctCount * 5;
+            loadStage(3);
+        }
+
+        function initStage3() {
+            const pool = document.getElementById('action-items-pool');
+            const dropEditing = document.getElementById('drop-editing');
+            const dropFormatting = document.getElementById('drop-formatting');
+
+            pool.innerHTML = '';
+            dropEditing.innerHTML = '';
+            dropFormatting.innerHTML = '';
+            stage3Assignments = {};
+
+            stage3Items.forEach(item => {
+                const card = document.createElement('div');
+                card.id = `s3-item-${item.id}`;
+                card.className = "p-2.5 bg-slate-800 border border-slate-600 hover:border-indigo-400 rounded-xl text-xs font-semibold text-slate-200 transition shadow-sm flex items-center justify-between gap-2";
+                card.innerHTML = `
+                    <span>${item.text}</span>
+                    <div class="space-x-1 flex-shrink-0">
+                        <button onclick="assignStage3(${item.id}, 'editing')" class="px-2 py-1 bg-blue-600/80 hover:bg-blue-500 rounded text-[10px]">Редагування</button>
+                        <button onclick="assignStage3(${item.id}, 'formatting')" class="px-2 py-1 bg-purple-600/80 hover:bg-purple-500 rounded text-[10px]">Форматування</button>
+                    </div>
+                `;
+                pool.appendChild(card);
+            });
+        }
+
+        function assignStage3(itemId, targetCat) {
+            stage3Assignments[itemId] = targetCat;
+            const item = stage3Items.find(i => i.id === itemId);
+
+            const editingBox = document.getElementById('drop-editing');
+            const formattingBox = document.getElementById('drop-formatting');
+
+            const existing = document.getElementById(`assigned-s3-${itemId}`);
+            if (existing) existing.remove();
+
+            const badge = document.createElement('div');
+            badge.id = `assigned-s3-${itemId}`;
+            badge.className = "p-2 bg-slate-800 border border-slate-600 rounded-lg text-xs flex justify-between items-center text-slate-200";
+            badge.innerHTML = `
+                <span>${item.text}</span>
+                <button onclick="unassignStage3(${itemId})" class="text-rose-400 hover:text-rose-300 ml-2">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            `;
+
+            if (targetCat === 'editing') editingBox.appendChild(badge);
+            if (targetCat === 'formatting') formattingBox.appendChild(badge);
+
+            document.getElementById(`s3-item-${itemId}`).classList.add('hidden');
+        }
+
+        function unassignStage3(itemId) {
+            delete stage3Assignments[itemId];
+            const assigned = document.getElementById(`assigned-s3-${itemId}`);
+            if (assigned) assigned.remove();
+            document.getElementById(`s3-item-${itemId}`).classList.remove('hidden');
+        }
+
+        function checkStage3() {
+            let correctCount = 0;
+            stage3Items.forEach(item => {
+                if (stage3Assignments[item.id] === item.cat) {
+                    correctCount++;
+                }
+            });
+
+            gameState.scores.stage3 = Math.round((correctCount / stage3Items.length) * 20);
+            loadStage(4);
+        }
+
+        function initStage4() {
+            const grid = document.getElementById('formats-grid');
+            grid.innerHTML = '';
+            stage4UserSelections = {};
+
+            const descriptions = stage4Data.map(d => d.correctDesc).sort(() => Math.random() - 0.5);
+
+            stage4Data.forEach((item) => {
+                let optionsHtml = `<option value="">-- Оберіть опис формату --</option>`;
+                descriptions.forEach(desc => {
+                    optionsHtml += `<option value="${desc}">${desc}</option>`;
+                });
+
+                const card = `
+                    <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-700/60">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <span class="px-3 py-1 bg-indigo-600/30 border border-indigo-400/40 text-indigo-300 font-mono font-bold text-sm rounded-lg">
+                                ${item.ext}
+                            </span>
+                            <span class="text-xs text-slate-400">Розширення файлу</span>
+                        </div>
+                        <select onchange="selectS4Format('${item.ext}', this.value)" class="w-full bg-slate-800 border border-slate-600 text-xs text-slate-200 rounded-xl p-2.5 focus:outline-none focus:border-indigo-500">
+                            ${optionsHtml}
+                        </select>
+                    </div>
+                `;
+                grid.innerHTML += card;
+            });
+        }
+
+        function selectS4Format(ext, selectedValue) {
+            stage4UserSelections[ext] = selectedValue;
+        }
+
+        function checkStage4() {
+            let correctCount = 0;
+            stage4Data.forEach(item => {
+                if (stage4UserSelections[item.ext] === item.correctDesc) {
+                    correctCount++;
+                }
+            });
+
+            gameState.scores.stage4 = correctCount * 5;
+            loadStage(5);
+        }
+
+        function initStage5() {
+            stage5Steps = JSON.parse(JSON.stringify(stage5OriginalSteps));
+            
+            // Randomly shuffle initial steps
+            do {
+                stage5Steps.sort(() => Math.random() - 0.5);
+            } while (stage5Steps.every((step, idx) => step.id === idx + 1));
+
+            renderAlgorithmSteps();
+        }
+
+        function renderAlgorithmSteps() {
+            const container = document.getElementById('algorithm-container');
+            container.innerHTML = '';
+
+            stage5Steps.forEach((step, idx) => {
+                const item = document.createElement('div');
+                item.className = "flex items-center justify-between p-3 bg-slate-800 border border-slate-700 rounded-xl text-xs md:text-sm text-slate-200";
+                item.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <span class="w-6 h-6 rounded-full bg-indigo-600/40 border border-indigo-400 text-indigo-300 flex items-center justify-center font-bold text-xs">
+                            ${idx + 1}
+                        </span>
+                        <span>${step.text}</span>
+                    </div>
+                    <div class="flex space-x-1">
+                        <button onclick="moveStep(${idx}, -1)" ${idx === 0 ? 'disabled class="opacity-30 p-1.5 bg-slate-700 rounded"' : 'class="p-1.5 bg-slate-700 hover:bg-slate-600 rounded text-indigo-300"'}>
+                            <i class="fa-solid fa-chevron-up"></i>
+                        </button>
+                        <button onclick="moveStep(${idx}, 1)" ${idx === stage5Steps.length - 1 ? 'disabled class="opacity-30 p-1.5 bg-slate-700 rounded"' : 'class="p-1.5 bg-slate-700 hover:bg-slate-600 rounded text-indigo-300"'}>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function moveStep(idx, direction) {
+            const targetIdx = idx + direction;
+            if (targetIdx < 0 || targetIdx >= stage5Steps.length) return;
+
+            const temp = stage5Steps[idx];
+            stage5Steps[idx] = stage5Steps[targetIdx];
+            stage5Steps[targetIdx] = temp;
+
+            renderAlgorithmSteps();
+        }
+
+        function checkStage5() {
+            let correctCount = 0;
+            stage5Steps.forEach((step, idx) => {
+                if (step.id === idx + 1) {
+                    correctCount++;
+                }
+            });
+
+            // 5 steps * 4 pts = 20 pts
+            gameState.scores.stage5 = correctCount * 4;
+            showFinalResults();
+        }
+
+        function showFinalResults() {
+            document.getElementById('game-progress-bar').classList.add('hidden');
+            document.getElementById('stage-5').classList.add('hidden');
+            document.getElementById('screen-results').classList.remove('hidden');
+
+            const totalScore = Object.values(gameState.scores).reduce((a, b) => a + b, 0);
+            const percentage = Math.round((totalScore / 100) * 100);
+
+            document.getElementById('cert-student-name').innerText = gameState.playerName;
+            document.getElementById('cert-score-points').innerText = `${totalScore} / 100`;
+            document.getElementById('cert-score-percent').innerText = `${percentage}%`;
+
+            const today = new Date();
+            document.getElementById('cert-date').innerText = today.toLocaleDateString('uk-UA');
+
+            let levelText = "";
+            let verbalFeedback = "";
+            let strengths = [];
+            let recommendations = [];
+
+            if (gameState.scores.stage1 >= 15) strengths.push("об'єкти текстового документа (символ, слово, речення, абзац)");
+            else recommendations.push("повторити визначення об'єктів документа (стор. 76)");
+
+            if (gameState.scores.stage2 >= 15) strengths.push("знання спеціальних клавіш (Backspace, Delete, Home, Shift)");
+            else recommendations.push("потренувати використання клавіш Backspace та Delete (стор. 78)");
+
+            if (gameState.scores.stage3 >= 15) strengths.push("розрізнення редагування та форматування");
+            else recommendations.push("запам'ятати: форматування змінює вигляд, а редагування — вміст");
+
+            if (gameState.scores.stage4 >= 15) strengths.push("формати файлів (.docx, .pdf, .txt, .rtf)");
+            else recommendations.push("повторити призначення форматів .pdf та .docx (стор. 77)");
+
+            if (gameState.scores.stage5 >= 15) strengths.push("алгоритм збереження файлу");
+            else recommendations.push("закріпити послідовність збереження документа через меню «Файл» (стор. 79)");
+
+            if (percentage >= 85) {
+                levelText = "Високий рівень 🌟";
+                verbalFeedback = `Шановний/а ${gameState.playerName}! Ти демонструєш глибокі знання з теми текстових документів. Вільно орієнтуєшся в об'єктах документа, призначеннях клавіш та форматах файлів. Твоя робота заслуговує найвищої оцінки!`;
+            } else if (percentage >= 65) {
+                levelText = "Достатній рівень 👍";
+                verbalFeedback = `Молодець, ${gameState.playerName}! Ти володієш темами уроку та впевнено виконуєш більшість завдань з опрацювання тексту. Зверни увагу на підказки для досягнення ідеального результату!`;
+            } else if (percentage >= 40) {
+                levelText = "Середній рівень 📘";
+                verbalFeedback = `Хороша спроба, ${gameState.playerName}! Ти маєш базові уявлення про текстовий документ, але тобі варто ще трохи попрактикуватися з призначенням клавіш та алгоритмом збереження файлів.`;
+            } else {
+                levelText = "Початковий рівень 🚀";
+                verbalFeedback = `Дякуємо за старання, ${gameState.playerName}! Радимо ще раз уважно перечитати матеріали параграфа та спробувати пройти вправу знову. У тебе обов'язково все вийде!`;
+            }
+
+            document.getElementById('cert-level').innerText = levelText;
+            document.getElementById('verbal-feedback-text').innerText = `«${verbalFeedback}»`;
+
+            document.getElementById('strengths-list').innerText = strengths.length > 0 ? strengths.join('; ') : "старанність та прагнення знань";
+            document.getElementById('recommendation-text').innerText = recommendations.length > 0 ? recommendations.join('; ') : "продовжувати в тому ж дусі!";
+
+            if (percentage >= 60 && window.confetti) {
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            }
+        }
+
+        function restartGame() {
+            gameState.scores = { stage1: 0, stage2: 0, stage3: 0, stage4: 0, stage5: 0 };
+            document.getElementById('screen-results').classList.add('hidden');
+            document.getElementById('screen-welcome').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
