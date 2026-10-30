@@ -1,0 +1,1537 @@
+<!DOCTYPE html>
+<html lang="uk" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Хроніки Зорельоту: Енергетичний Підсилювач</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,300;0,400;0,600;0,700;0,800;1,400&family=Orbitron:wght@500;700;800;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        space: {
+                            950: '#03050c',
+                            900: '#060814',
+                            850: '#090e20',
+                            800: '#0c122c',
+                            750: '#11193a',
+                            700: '#17224d',
+                            600: '#23326e',
+                        },
+                        gdoc: {
+                            bg: '#f8f9fa',
+                            header: '#edf2fc',
+                            border: '#dadce0',
+                            blue: '#1a73e8',
+                            hover: '#e8f0fe',
+                            darkbg: '#1e1e1e',
+                            darkpage: '#282a36'
+                        },
+                        neon: {
+                            blue: '#00f0ff',
+                            purple: '#b026ff',
+                            gold: '#ffd700',
+                            green: '#00ff66',
+                            pink: '#ff007f'
+                        }
+                    },
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        exo: ['Exo 2', 'sans-serif'],
+                        roboto: ['Roboto', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background-color: #060814;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+        .font-roboto { font-family: 'Roboto', sans-serif; }
+
+        /* Neon & Hologram Glow Effects */
+        .glow-blue { box-shadow: 0 0 15px rgba(0, 240, 255, 0.4); }
+        .glow-purple { box-shadow: 0 0 15px rgba(176, 38, 255, 0.4); }
+        .glow-gold { box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
+        .text-glow-blue { text-shadow: 0 0 10px rgba(0, 240, 255, 0.7); }
+        .text-glow-gold { text-shadow: 0 0 12px rgba(255, 215, 0, 0.8); }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0c122c; }
+        ::-webkit-scrollbar-thumb { background: #17224d; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #00f0ff; }
+
+        /* Certificate Print CSS */
+        @media print {
+            body { background: white !important; color: black !important; }
+            .no-print, canvas, #bg-canvas, #game-hud { display: none !important; }
+            #certificate-screen {
+                display: block !important;
+                position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+                margin: 0; padding: 0; background: white !important; box-shadow: none !important;
+            }
+            .cert-card {
+                border: 8px double #1a202c !important;
+                background: white !important; color: black !important; box-shadow: none !important;
+            }
+        }
+
+        /* Range Slider Styling */
+        input[type=range] {
+            -webkit-appearance: none;
+            background: #17224d;
+            border-radius: 8px;
+            height: 6px;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 18px; width: 18px;
+            border-radius: 50%;
+            background: #00f0ff;
+            cursor: pointer;
+            box-shadow: 0 0 10px #00f0ff;
+        }
+
+        /* Animated Hologram Sheen */
+        @keyframes hologram {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .hologram-effect {
+            background: linear-gradient(135deg, rgba(0,240,255,0.08) 0%, rgba(176,38,255,0.15) 50%, rgba(0,255,102,0.08) 100%);
+            background-size: 200% 200%;
+            animation: hologram 6s ease infinite;
+        }
+
+        /* Google Docs Selection Handles */
+        .gdoc-handle {
+            width: 9px; height: 9px;
+            background-color: #1a73e8;
+            border: 1px solid #ffffff;
+            position: absolute;
+            z-index: 25;
+        }
+        .gdoc-handle-tl { top: -5px; left: -5px; cursor: nwse-resize; }
+        .gdoc-handle-tr { top: -5px; right: -5px; cursor: nesw-resize; }
+        .gdoc-handle-bl { bottom: -5px; left: -5px; cursor: nesw-resize; }
+        .gdoc-handle-br { bottom: -5px; right: -5px; cursor: nwse-resize; }
+        .gdoc-handle-tm { top: -5px; left: calc(50% - 4px); cursor: ns-resize; }
+        .gdoc-handle-bm { bottom: -5px; left: calc(50% - 4px); cursor: ns-resize; }
+        .gdoc-handle-lm { top: calc(50% - 4px); left: -5px; cursor: ew-resize; }
+        .gdoc-handle-rm { top: calc(50% - 4px); right: -5px; cursor: ew-resize; }
+        .gdoc-rotate-handle {
+            width: 10px; height: 10px;
+            background-color: #1a73e8;
+            border: 1px solid #ffffff;
+            border-radius: 50%;
+            position: absolute;
+            top: -24px; left: calc(50% - 5px);
+            cursor: grab;
+            z-index: 25;
+        }
+        .gdoc-rotate-line {
+            width: 1px; height: 19px;
+            background-color: #1a73e8;
+            position: absolute;
+            top: -19px; left: calc(50% - 0.5px);
+            z-index: 24;
+        }
+
+        /* Black Crop Handles */
+        .crop-handle-tl { top: -3px; left: -3px; width: 12px; height: 12px; border-top: 3px solid #000; border-left: 3px solid #000; position: absolute; }
+        .crop-handle-tr { top: -3px; right: -3px; width: 12px; height: 12px; border-top: 3px solid #000; border-right: 3px solid #000; position: absolute; }
+        .crop-handle-bl { bottom: -3px; left: -3px; width: 12px; height: 12px; border-bottom: 3px solid #000; border-left: 3px solid #000; position: absolute; }
+        .crop-handle-br { bottom: -3px; right: -3px; width: 12px; height: 12px; border-bottom: 3px solid #000; border-right: 3px solid #000; position: absolute; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between relative selection:bg-neon-blue selection:text-black">
+
+    <!-- Background Space Canvas -->
+    <canvas id="bg-canvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
+
+    <!-- TOP HUD HEADER -->
+    <header id="game-hud" class="no-print relative z-20 hidden bg-space-900/90 border-b border-neon-blue/30 backdrop-blur-md px-4 py-3">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+            
+            <!-- Cadet Info -->
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-full bg-neon-blue/20 border border-neon-blue flex items-center justify-center text-neon-blue font-orbitron font-bold">
+                    <i class="fa-solid fa-user-astronaut"></i>
+                </div>
+                <div>
+                    <div id="hud-cadet-name" class="font-orbitron font-bold text-white text-sm sm:text-base">Кадет: -</div>
+                    <div id="hud-clan-name" class="text-xs text-neon-blue flex items-center gap-1">
+                        <i class="fa-solid fa-shield-halved"></i> Клан: -
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ship Reactor Power Level Bar -->
+            <div class="flex-1 max-w-md mx-4">
+                <div class="flex justify-between text-xs font-orbitron mb-1">
+                    <span class="text-gray-300"><i class="fa-solid fa-bolt text-neon-gold mr-1"></i>Енергія Реактора</span>
+                    <span id="hud-power-text" class="text-neon-gold font-bold">0%</span>
+                </div>
+                <div class="w-full bg-space-950 h-3 rounded-full overflow-hidden border border-gray-700">
+                    <div id="hud-power-bar" class="bg-gradient-to-r from-red-500 via-neon-gold to-neon-green h-full w-0 transition-all duration-700"></div>
+                </div>
+            </div>
+
+            <!-- Controls & Sound Toggle -->
+            <div class="flex items-center space-x-3">
+                <button id="sound-btn" onclick="toggleAudio()" class="p-2 rounded-lg bg-space-800 border border-gray-600 hover:border-neon-blue text-gray-300 hover:text-white transition" title="Звук">
+                    <i id="sound-icon" class="fa-solid fa-volume-high text-neon-blue"></i>
+                </button>
+                <div class="text-right hidden sm:block">
+                    <div class="text-xs text-gray-400">Сектор</div>
+                    <div id="hud-sector-indicator" class="font-orbitron text-neon-purple font-bold">1 / 5</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN GAME CONTAINER -->
+    <main class="relative z-10 flex-grow flex items-center justify-center p-2 sm:p-4">
+        
+        <!-- ==================== SCREEN 1: START & REGISTRATION ==================== -->
+        <section id="start-screen" class="w-full max-w-2xl bg-space-900/90 border border-neon-blue/40 rounded-2xl p-6 sm:p-8 backdrop-blur-lg glow-blue transition-all">
+            <div class="text-center mb-6">
+                <div class="inline-block p-3 rounded-full bg-neon-blue/10 border border-neon-blue/30 mb-3 text-neon-blue animate-pulse">
+                    <i class="fa-solid fa-rocket text-4xl"></i>
+                </div>
+                <h1 class="text-2xl sm:text-4xl font-orbitron font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-neon-blue via-white to-neon-purple text-glow-blue uppercase tracking-wider">
+                    Хроніки Зорельоту
+                </h1>
+                <p class="text-neon-gold font-orbitron text-sm sm:text-base mt-1">Квест: «Енергетичний Підсилювач»</p>
+            </div>
+
+            <!-- Story Context Box -->
+            <div class="bg-space-950/80 rounded-xl p-4 border border-gray-700/80 mb-6 text-sm text-gray-300 leading-relaxed">
+                <p class="mb-2">
+                    <strong class="text-neon-blue">🚨 АВАРІЙНИЙ СТАН:</strong> Зореліт <span class="text-white font-semibold">«Зоряний Сокіл»</span> потрапив у гравітаційний шторм! Головний реактор заблокований.
+                </p>
+                <p>
+                    Пройдіть 5 випробувань із роботи із зображеннями у <strong class="text-neon-gold">Google Документах</strong>, виконайте точні маніпуляції з об'єктами, збережіть 5 частин пароля та отримайте офіційне <strong class="text-neon-purple">Посвідчення Міжзоряного Енергетика</strong>!
+                </p>
+            </div>
+
+            <!-- Cadet Form -->
+            <form id="cadet-form" onsubmit="startGame(event)" class="space-y-5">
+                <div>
+                    <label for="cadet-name-input" class="block text-xs font-orbitron text-gray-300 uppercase mb-2">
+                        <i class="fa-solid fa-id-card text-neon-blue mr-1"></i> Ім'я та Прізвище Кадета:
+                    </label>
+                    <input type="text" id="cadet-name-input" required placeholder="Наприклад: Олександр Сидоренко" 
+                        class="w-full bg-space-950 border border-gray-600 focus:border-neon-blue rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-neon-blue transition">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-orbitron text-gray-300 uppercase mb-2">
+                        <i class="fa-solid fa-users-rays text-neon-purple mr-1"></i> Оберіть Ваш Космічний Клан:
+                    </label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="clan-option cursor-pointer">
+                            <input type="radio" name="clan" value="Зоряний Сокіл" checked class="peer hidden">
+                            <div class="p-3 bg-space-950 border border-gray-700 peer-checked:border-neon-blue peer-checked:bg-neon-blue/10 rounded-xl flex items-center gap-2 hover:border-gray-500 transition">
+                                <i class="fa-solid fa-crow text-neon-blue"></i>
+                                <span class="text-xs sm:text-sm font-semibold">Зоряний Сокіл</span>
+                            </div>
+                        </label>
+                        <label class="clan-option cursor-pointer">
+                            <input type="radio" name="clan" value="Срібний Фенікс" class="peer hidden">
+                            <div class="p-3 bg-space-950 border border-gray-700 peer-checked:border-neon-purple peer-checked:bg-neon-purple/10 rounded-xl flex items-center gap-2 hover:border-gray-500 transition">
+                                <i class="fa-solid fa-phoenix-framework text-neon-purple"></i>
+                                <span class="text-xs sm:text-sm font-semibold">Срібний Фенікс</span>
+                            </div>
+                        </label>
+                        <label class="clan-option cursor-pointer">
+                            <input type="radio" name="clan" value="Галактичний Пегас" class="peer hidden">
+                            <div class="p-3 bg-space-950 border border-gray-700 peer-checked:border-neon-gold peer-checked:bg-neon-gold/10 rounded-xl flex items-center gap-2 hover:border-gray-500 transition">
+                                <i class="fa-solid fa-horse-head text-neon-gold"></i>
+                                <span class="text-xs sm:text-sm font-semibold">Галактичний Пегас</span>
+                            </div>
+                        </label>
+                        <label class="clan-option cursor-pointer">
+                            <input type="radio" name="clan" value="Квантовий Дракон" class="peer hidden">
+                            <div class="p-3 bg-space-950 border border-gray-700 peer-checked:border-neon-green peer-checked:bg-neon-green/10 rounded-xl flex items-center gap-2 hover:border-gray-500 transition">
+                                <i class="fa-solid fa-dragon text-neon-green"></i>
+                                <span class="text-xs sm:text-sm font-semibold">Квантовий Дракон</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full py-4 bg-gradient-to-r from-neon-blue via-indigo-600 to-neon-purple hover:from-cyan-400 hover:to-fuchsia-600 font-orbitron font-bold text-white uppercase tracking-wider rounded-xl shadow-lg glow-blue transition duration-300 transform active:scale-98 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-play"></i> Запустити Систему Квесту
+                </button>
+            </form>
+        </section>
+
+
+        <!-- ==================== SCREEN 2: QUEST SECTORS ==================== -->
+        <section id="quest-screen" class="w-full max-w-5xl bg-space-900/95 border border-gray-700 rounded-2xl p-3 sm:p-6 backdrop-blur-lg hidden transition-all">
+            
+            <!-- Sector Navigation Header -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-700 pb-3 mb-4 gap-2">
+                <div>
+                    <span id="sector-badge" class="px-3 py-1 rounded-full text-xs font-orbitron font-bold bg-neon-blue/20 text-neon-blue border border-neon-blue/40 uppercase">
+                        Сектор 1 з 5
+                    </span>
+                    <h2 id="sector-title" class="text-lg sm:text-xl font-orbitron font-bold text-white mt-1">
+                        Вставлення Зображень
+                    </h2>
+                </div>
+                <div class="text-xs text-gray-300 font-mono bg-space-950 px-3 py-2 rounded-lg border border-gray-800 flex items-center gap-2">
+                    <i class="fa-solid fa-key text-neon-gold"></i> Код до реактора: 
+                    <span id="collected-code-display" class="text-neon-gold font-bold tracking-widest">[ _ - _ - _ - _ - _ ]</span>
+                </div>
+            </div>
+
+            <!-- Mentor Dialog Box -->
+            <div class="flex items-start gap-3 bg-space-950/90 border border-neon-blue/30 rounded-xl p-3 mb-4">
+                <div class="w-9 h-9 rounded-xl bg-neon-blue/20 border border-neon-blue flex items-center justify-center text-neon-blue shrink-0 mt-0.5">
+                    <i class="fa-solid fa-robot text-base"></i>
+                </div>
+                <div class="text-xs sm:text-sm text-gray-200">
+                    <div class="font-orbitron text-neon-blue text-xs font-bold mb-0.5">ШІ-Навігатор «Оріон»:</div>
+                    <div id="mentor-text">Ласкаво просимо в симулятор Google Документів! Для завантаження енергокристала скористайтесь точним меню програми.</div>
+                </div>
+            </div>
+
+            <!-- Dynamic Sector Workspace Container -->
+            <div id="sector-workspace" class="min-h-[380px]">
+                <!-- Interactive sector contents dynamically injected here -->
+            </div>
+
+            <!-- Action Controls & Next Button -->
+            <div class="mt-4 flex flex-wrap justify-between items-center border-t border-gray-700/80 pt-3 gap-2">
+                <div id="feedback-msg" class="text-xs sm:text-sm font-semibold flex items-center gap-2"></div>
+                <button id="next-sector-btn" onclick="nextSector()" disabled class="px-6 py-2.5 bg-gray-700 text-gray-400 font-orbitron font-bold text-xs sm:text-sm rounded-xl cursor-not-allowed transition flex items-center gap-2">
+                    Далі <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </section>
+
+
+        <!-- ==================== SCREEN 3: CERTIFICATE & FINALE ==================== -->
+        <section id="certificate-screen" class="w-full max-w-4xl bg-space-900/95 border border-neon-gold/50 rounded-2xl p-4 sm:p-8 backdrop-blur-xl hidden transition-all">
+            
+            <div class="text-center mb-4">
+                <div class="inline-block p-3 rounded-full bg-neon-gold/10 border border-neon-gold/40 mb-2">
+                    <i id="cert-badge-icon" class="fa-solid fa-award text-4xl text-neon-gold"></i>
+                </div>
+                <h1 id="cert-title-class" class="text-xl sm:text-3xl font-orbitron font-black text-transparent bg-clip-text bg-gradient-to-r from-neon-gold via-white to-amber-400 uppercase">
+                    Посвідчення Міжзоряного Енергетика
+                </h1>
+                <p class="text-xs sm:text-sm text-neon-blue font-orbitron mt-1">Реактор запущенно на <span id="cert-score-percent" class="font-bold text-neon-green">100%</span>!</p>
+            </div>
+
+            <!-- Generated PNG Certificate Display Container -->
+            <div class="relative bg-space-950 border-2 border-neon-gold/80 rounded-2xl p-2 sm:p-4 shadow-2xl overflow-hidden group">
+                <img id="cert-img-element" src="" alt="Посвідчення Міжзоряного Енергетика" class="w-full h-auto rounded-xl shadow-lg border border-gray-800 transition-all duration-300">
+            </div>
+
+            <!-- Fallback Info / Download Notice -->
+            <div id="download-hint-box" class="mt-4 p-3 bg-space-950/90 border border-neon-gold/40 rounded-xl text-center text-xs sm:text-sm text-gray-300">
+                <i class="fa-solid fa-lightbulb text-neon-gold mr-1"></i>
+                <strong>Порада щодо збереження:</strong> Якщо автоматичне завантаження не розпочалося, натисніть 
+                <span class="text-neon-blue font-semibold">правою кнопкою миші</span> на зображення вище (або затисніть його на смартфоні) та оберіть <strong>«Зберегти зображення як...»</strong>.
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="no-print mt-6 flex flex-wrap gap-3 justify-center items-center">
+                <button onclick="downloadCertificatePNG()" class="px-5 py-3 bg-neon-gold hover:bg-yellow-400 text-black font-orbitron font-bold text-xs sm:text-sm rounded-xl shadow-lg glow-gold transition flex items-center gap-2 cursor-pointer">
+                    <i class="fa-solid fa-download"></i> Завантажити PNG
+                </button>
+                <button onclick="openCertModal()" class="px-5 py-3 bg-blue-600 hover:bg-blue-500 text-white font-orbitron font-bold text-xs sm:text-sm rounded-xl shadow-lg glow-blue transition flex items-center gap-2 cursor-pointer">
+                    <i class="fa-solid fa-expand"></i> Повноекранний перегляд
+                </button>
+                <button onclick="restartGame()" class="px-5 py-3 bg-space-800 hover:bg-space-700 text-white border border-gray-600 font-orbitron font-bold text-xs sm:text-sm rounded-xl transition flex items-center gap-2 cursor-pointer">
+                    <i class="fa-solid fa-rotate-right"></i> Пройти Знову
+                </button>
+            </div>
+        </section>
+
+        <!-- Fullscreen Certificate Image Modal -->
+        <div id="cert-full-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex flex-col items-center justify-center p-3 sm:p-6">
+            <div class="max-w-4xl w-full flex justify-between items-center mb-2">
+                <span class="text-white font-orbitron font-bold text-xs sm:text-base flex items-center gap-2">
+                    <i class="fa-solid fa-award text-neon-gold"></i> Посвідчення у повному розмірі
+                </span>
+                <button onclick="closeCertModal()" class="text-gray-400 hover:text-white text-2xl font-bold px-3 py-1 cursor-pointer">&times;</button>
+            </div>
+            <div class="relative max-h-[75vh] overflow-auto border-2 border-neon-gold/60 rounded-xl shadow-2xl bg-space-950">
+                <img id="cert-modal-img" src="" alt="Посвідчення у повному розмірі" class="w-full h-auto max-w-full">
+            </div>
+            <div class="mt-3 text-center text-xs text-neon-gold bg-space-950 px-4 py-2 rounded-xl border border-neon-gold/40 max-w-xl">
+                💡 <strong>Для збереження:</strong> Натисніть правою кнопкою миші на малюнок (або затисніть його на екрані смартфона) та оберіть <strong>«Зберегти зображення як...»</strong>.
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="no-print relative z-10 text-center py-2 text-xs text-gray-500 border-t border-gray-800/80 bg-space-950/80">
+        Інтерактивна гра з інформатики для 5 класу • Тема: «Зображення у Google Документах»
+    </footer>
+
+
+    <!-- ==================== JAVASCRIPT LOGIC ==================== -->
+    <script>
+        /* ================= GAME STATE ================= */
+        const gameState = {
+            cadetName: '',
+            clan: 'Зоряний Сокіл',
+            currentSector: 1,
+            totalSectors: 5,
+            score: 0,
+            sectorScores: [0, 0, 0, 0, 0],
+            firstAttempts: [true, true, true, true, true],
+            unlockedCodes: ['_', '_', '_', '_', '_'],
+            targetCodes: ['A', '77', 'X', 'POWER', '99'],
+            soundEnabled: true
+        };
+
+        /* ================= WEB AUDIO API SYNTHESIZER ================= */
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSound(type) {
+            if (!gameState.soundEnabled) return;
+            initAudio();
+            if (!audioCtx) return;
+
+            const now = audioCtx.currentTime;
+
+            if (type === 'click') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(500, now);
+                osc.frequency.exponentialRampToValueAtTime(750, now + 0.04);
+                gain.gain.setValueAtTime(0.12, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.04);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.04);
+            } else if (type === 'success') {
+                const notes = [523.25, 659.25, 783.99, 1046.50];
+                notes.forEach((freq, i) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, now + i * 0.08);
+                    gain.gain.setValueAtTime(0.18, now + i * 0.08);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.22);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now + i * 0.08);
+                    osc.stop(now + i * 0.08 + 0.22);
+                });
+            } else if (type === 'error') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(160, now);
+                osc.frequency.linearRampToValueAtTime(90, now + 0.2);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.2);
+            } else if (type === 'powerup') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(220, now);
+                osc.frequency.exponentialRampToValueAtTime(1100, now + 0.5);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.5);
+            }
+        }
+
+        function toggleAudio() {
+            gameState.soundEnabled = !gameState.soundEnabled;
+            const icon = document.getElementById('sound-icon');
+            if (gameState.soundEnabled) {
+                icon.className = 'fa-solid fa-volume-high text-neon-blue';
+            } else {
+                icon.className = 'fa-solid fa-volume-xmark text-gray-500';
+            }
+            playSound('click');
+        }
+
+        /* ================= BACKGROUND CANVAS (STARFIELD) ================= */
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        function createStars() {
+            stars = [];
+            const count = Math.floor((canvas.width * canvas.height) / 3200);
+            for (let i = 0; i < count; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 1.6 + 0.2,
+                    speed: Math.random() * 0.4 + 0.1,
+                    alpha: Math.random()
+                });
+            }
+        }
+
+        function animateStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#ffffff';
+            stars.forEach(star => {
+                star.y += star.speed;
+                if (star.y > canvas.height) star.y = 0;
+                ctx.globalAlpha = star.alpha;
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            requestAnimationFrame(animateStars);
+        }
+
+        window.addEventListener('resize', () => { resizeCanvas(); createStars(); });
+        resizeCanvas();
+        createStars();
+        animateStars();
+
+
+        /* ================= GAME CONTROLLER ================= */
+        function startGame(e) {
+            e.preventDefault();
+            initAudio();
+            playSound('powerup');
+
+            const nameInput = document.getElementById('cadet-name-input').value.trim();
+            const clanInput = document.querySelector('input[name="clan"]:checked').value;
+
+            if (!nameInput) return;
+
+            gameState.cadetName = nameInput;
+            gameState.clan = clanInput;
+
+            document.getElementById('hud-cadet-name').innerText = `Кадет: ${gameState.cadetName}`;
+            document.getElementById('hud-clan-name').innerHTML = `<i class="fa-solid fa-shield-halved"></i> Клан: ${gameState.clan}`;
+            document.getElementById('game-hud').classList.remove('hidden');
+
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('quest-screen').classList.remove('hidden');
+
+            loadSector(1);
+        }
+
+        function loadSector(sectorNum) {
+            gameState.currentSector = sectorNum;
+            document.getElementById('hud-sector-indicator').innerText = `${sectorNum} / 5`;
+            document.getElementById('sector-badge').innerText = `Сектор ${sectorNum} з 5`;
+
+            const nextBtn = document.getElementById('next-sector-btn');
+            nextBtn.disabled = true;
+            nextBtn.className = "px-6 py-2.5 bg-gray-700 text-gray-400 font-orbitron font-bold text-xs sm:text-sm rounded-xl cursor-not-allowed transition flex items-center gap-2";
+            document.getElementById('feedback-msg').innerHTML = '';
+
+            const workspace = document.getElementById('sector-workspace');
+
+            if (sectorNum === 1) renderSector1(workspace);
+            else if (sectorNum === 2) renderSector2(workspace);
+            else if (sectorNum === 3) renderSector3(workspace);
+            else if (sectorNum === 4) renderSector4(workspace);
+            else if (sectorNum === 5) renderSector5(workspace);
+        }
+
+        function markSectorComplete(sectorNum, scoreGained, codePart) {
+            playSound('success');
+            
+            // Give full points if first attempt, slightly less if retried
+            const finalPoints = gameState.firstAttempts[sectorNum - 1] ? scoreGained : Math.round(scoreGained * 0.85);
+            gameState.sectorScores[sectorNum - 1] = finalPoints;
+            gameState.unlockedCodes[sectorNum - 1] = codePart;
+
+            const totalScore = gameState.sectorScores.reduce((a, b) => a + b, 0);
+            gameState.score = totalScore;
+            document.getElementById('hud-power-bar').style.width = `${totalScore}%`;
+            document.getElementById('hud-power-text').innerText = `${totalScore}%`;
+
+            document.getElementById('collected-code-display').innerText = `[ ${gameState.unlockedCodes.join(' - ')} ]`;
+
+            const nextBtn = document.getElementById('next-sector-btn');
+            nextBtn.disabled = false;
+            nextBtn.className = "px-6 py-2.5 bg-neon-blue hover:bg-cyan-400 text-black font-orbitron font-bold text-xs sm:text-sm rounded-xl shadow-lg glow-blue transition flex items-center gap-2 cursor-pointer";
+
+            document.getElementById('feedback-msg').innerHTML = `<span class="text-neon-green"><i class="fa-solid fa-circle-check"></i> Сектор пройдено! Отримано код: <strong class="text-neon-gold font-mono">${codePart}</strong> (+${finalPoints}%)</span>`;
+        }
+
+        function nextSector() {
+            playSound('click');
+            if (gameState.currentSector < gameState.totalSectors) {
+                loadSector(gameState.currentSector + 1);
+            } else {
+                finishQuest();
+            }
+        }
+
+
+        /* ================= SECTOR 1: GOOGLE DOCS INSERT MENU ================= */
+        let s1SubmenuOpen = false;
+        function renderSector1(container) {
+            document.getElementById('sector-title').innerText = "Сектор 1: Джерело Матерії (Вставлення)";
+            document.getElementById('mentor-text').innerText = "Завдання: Відкрийте меню «Вставлення» -> «Зображення» -> «Шукати в Інтернеті». Потім у бічній панелі знайдіть та вставте Кристал Живлення.";
+
+            s1SubmenuOpen = false;
+
+            container.innerHTML = `
+                <div class="bg-space-950 border border-gray-700 rounded-xl overflow-hidden shadow-2xl flex flex-col md:flex-row min-h-[380px]">
+                    
+                    <!-- Main Docs Interface -->
+                    <div class="flex-1 flex flex-col bg-slate-900 border-r border-gray-800">
+                        
+                        <!-- Top Docs Menu Bar -->
+                        <div class="bg-slate-800 px-3 py-1.5 border-b border-gray-700 flex items-center gap-2 text-xs relative">
+                            <span class="text-blue-400 font-bold px-1 flex items-center gap-1"><i class="fa-solid fa-file-lines"></i> Інструкція_Реактора</span>
+                            <div class="h-4 w-px bg-gray-600 my-auto"></div>
+                            
+                            <button onclick="s1ToggleMenu('file')" class="px-2 py-1 rounded hover:bg-slate-700 text-gray-300">Файл</button>
+                            <button onclick="s1ToggleMenu('edit')" class="px-2 py-1 rounded hover:bg-slate-700 text-gray-300">Редагувати</button>
+                            
+                            <!-- Insert Menu Button -->
+                            <div class="relative">
+                                <button onclick="s1ToggleMenu('insert')" id="s1-insert-menu-btn" class="px-2 py-1 rounded hover:bg-blue-600/30 text-white font-medium flex items-center gap-1">
+                                    Вставлення
+                                </button>
+
+                                <!-- Insert Dropdown Menu -->
+                                <div id="s1-insert-dropdown" class="hidden absolute top-full left-0 mt-1 bg-slate-800 border border-gray-600 rounded-lg shadow-2xl py-1 w-52 z-30 text-xs">
+                                    <div onclick="s1ToggleSubmenu()" class="px-3 py-2 hover:bg-blue-600 text-white flex justify-between items-center cursor-pointer font-medium">
+                                        <span><i class="fa-regular fa-image text-blue-400 mr-2"></i>Зображення</span>
+                                        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                                    </div>
+                                    <div class="px-3 py-2 text-gray-500 hover:bg-slate-700 cursor-not-allowed">Таблиця</div>
+                                    <div class="px-3 py-2 text-gray-500 hover:bg-slate-700 cursor-not-allowed">Малюнок</div>
+                                    <div class="px-3 py-2 text-gray-500 hover:bg-slate-700 cursor-not-allowed">Діаграма</div>
+                                </div>
+
+                                <!-- Submenu for Image sources -->
+                                <div id="s1-image-submenu" class="hidden absolute top-full left-52 mt-1 bg-slate-800 border border-gray-600 rounded-lg shadow-2xl py-1 w-56 z-40 text-xs">
+                                    <div onclick="s1WrongSource()" class="px-3 py-2 hover:bg-slate-700 text-gray-300 cursor-pointer">Завантажити з комп'ютера</div>
+                                    <div onclick="s1OpenWebSearch()" class="px-3 py-2 hover:bg-blue-600 text-white font-bold cursor-pointer bg-blue-900/40 flex items-center justify-between">
+                                        <span><i class="fa-solid fa-globe text-blue-400 mr-2"></i>Шукати в Інтернеті</span>
+                                        <i class="fa-solid fa-arrow-right text-neon-green"></i>
+                                    </div>
+                                    <div class="px-3 py-2 text-gray-500">З Google Диску</div>
+                                </div>
+                            </div>
+
+                            <button onclick="s1ToggleMenu('format')" class="px-2 py-1 rounded hover:bg-slate-700 text-gray-300">Формат</button>
+                            <button onclick="s1ToggleMenu('tools')" class="px-2 py-1 rounded hover:bg-slate-700 text-gray-300">Інструменти</button>
+                        </div>
+
+                        <!-- Document Sheet Canvas -->
+                        <div class="flex-1 p-6 bg-slate-950 flex flex-col items-center justify-center relative">
+                            <div id="s1-doc-page" class="w-full max-w-md bg-slate-900 border border-gray-700 rounded-lg p-6 shadow-xl text-center min-h-[220px] flex flex-col items-center justify-center">
+                                <p class="text-xs text-gray-400 mb-4">Бортовий журнал: «Для відновлення реактора потрібно додати кристал через бічний пошук Google...»</p>
+                                <div id="s1-crystal-slot" class="w-24 h-24 rounded-2xl border-2 border-dashed border-gray-700 flex flex-col items-center justify-center text-gray-600 text-xs gap-1">
+                                    <i class="fa-solid fa-plus text-lg"></i>
+                                    <span>Порожньо</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Sidebar: Google Image Search -->
+                    <div id="s1-sidebar" class="w-full md:w-72 bg-slate-850 border-l border-gray-700 p-3 flex flex-col justify-between hidden md:flex">
+                        <div>
+                            <div class="flex items-center justify-between border-b border-gray-700 pb-2 mb-3">
+                                <span class="text-xs font-bold text-white flex items-center gap-1.5"><i class="fa-solid fa-globe text-blue-400"></i> Зображення Google</span>
+                                <i class="fa-solid fa-xmark text-gray-400 text-xs"></i>
+                            </div>
+                            
+                            <div class="relative mb-3">
+                                <input type="text" value="космічний кристал" readonly class="w-full bg-slate-900 border border-gray-600 rounded-lg px-3 py-1.5 text-xs text-gray-200 pr-8">
+                                <i class="fa-solid fa-magnifying-glass absolute right-2.5 top-2 text-gray-400 text-xs"></i>
+                            </div>
+
+                            <!-- Image Thumbnails Grid -->
+                            <div id="s1-thumbs-grid" class="grid grid-cols-2 gap-2 opacity-50 pointer-events-none transition-all">
+                                <div onclick="s1SelectCrystal()" class="p-2 bg-slate-900 border border-blue-500 hover:border-neon-blue rounded-lg cursor-pointer flex flex-col items-center gap-1 text-center group">
+                                    <div class="w-12 h-12 rounded bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-white text-2xl group-hover:scale-110 transition">
+                                        <i class="fa-solid fa-gem"></i>
+                                    </div>
+                                    <span class="text-[10px] text-gray-300 font-semibold">Енергокристал</span>
+                                </div>
+                                <div onclick="s1WrongCrystal()" class="p-2 bg-slate-900 border border-gray-700 rounded-lg cursor-pointer flex flex-col items-center gap-1 text-center opacity-60">
+                                    <div class="w-12 h-12 rounded bg-gray-700 flex items-center justify-center text-gray-400 text-xl">
+                                        <i class="fa-solid fa-mountain"></i>
+                                    </div>
+                                    <span class="text-[10px] text-gray-400">Звичайне каміння</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="s1-sidebar-hint" class="text-[11px] text-amber-400 bg-amber-950/40 border border-amber-800/50 p-2 rounded text-center">
+                            Спочатку відкрийте меню «Вставлення» -> «Зображення» -> «Шукати в Інтернеті»!
+                        </div>
+                    </div>
+
+                </div>
+            `;
+        }
+
+        function s1ToggleMenu(menu) {
+            playSound('click');
+            const dropdown = document.getElementById('s1-insert-dropdown');
+            const submenu = document.getElementById('s1-image-submenu');
+
+            if (menu === 'insert') {
+                dropdown.classList.toggle('hidden');
+                submenu.classList.add('hidden');
+            } else {
+                dropdown.classList.add('hidden');
+                submenu.classList.add('hidden');
+            }
+        }
+
+        function s1ToggleSubmenu() {
+            playSound('click');
+            const submenu = document.getElementById('s1-image-submenu');
+            submenu.classList.toggle('hidden');
+        }
+
+        function s1WrongSource() {
+            playSound('error');
+            document.getElementById('feedback-msg').innerHTML = `<span class="text-red-400 text-xs"><i class="fa-solid fa-circle-exclamation"></i> Для пошуку без збереження на ПК треба обрати «Шукати в Інтернеті»!</span>`;
+        }
+
+        function s1OpenWebSearch() {
+            playSound('success');
+            document.getElementById('s1-insert-dropdown').classList.add('hidden');
+            document.getElementById('s1-image-submenu').classList.add('hidden');
+
+            const grid = document.getElementById('s1-thumbs-grid');
+            grid.classList.remove('opacity-50', 'pointer-events-none');
+
+            const hint = document.getElementById('s1-sidebar-hint');
+            hint.className = "text-[11px] text-neon-green bg-green-950/40 border border-green-800/50 p-2 rounded text-center font-semibold";
+            hint.innerHTML = `<i class="fa-solid fa-hand-pointer"></i> Тепер натисніть на Енергокристал у правій панелі!`;
+        }
+
+        function s1SelectCrystal() {
+            playSound('powerup');
+            const slot = document.getElementById('s1-crystal-slot');
+            slot.className = "w-28 h-28 rounded-2xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-700 border-2 border-neon-blue flex flex-col items-center justify-center text-white text-4xl shadow-xl glow-blue transform scale-105 transition";
+            slot.innerHTML = `<i class="fa-solid fa-gem animate-pulse"></i><span class="text-[10px] font-orbitron mt-1">Кристал Активовано</span>`;
+
+            markSectorComplete(1, 20, gameState.targetCodes[0]);
+        }
+
+        function s1WrongCrystal() {
+            playSound('error');
+            document.getElementById('feedback-msg').innerHTML = `<span class="text-red-400 text-xs">Це звичайне каміння! Оберіть сяючий Енергокристал.</span>`;
+        }
+
+
+        /* ================= SECTOR 2: TEXT WRAPPING SIMULATION ================= */
+        let s2CurrentWrap = 'inline';
+
+        function renderSector2(container) {
+            document.getElementById('sector-title').innerText = "Сектор 2: Гравітаційне Огортання (Обтікання текстом)";
+            document.getElementById('mentor-text').innerText = "Клікніть по зображенню генератора у документі! Під ним з'явиться справжня контекстна панель Google Документів. Виберіть режим «З обтіканням текстом» або «За текстом», щоб вивільнити прихований код!";
+
+            s2CurrentWrap = 'inline';
+
+            container.innerHTML = `
+                <div class="bg-slate-900 border border-gray-700 rounded-xl p-3 sm:p-6 shadow-2xl relative">
+                    
+                    <!-- Docs Toolbar Header -->
+                    <div class="bg-slate-800 border border-gray-700 rounded-t-lg p-2 flex items-center justify-between text-xs text-gray-300 mb-2">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-file-lines text-blue-400"></i>
+                            <span class="font-bold text-white">Аварійна_Інструкція.gdoc</span>
+                        </div>
+                        <span class="text-[11px] text-neon-gold bg-space-950 px-2 py-0.5 rounded border border-gray-700">Клацніть малюнок у документі ⬇️</span>
+                    </div>
+
+                    <!-- Simulated Google Docs Page Sheet -->
+                    <div class="bg-slate-950 border border-gray-800 rounded-b-lg p-4 sm:p-8 min-h-[300px] relative font-roboto text-xs sm:text-sm leading-relaxed text-gray-200 selection:bg-blue-500 select-none">
+                        
+                        <p class="mb-3 text-gray-400">
+                            <strong>ІНСТРУКЦІЯ КАПІТАНА:</strong> Запуск реактора вимагає точного налаштування енергетичного генератора.
+                        </p>
+
+                        <!-- Document Layout Container -->
+                        <div id="s2-doc-layout" class="relative my-2 min-h-[160px]">
+                            
+                            <!-- Generator Image Element (Selectable) -->
+                            <div id="s2-image-wrapper" onclick="s2SelectImage(event)" class="inline-block cursor-pointer relative group transition-all duration-300">
+                                
+                                <!-- Image Card -->
+                                <div id="s2-img-card" class="w-24 h-24 sm:w-28 sm:h-28 rounded-lg bg-gradient-to-br from-indigo-600 to-purple-800 border-2 border-neon-purple flex flex-col items-center justify-center text-white shadow-lg">
+                                    <i class="fa-solid fa-bolt-lightning text-3xl sm:text-4xl text-neon-gold mb-1"></i>
+                                    <span class="text-[10px] font-orbitron">Генератор</span>
+                                </div>
+
+                                <!-- Blue Bounding Box & Handles (Hidden by default) -->
+                                <div id="s2-blue-handles" class="hidden absolute inset-0 border-2 border-blue-500 pointer-events-none">
+                                    <div class="gdoc-rotate-line"></div>
+                                    <div class="gdoc-rotate-handle"></div>
+                                    <div class="gdoc-handle gdoc-handle-tl"></div>
+                                    <div class="gdoc-handle gdoc-handle-tr"></div>
+                                    <div class="gdoc-handle gdoc-handle-bl"></div>
+                                    <div class="gdoc-handle gdoc-handle-br"></div>
+                                    <div class="gdoc-handle gdoc-handle-tm"></div>
+                                    <div class="gdoc-handle gdoc-handle-bm"></div>
+                                    <div class="gdoc-handle gdoc-handle-lm"></div>
+                                    <div class="gdoc-handle gdoc-handle-rm"></div>
+                                </div>
+
+                                <!-- Authentic Google Docs Image Floating Toolbar -->
+                                <div id="s2-floating-toolbar" class="hidden absolute top-full left-0 mt-2 bg-slate-800 border border-gray-600 rounded-md shadow-2xl p-1.5 flex items-center gap-1 z-30 whitespace-nowrap text-xs">
+                                    
+                                    <!-- 1. Inline -->
+                                    <button onclick="s2ApplyWrap('inline', event)" id="s2-btn-inline" title="У тексті" class="p-1.5 rounded hover:bg-slate-700 text-gray-300 flex items-center gap-1 border border-transparent">
+                                        <i class="fa-solid fa-align-left text-sm"></i>
+                                        <span class="hidden sm:inline text-[11px]">У тексті</span>
+                                    </button>
+
+                                    <!-- 2. Wrap text -->
+                                    <button onclick="s2ApplyWrap('wrap', event)" id="s2-btn-wrap" title="З обтіканням текстом" class="p-1.5 rounded hover:bg-slate-700 text-gray-300 flex items-center gap-1 border border-transparent">
+                                        <i class="fa-solid fa-border-all text-sm"></i>
+                                        <span class="hidden sm:inline text-[11px]">Обтікання</span>
+                                    </button>
+
+                                    <!-- 3. Break text -->
+                                    <button onclick="s2ApplyWrap('break', event)" id="s2-btn-break" title="Розділити текст" class="p-1.5 rounded hover:bg-slate-700 text-gray-300 flex items-center gap-1 border border-transparent">
+                                        <i class="fa-solid fa-list text-sm"></i>
+                                        <span class="hidden sm:inline text-[11px]">Розділити</span>
+                                    </button>
+
+                                    <!-- 4. Behind text -->
+                                    <button onclick="s2ApplyWrap('behind', event)" id="s2-btn-behind" title="За текстом" class="p-1.5 rounded hover:bg-slate-700 text-gray-300 flex items-center gap-1 border border-transparent">
+                                        <i class="fa-solid fa-layer-group text-sm"></i>
+                                        <span class="hidden sm:inline text-[11px]">За текстом</span>
+                                    </button>
+
+                                    <!-- 5. In front of text -->
+                                    <button onclick="s2ApplyWrap('front', event)" id="s2-btn-front" title="Перед текстом" class="p-1.5 rounded hover:bg-slate-700 text-gray-300 flex items-center gap-1 border border-transparent">
+                                        <i class="fa-solid fa-clone text-sm"></i>
+                                        <span class="hidden sm:inline text-[11px]">Перед текстом</span>
+                                    </button>
+
+                                    <div class="h-4 w-px bg-gray-600 mx-1"></div>
+
+                                    <!-- Margin Dropdown -->
+                                    <select onchange="s2ChangeMargin(this.value)" class="bg-slate-900 text-gray-200 text-[11px] rounded border border-gray-600 px-1 py-0.5 focus:outline-none">
+                                        <option value="0">3.2 мм відступ</option>
+                                        <option value="1">0 мм (без відступу)</option>
+                                        <option value="2">6.4 мм відступ</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Document Text Content -->
+                            <span id="s2-text-content" class="text-gray-300">
+                                Перевірте підключення первинного кабелю до центрального шинопроводу. УВАГА: Таємний код розблокування сектору реактора — <mark id="s2-secret-code" class="bg-yellow-400 text-black font-bold px-1 rounded font-mono">77</mark> (введіть його або змініть режим на «Обтікання» чи «За текстом»). Будьте обережні під час перемикання фаз!
+                            </span>
+                        </div>
+
+                        <p class="mt-4 text-gray-400">
+                            Після правильно підбраного обтікання текстова інструкція стане чітко читабельною без перекриттів.
+                        </p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function s2SelectImage(e) {
+            e.stopPropagation();
+            playSound('click');
+            document.getElementById('s2-blue-handles').classList.remove('hidden');
+            document.getElementById('s2-floating-toolbar').classList.remove('hidden');
+        }
+
+        function s2ApplyWrap(mode, e) {
+            if (e) e.stopPropagation();
+            playSound('click');
+            s2CurrentWrap = mode;
+
+            const wrapper = document.getElementById('s2-image-wrapper');
+            const text = document.getElementById('s2-text-content');
+            const secretCode = document.getElementById('s2-secret-code');
+
+            // Reset active button styling
+            ['inline', 'wrap', 'break', 'behind', 'front'].forEach(m => {
+                const btn = document.getElementById(`s2-btn-${m}`);
+                if (btn) {
+                    if (m === mode) {
+                        btn.className = "p-1.5 rounded bg-blue-600 text-white font-bold flex items-center gap-1 border border-blue-400 shadow";
+                    } else {
+                        btn.className = "p-1.5 rounded hover:bg-slate-700 text-gray-300 flex items-center gap-1 border border-transparent";
+                    }
+                }
+            });
+
+            // Reset layout properties
+            wrapper.style.float = 'none';
+            wrapper.style.position = 'relative';
+            wrapper.style.zIndex = '10';
+            wrapper.style.display = 'inline-block';
+            wrapper.style.margin = '0 8px 0 0';
+
+            if (mode === 'inline') {
+                wrapper.style.display = 'inline-block';
+                wrapper.style.verticalAlign = 'middle';
+            } else if (mode === 'wrap') {
+                wrapper.style.float = 'left';
+                wrapper.style.margin = '0 12px 8px 0';
+            } else if (mode === 'break') {
+                wrapper.style.display = 'block';
+                wrapper.style.margin = '12px auto';
+            } else if (mode === 'behind') {
+                wrapper.style.position = 'absolute';
+                wrapper.style.top = '10px';
+                wrapper.style.left = '10px';
+                wrapper.style.zIndex = '0';
+                wrapper.style.opacity = '0.5';
+            } else if (mode === 'front') {
+                wrapper.style.position = 'absolute';
+                wrapper.style.top = '10px';
+                wrapper.style.left = '10px';
+                wrapper.style.zIndex = '20';
+                wrapper.style.opacity = '1.0';
+            }
+
+            // Check sector win condition (Wrap text or Behind text)
+            if (mode === 'wrap' || mode === 'behind') {
+                secretCode.className = "bg-neon-green text-black font-extrabold px-1.5 py-0.5 rounded font-mono glow-green animate-bounce inline-block";
+                markSectorComplete(2, 20, gameState.targetCodes[1]);
+            } else {
+                secretCode.className = "bg-yellow-400 text-black font-bold px-1 rounded font-mono";
+            }
+        }
+
+        function s2ChangeMargin(val) {
+            playSound('click');
+            const wrapper = document.getElementById('s2-image-wrapper');
+            if (val === '1') wrapper.style.margin = '0px';
+            else if (val === '2') wrapper.style.margin = '0 20px 16px 0';
+            else wrapper.style.margin = '0 12px 8px 0';
+        }
+
+
+        /* ================= SECTOR 3: CROPPING & ROTATION ================= */
+        let s3RotationAngle = 0;
+        let s3CroppedDebris = false;
+
+        function renderSector3(container) {
+            document.getElementById('sector-title').innerText = "Сектор 3: Оптичне Кадрування (Обтинання та обертання)";
+            document.getElementById('mentor-text').innerText = "Фотографія схеми містить космічне сміття й перевернута. Використайте інструмент «Обітнути» (чорні кутові маркери) та верхній ручний маркер обертання!";
+
+            s3RotationAngle = 0;
+            s3CroppedDebris = false;
+
+            container.innerHTML = `
+                <div class="bg-slate-900 border border-gray-700 rounded-xl p-4 sm:p-6 shadow-2xl">
+                    
+                    <!-- Docs Toolbar for Crop/Rotate -->
+                    <div class="bg-slate-800 border border-gray-700 rounded-lg p-2 mb-4 flex flex-wrap items-center justify-between gap-2 text-xs">
+                        <div class="flex items-center gap-2">
+                            <button onclick="s3ToggleCropMode()" id="s3-crop-tool-btn" class="px-3 py-1.5 bg-slate-700 hover:bg-blue-600 text-white rounded font-bold flex items-center gap-1.5 border border-gray-600 transition">
+                                <i class="fa-solid fa-crop-simple text-neon-blue"></i>
+                                <span>Обітнути зображення</span>
+                            </button>
+                            <button onclick="s3RotateRight()" class="px-3 py-1.5 bg-slate-700 hover:bg-purple-600 text-white rounded font-bold flex items-center gap-1.5 border border-gray-600 transition">
+                                <i class="fa-solid fa-rotate-right text-neon-purple"></i>
+                                <span>Повернути на 90°</span>
+                            </button>
+                        </div>
+                        <span id="s3-status-pill" class="text-[11px] text-gray-400 bg-slate-950 px-2 py-1 rounded border border-gray-800">
+                            Статус: Необрізано, кут 0°
+                        </span>
+                    </div>
+
+                    <!-- Workspace Document Area -->
+                    <div class="bg-slate-950 border border-gray-800 rounded-lg p-8 flex items-center justify-center min-h-[260px] relative overflow-hidden">
+                        
+                        <!-- Image Container -->
+                        <div id="s3-image-box" class="relative w-56 h-56 bg-slate-900 border-2 border-blue-500 rounded-xl flex items-center justify-center transition-all duration-500 shadow-2xl" style="transform: rotate(0deg);">
+                            
+                            <!-- Rotation Handle -->
+                            <div onclick="s3RotateRight()" title="Клацніть для обертання" class="gdoc-rotate-handle bg-neon-blue hover:scale-125 transition"></div>
+                            <div class="gdoc-rotate-line bg-neon-blue"></div>
+
+                            <!-- Black Crop Markers Overlay -->
+                            <div id="s3-crop-handles" class="hidden inset-0 pointer-events-none">
+                                <div class="crop-handle-tl"></div>
+                                <div class="crop-handle-tr"></div>
+                                <div class="crop-handle-bl"></div>
+                                <div class="crop-handle-br"></div>
+                            </div>
+
+                            <!-- Debris Badge overlay -->
+                            <div id="s3-debris-badge" class="absolute top-2 left-2 bg-red-900/90 text-red-200 border border-red-500 px-2 py-0.5 rounded text-[10px] font-bold flex items-center gap-1 animate-pulse">
+                                <i class="fa-solid fa-trash-can"></i> Космічне сміття
+                            </div>
+
+                            <!-- Schema Content inside image -->
+                            <div class="text-center p-3">
+                                <i class="fa-solid fa-microchip text-5xl text-neon-gold mb-2"></i>
+                                <div class="text-xs font-orbitron text-white">Схема_Живлення</div>
+                                <div class="text-[10px] text-gray-400">Сектор X</div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `;
+        }
+
+        function s3ToggleCropMode() {
+            playSound('click');
+            s3CroppedDebris = true;
+            document.getElementById('s3-crop-handles').classList.remove('hidden');
+            document.getElementById('s3-debris-badge').classList.add('hidden');
+
+            const btn = document.getElementById('s3-crop-tool-btn');
+            btn.className = "px-3 py-1.5 bg-green-600 text-white rounded font-bold flex items-center gap-1.5 border border-green-400 shadow";
+            btn.innerHTML = `<i class="fa-solid fa-check"></i> <span>Сміття обітнуто!</span>`;
+
+            s3CheckComplete();
+        }
+
+        function s3RotateRight() {
+            playSound('click');
+            s3RotationAngle = (s3RotationAngle + 90) % 360;
+            const imgBox = document.getElementById('s3-image-box');
+            imgBox.style.transform = `rotate(${s3RotationAngle}deg)`;
+
+            s3CheckComplete();
+        }
+
+        function s3CheckComplete() {
+            const pill = document.getElementById('s3-status-pill');
+            pill.innerText = `Статус: ${s3CroppedDebris ? 'Обітно' : 'Необрізано'}, кут ${s3RotationAngle}°`;
+
+            if (s3CroppedDebris && s3RotationAngle === 90) {
+                markSectorComplete(3, 20, gameState.targetCodes[2]);
+            }
+        }
+
+
+        /* ================= SECTOR 4: IMAGE OPTIONS SIDEBAR ================= */
+        let s4Trans = 100;
+        let s4Bright = 100;
+        let s4Recolor = 'none';
+
+        function renderSector4(container) {
+            document.getElementById('sector-title').innerText = "Сектор 4: Спектральний Коректор (Параметри зображення)";
+            document.getElementById('mentor-text').innerText = "Відкрийте бічну панель «Параметри зображення». Виставте: Прозорість = 50%, Яскравість = 150% та перекольорування = «Енергетичний синій»!";
+
+            s4Trans = 100;
+            s4Bright = 100;
+            s4Recolor = 'none';
+
+            container.innerHTML = `
+                <div class="bg-slate-900 border border-gray-700 rounded-xl overflow-hidden shadow-2xl flex flex-col md:flex-row min-h-[360px]">
+                    
+                    <!-- Main Doc View -->
+                    <div class="flex-1 p-6 bg-slate-950 flex flex-col items-center justify-center">
+                        
+                        <!-- Target Crystal Image -->
+                        <div id="s4-crystal-preview" class="w-36 h-36 rounded-2xl bg-gradient-to-tr from-cyan-400 via-blue-500 to-indigo-600 border-4 border-neon-blue flex flex-col items-center justify-center text-white text-5xl shadow-2xl transition-all duration-300">
+                            <i class="fa-solid fa-gem"></i>
+                            <span class="text-[10px] font-orbitron mt-2">Спектр</span>
+                        </div>
+
+                        <div id="s4-target-hint" class="mt-4 text-xs font-orbitron text-gray-400 bg-slate-900 px-3 py-1.5 rounded-lg border border-gray-800">
+                            Ціль: Прозорість 50% | Яскравість 150% | Синій спектр
+                        </div>
+                    </div>
+
+                    <!-- Right Sidebar: Image Options (Google Docs format) -->
+                    <div class="w-full md:w-80 bg-slate-850 border-l border-gray-700 p-4 font-roboto text-xs text-gray-200 space-y-4">
+                        <div class="flex items-center justify-between border-b border-gray-700 pb-2">
+                            <span class="font-bold text-white text-sm flex items-center gap-2"><i class="fa-solid fa-sliders text-blue-400"></i> Параметри зображення</span>
+                            <i class="fa-solid fa-xmark text-gray-400 cursor-pointer"></i>
+                        </div>
+
+                        <!-- Recolor Accordion -->
+                        <div class="bg-slate-900 p-3 rounded-lg border border-gray-700">
+                            <label class="block font-bold text-gray-300 mb-1.5">Перекольорування</label>
+                            <select id="s4-select-recolor" onchange="s4UpdateOptions()" class="w-full bg-slate-950 border border-gray-600 rounded px-2 py-1.5 text-xs text-gray-200 focus:outline-none">
+                                <option value="none">Без перекольорування</option>
+                                <option value="blue">Енергетичний синій</option>
+                                <option value="green">Квантовий зелений</option>
+                                <option value="red">Аварійний червоний</option>
+                            </select>
+                        </div>
+
+                        <!-- Adjustments Accordion -->
+                        <div class="bg-slate-900 p-3 rounded-lg border border-gray-700 space-y-3">
+                            <span class="font-bold text-gray-300 block border-b border-gray-800 pb-1">Коригування</span>
+
+                            <!-- Transparency Slider -->
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-gray-400">Прозорість</span>
+                                    <span id="s4-trans-val" class="text-neon-gold font-bold">100%</span>
+                                </div>
+                                <input type="range" id="s4-trans-range" min="10" max="100" value="100" oninput="s4UpdateOptions()" class="w-full">
+                            </div>
+
+                            <!-- Brightness Slider -->
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-gray-400">Яскравість</span>
+                                    <span id="s4-bright-val" class="text-neon-gold font-bold">100%</span>
+                                </div>
+                                <input type="range" id="s4-bright-range" min="50" max="200" value="100" oninput="s4UpdateOptions()" class="w-full">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `;
+        }
+
+        function s4UpdateOptions() {
+            s4Trans = parseInt(document.getElementById('s4-trans-range').value);
+            s4Bright = parseInt(document.getElementById('s4-bright-range').value);
+            s4Recolor = document.getElementById('s4-select-recolor').value;
+
+            document.getElementById('s4-trans-val').innerText = `${s4Trans}%`;
+            document.getElementById('s4-bright-val').innerText = `${s4Bright}%`;
+
+            const img = document.getElementById('s4-crystal-preview');
+            img.style.opacity = s4Trans / 100;
+            
+            let hue = '0deg';
+            if (s4Recolor === 'blue') hue = '180deg';
+            else if (s4Recolor === 'green') hue = '90deg';
+            else if (s4Recolor === 'red') hue = '320deg';
+
+            img.style.filter = `brightness(${s4Bright}%) hue-rotate(${hue})`;
+
+            // Check tolerance
+            if (Math.abs(s4Trans - 50) <= 5 && Math.abs(s4Bright - 150) <= 5 && s4Recolor === 'blue') {
+                document.getElementById('s4-target-hint').className = "mt-4 text-xs font-orbitron text-neon-green bg-green-950 px-3 py-1.5 rounded-lg border border-green-600 font-bold animate-pulse";
+                document.getElementById('s4-target-hint').innerHTML = `<i class="fa-solid fa-circle-check"></i> Спектр ідеально скориговано!`;
+                markSectorComplete(4, 20, gameState.targetCodes[3]);
+            }
+        }
+
+
+        /* ================= SECTOR 5: GOOGLE DRAWINGS MODAL ================= */
+        let s5ShapesAdded = { circle: false, rect: false, arrow: false };
+
+        function renderSector5(container) {
+            document.getElementById('sector-title').innerText = "Сектор 5: Векторний Щит (Google Малюнки)";
+            document.getElementById('mentor-text').innerText = "Клацніть кнопку «Створити малюнок» для відкриття вбудованого редактора Google Малюнків. Намалюйте Ядро, Щит та Стрілку і натисніть «Зберегти та закрити»!";
+
+            s5ShapesAdded = { circle: false, rect: false, arrow: false };
+
+            container.innerHTML = `
+                <div class="bg-slate-900 border border-gray-700 rounded-xl p-4 sm:p-6 shadow-2xl text-center">
+                    
+                    <button onclick="s5OpenDrawingModal()" class="px-6 py-3 bg-gradient-to-r from-neon-purple to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-orbitron font-bold rounded-xl shadow-lg glow-purple transition transform active:scale-95 flex items-center gap-2 mx-auto mb-6">
+                        <i class="fa-solid fa-pen-ruler text-neon-gold text-lg"></i>
+                        <span>Відкрити «Google Малюнки»</span>
+                    </button>
+
+                    <!-- Document Sheet Preview Slot -->
+                    <div class="bg-slate-950 border border-gray-800 rounded-xl p-6 max-w-lg mx-auto min-h-[180px] flex flex-col items-center justify-center">
+                        <div id="s5-doc-drawing-slot" class="text-xs text-gray-500 italic">
+                            Схема векторного щита ще не збережена у документі...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Google Drawings Modal Window -->
+                <div id="s5-drawing-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-2 sm:p-4">
+                    <div class="w-full max-w-2xl bg-slate-850 border border-gray-600 rounded-xl shadow-2xl flex flex-col overflow-hidden">
+                        
+                        <!-- Modal Header -->
+                        <div class="bg-slate-800 px-4 py-2.5 border-b border-gray-700 flex items-center justify-between">
+                            <span class="font-bold text-white text-xs sm:text-sm flex items-center gap-2 font-roboto">
+                                <i class="fa-solid fa-shapes text-neon-purple"></i> Малюнок — Google Документи
+                            </span>
+                            <button onclick="s5SaveAndClose()" class="px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-lg shadow transition">
+                                Зберегти та закрити
+                            </button>
+                        </div>
+
+                        <!-- Drawing Toolbar -->
+                        <div class="bg-slate-800/80 px-3 py-1.5 border-b border-gray-700 flex items-center gap-2 text-xs overflow-x-auto">
+                            <button onclick="s5AddDrawingShape('circle')" id="s5-btn-circle" class="px-2.5 py-1 bg-slate-700 hover:bg-slate-600 text-gray-200 rounded flex items-center gap-1.5 border border-gray-600">
+                                <i class="fa-regular fa-circle text-blue-400"></i> + Коло (Ядро)
+                            </button>
+                            <button onclick="s5AddDrawingShape('rect')" id="s5-btn-rect" class="px-2.5 py-1 bg-slate-700 hover:bg-slate-600 text-gray-200 rounded flex items-center gap-1.5 border border-gray-600">
+                                <i class="fa-regular fa-square text-purple-400"></i> + Прямокутник (Щит)
+                            </button>
+                            <button onclick="s5AddDrawingShape('arrow')" id="s5-btn-arrow" class="px-2.5 py-1 bg-slate-700 hover:bg-slate-600 text-gray-200 rounded flex items-center gap-1.5 border border-gray-600">
+                                <i class="fa-solid fa-arrow-right text-neon-green"></i> + Стрілка Живлення
+                            </button>
+                        </div>
+
+                        <!-- Drawing Canvas (Grid / Checkerboard) -->
+                        <div class="p-6 bg-slate-950 min-h-[240px] flex items-center justify-around relative bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px]">
+                            
+                            <!-- Slot 1: Core Circle -->
+                            <div id="s5-modal-circle" class="w-20 h-20 rounded-full border-2 border-dashed border-gray-700 flex items-center justify-center text-xs text-gray-600">
+                                Коло
+                            </div>
+
+                            <!-- Slot 2: Arrow -->
+                            <div id="s5-modal-arrow" class="w-16 h-8 border-b-2 border-dashed border-gray-700 flex items-center justify-center text-xs text-gray-600">
+                                Стрілка
+                            </div>
+
+                            <!-- Slot 3: Shield Rect -->
+                            <div id="s5-modal-rect" class="w-24 h-20 rounded-lg border-2 border-dashed border-gray-700 flex items-center justify-center text-xs text-gray-600">
+                                Прямокутник
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `;
+        }
+
+        function s5OpenDrawingModal() {
+            playSound('click');
+            document.getElementById('s5-drawing-modal').classList.remove('hidden');
+        }
+
+        function s5AddDrawingShape(shape) {
+            playSound('click');
+            if (shape === 'circle') {
+                s5ShapesAdded.circle = true;
+                const c = document.getElementById('s5-modal-circle');
+                c.className = "w-20 h-20 rounded-full bg-blue-600/30 border-2 border-neon-blue flex items-center justify-center text-neon-blue text-2xl shadow-lg glow-blue";
+                c.innerHTML = `<i class="fa-solid fa-atom"></i>`;
+            } else if (shape === 'arrow') {
+                s5ShapesAdded.arrow = true;
+                const a = document.getElementById('s5-modal-arrow');
+                a.className = "w-16 h-8 flex items-center justify-center text-neon-green text-3xl";
+                a.innerHTML = `<i class="fa-solid fa-right-long animate-pulse"></i>`;
+            } else if (shape === 'rect') {
+                s5ShapesAdded.rect = true;
+                const r = document.getElementById('s5-modal-rect');
+                r.className = "w-24 h-20 rounded-lg bg-purple-600/30 border-2 border-neon-purple flex items-center justify-center text-neon-purple text-3xl shadow-lg glow-purple";
+                r.innerHTML = `<i class="fa-solid fa-shield-halved"></i>`;
+            }
+        }
+
+        function s5SaveAndClose() {
+            playSound('click');
+            document.getElementById('s5-drawing-modal').classList.add('hidden');
+
+            if (s5ShapesAdded.circle && s5ShapesAdded.arrow && s5ShapesAdded.rect) {
+                const slot = document.getElementById('s5-doc-drawing-slot');
+                slot.className = "flex items-center justify-around gap-4 p-4 bg-slate-900 border-2 border-neon-green rounded-xl shadow-xl w-full";
+                slot.innerHTML = `
+                    <div class="w-16 h-16 rounded-full bg-blue-600/30 border border-neon-blue flex items-center justify-center text-neon-blue text-xl"><i class="fa-solid fa-atom"></i></div>
+                    <i class="fa-solid fa-right-long text-neon-green text-2xl"></i>
+                    <div class="w-20 h-16 rounded-lg bg-purple-600/30 border border-neon-purple flex items-center justify-center text-neon-purple text-2xl"><i class="fa-solid fa-shield-halved"></i></div>
+                `;
+                markSectorComplete(5, 20, gameState.targetCodes[4]);
+            } else {
+                playSound('error');
+                document.getElementById('feedback-msg').innerHTML = `<span class="text-red-400 text-xs">Додайте всі 3 елементи (Коло, Стрілку та Прямокутник) перед збереженням!</span>`;
+            }
+        }
+
+
+        /* ================= FINALE & DIPLOMA GENERATOR ================= */
+        function finishQuest() {
+            playSound('powerup');
+
+            document.getElementById('quest-screen').classList.add('hidden');
+            document.getElementById('certificate-screen').classList.remove('hidden');
+
+            const totalScore = gameState.score;
+            let rankClass = "I-го Класу";
+            let rankTitle = "Експерт-Енергетик";
+            let badgeIcon = "fa-solid fa-award text-neon-gold";
+
+            if (totalScore >= 90) {
+                rankClass = "I-го Класу";
+                rankTitle = "Експерт-Енергетик (Золотий Рівень)";
+                badgeIcon = "fa-solid fa-award text-neon-gold";
+            } else if (totalScore >= 70) {
+                rankClass = "II-го Класу";
+                rankTitle = "Фахівець-Енергетик (Срібний Рівень)";
+                badgeIcon = "fa-solid fa-medal text-slate-300";
+            } else {
+                rankClass = "III-го Класу";
+                rankTitle = "Практикант-Енергетик (Бронзовий Рівень)";
+                badgeIcon = "fa-solid fa-shield text-amber-600";
+            }
+
+            document.getElementById('cert-title-class').innerText = `Посвідчення Міжзоряного Енергетика ${rankClass}`;
+            document.getElementById('cert-score-percent').innerText = `${totalScore}%`;
+            document.getElementById('cert-badge-icon').className = badgeIcon;
+
+            // Generate Canvas DataURL & render directly into IMG element
+            const dataUrl = generateCertificateCanvas();
+            document.getElementById('cert-img-element').src = dataUrl;
+            document.getElementById('cert-modal-img').src = dataUrl;
+        }
+
+        /* ================= CANVAS PNG CERTIFICATE GENERATOR ================= */
+        function generateCertificateCanvas() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1200;
+            canvas.height = 800;
+            const ctx = canvas.getContext('2d');
+
+            // 1. Background Space Gradient
+            const bgGrad = ctx.createLinearGradient(0, 0, 1200, 800);
+            bgGrad.addColorStop(0, '#060814');
+            bgGrad.addColorStop(0.5, '#0c122c');
+            bgGrad.addColorStop(1, '#060814');
+            ctx.fillStyle = bgGrad;
+            ctx.fillRect(0, 0, 1200, 800);
+
+            // Subtle Starfield
+            ctx.fillStyle = '#ffffff';
+            for (let i = 0; i < 160; i++) {
+                const x = (Math.sin(i * 88.3) * 0.5 + 0.5) * 1200;
+                const y = (Math.cos(i * 41.7) * 0.5 + 0.5) * 800;
+                const r = (i % 3 === 0) ? 1.6 : 0.8;
+                ctx.globalAlpha = 0.3 + (i % 5) * 0.14;
+                ctx.beginPath();
+                ctx.arc(x, y, r, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.globalAlpha = 1.0;
+
+            // Tech Grid Pattern
+            ctx.strokeStyle = 'rgba(0, 240, 255, 0.05)';
+            ctx.lineWidth = 1;
+            for (let x = 0; x < 1200; x += 40) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 800); ctx.stroke();
+            }
+            for (let y = 0; y < 800; y += 40) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(1200, y); ctx.stroke();
+            }
+
+            // Outer Borders
+            ctx.strokeStyle = '#ffd700';
+            ctx.lineWidth = 6;
+            ctx.strokeRect(25, 25, 1150, 750);
+
+            ctx.strokeStyle = '#00f0ff';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(36, 36, 1128, 728);
+
+            // Corner Accents
+            [[36, 36], [1164, 36], [36, 764], [1164, 764]].forEach(([cx, cy]) => {
+                ctx.fillStyle = '#ffd700';
+                ctx.beginPath(); ctx.arc(cx, cy, 7, 0, Math.PI * 2); ctx.fill();
+            });
+
+            // Header Titles
+            ctx.fillStyle = '#ffd700';
+            ctx.font = 'bold 20px "Orbitron", sans-serif, Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('КОСМІЧНА АКАДЕМІЯ ЦИФРОВИХ ТЕХНОЛОГІЙ', 600, 85);
+
+            ctx.fillStyle = '#00f0ff';
+            ctx.font = '13px "Orbitron", sans-serif, Arial';
+            ctx.fillText('ШТАБ МІЖЗОРЯНОГО ФЛОТУ • СЕКТОР ГУТЕНБЕРГА', 600, 115);
+
+            // Badge Symbol
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(600, 175, 38, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255, 215, 0, 0.15)';
+            ctx.fill();
+            ctx.strokeStyle = '#ffd700';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            ctx.fillStyle = '#ffd700';
+            ctx.font = 'bold 32px Arial';
+            ctx.fillText('★', 600, 186);
+            ctx.restore();
+
+            // Rank Title
+            const rankClass = gameState.score >= 90 ? "I-го КЛАСУ" : (gameState.score >= 70 ? "II-го КЛАСУ" : "III-го КЛАСУ");
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 32px "Orbitron", sans-serif, Arial';
+            ctx.fillText(`ПОСВІДЧЕННЯ МІЖЗОРЯНОГО ЕНЕРГЕТИКА ${rankClass}`, 600, 260);
+
+            // Gold Divider
+            ctx.strokeStyle = 'rgba(255, 215, 0, 0.4)';
+            ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(250, 290); ctx.lineTo(950, 290); ctx.stroke();
+
+            // Cadet Info
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '18px "Exo 2", sans-serif, Arial';
+            ctx.fillText(`Цим засвідчується, що кадет клану «${gameState.clan}»`, 600, 335);
+
+            ctx.fillStyle = '#ffd700';
+            ctx.font = 'bold 42px "Orbitron", sans-serif, Arial';
+            ctx.shadowColor = 'rgba(0, 240, 255, 0.8)';
+            ctx.shadowBlur = 12;
+            ctx.fillText(gameState.cadetName || 'Кадет Академії', 600, 400);
+            ctx.shadowBlur = 0;
+
+            // Description
+            ctx.fillStyle = '#cbd5e1';
+            ctx.font = '16px "Exo 2", sans-serif, Arial';
+            ctx.fillText(`успішно опанував прийоми роботи з графічними об'єктами у Google Документах,`, 600, 455);
+            ctx.fillText(`досяг потужності реактора ${gameState.score}% та активував Енергетичний Підсилювач!`, 600, 485);
+
+            // Info Boxes
+            const boxY = 550;
+            const boxW = 260;
+            const boxH = 85;
+
+            drawCanvasBox(ctx, 170, boxY, boxW, boxH, "КОД РЕАКТОРА", gameState.unlockedCodes.join('-'), '#ffd700');
+            const qualTitle = gameState.score >= 90 ? "Експерт-Енергетик" : (gameState.score >= 70 ? "Фахівець-Енергетик" : "Практикант-Енергетик");
+            drawCanvasBox(ctx, 470, boxY, boxW, boxH, "КВАЛІФІКАЦІЯ", qualTitle, '#00f0ff');
+            
+            const today = new Date();
+            const dateStr = `${String(today.getDate()).padStart(2, '0')}.${String(today.getMonth() + 1).padStart(2, '0')}.${today.getFullYear()}`;
+            drawCanvasBox(ctx, 770, boxY, boxW, boxH, "ДАТА ВИДАЧІ", dateStr, '#00ff66');
+
+            // Stamp Seal on bottom right
+            ctx.save();
+            ctx.translate(1010, 670);
+            ctx.rotate(-0.15);
+            ctx.strokeStyle = '#00f0ff';
+            ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.arc(0, 0, 46, 0, Math.PI * 2); ctx.stroke();
+            ctx.beginPath(); ctx.arc(0, 0, 40, 0, Math.PI * 2); ctx.stroke();
+            ctx.fillStyle = '#00f0ff';
+            ctx.font = 'bold 9px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('★ ПЕРЕВІРЕНО ★', 0, -16);
+            ctx.font = 'bold 13px Arial';
+            ctx.fillText('АКАДЕМІЯ', 0, 4);
+            ctx.font = 'bold 9px Arial';
+            ctx.fillText('ШТАБ ФЛОТУ', 0, 20);
+            ctx.restore();
+
+            return canvas.toDataURL('image/png');
+        }
+
+        function downloadCertificatePNG() {
+            playSound('powerup');
+            const dataUrl = generateCertificateCanvas();
+
+            // Try direct programmatic download link
+            const fileName = `posvidchennya_energetyka_${(gameState.cadetName || 'cadet').replace(/\s+/g, '_')}.png`;
+            const a = document.createElement('a');
+            a.href = dataUrl;
+            a.download = fileName;
+            a.target = '_blank';
+            document.body.appendChild(a);
+            
+            try {
+                a.click();
+            } catch (err) {
+                console.warn("Download link blocked by sandbox:", err);
+            }
+            document.body.removeChild(a);
+
+            // Highlight hint box to user
+            const hintBox = document.getElementById('download-hint-box');
+            if (hintBox) {
+                hintBox.className = "mt-4 p-3 bg-neon-gold/20 border-2 border-neon-gold rounded-xl text-center text-xs sm:text-sm text-neon-gold font-bold animate-pulse";
+                setTimeout(() => {
+                    hintBox.className = "mt-4 p-3 bg-space-950/90 border border-neon-gold/40 rounded-xl text-center text-xs sm:text-sm text-gray-300 transition-all";
+                }, 4000);
+            }
+        }
+
+        function openCertModal() {
+            playSound('click');
+            const dataUrl = generateCertificateCanvas();
+            document.getElementById('cert-modal-img').src = dataUrl;
+            document.getElementById('cert-full-modal').classList.remove('hidden');
+        }
+
+        function closeCertModal() {
+            playSound('click');
+            document.getElementById('cert-full-modal').classList.add('hidden');
+        }
+
+        function drawCanvasBox(ctx, x, y, w, h, label, value, valColor) {
+            ctx.fillStyle = 'rgba(12, 18, 44, 0.85)';
+            ctx.fillRect(x, y, w, h);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(x, y, w, h);
+
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = 'bold 11px "Orbitron", sans-serif, Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(label, x + w / 2, y + 28);
+
+            ctx.fillStyle = valColor;
+            ctx.font = 'bold 15px "Orbitron", sans-serif, Arial';
+            ctx.fillText(value, x + w / 2, y + 58);
+        }
+
+        function restartGame() {
+            playSound('click');
+            gameState.currentSector = 1;
+            gameState.score = 0;
+            gameState.sectorScores = [0, 0, 0, 0, 0];
+            gameState.unlockedCodes = ['_', '_', '_', '_', '_'];
+
+            document.getElementById('hud-power-bar').style.width = '0%';
+            document.getElementById('hud-power-text').innerText = '0%';
+            document.getElementById('collected-code-display').innerText = '[ _ - _ - _ - _ - _ ]';
+
+            document.getElementById('certificate-screen').classList.add('hidden');
+            document.getElementById('start-screen').classList.remove('hidden');
+            document.getElementById('game-hud').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
+```eoc
