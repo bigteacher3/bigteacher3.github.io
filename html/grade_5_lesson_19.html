@@ -1,0 +1,1535 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Пригода у Зачарованому Замку: Порятунок Срібного Дракона</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&family=Fredoka:wght@400;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              gold: '#FBBF24',
+              purple: '#6D28D9',
+              darkPurple: '#2E1065',
+              emerald: '#059669',
+              magicBlue: '#0284C7',
+            }
+          },
+          fontFamily: {
+            fredoka: ['Fredoka', 'Comfortaa', 'sans-serif'],
+            comfortaa: ['Comfortaa', 'cursive'],
+            inter: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Fredoka', 'Comfortaa', sans-serif;
+      background: radial-gradient(circle at center, #1e1b4b 0%, #0f172a 100%);
+      color: #f8fafc;
+      min-height: 100vh;
+      overflow-x: hidden;
+      user-select: none;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #4c1d95;
+      border-radius: 4px;
+    }
+
+    /* Magic Animations */
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-8px) rotate(1deg); }
+    }
+    .animate-float {
+      animation: float 4s ease-in-out infinite;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 15px rgba(251, 191, 36, 0.4); }
+      50% { box-shadow: 0 0 30px rgba(251, 191, 36, 0.8); }
+    }
+    .glow-gold {
+      animation: pulseGlow 2.5s infinite;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+    .animate-shake {
+      animation: shake 0.4s ease-in-out;
+    }
+
+    /* Speech Bubble Triangle */
+    .bubble-arrow::after {
+      content: '';
+      position: absolute;
+      left: -12px;
+      top: 24px;
+      border-width: 8px 12px 8px 0;
+      border-style: solid;
+      border-color: transparent #1e293b transparent transparent;
+    }
+
+    /* Print Styling for Certificate */
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #printable-certificate, #printable-certificate * {
+        visibility: visible;
+      }
+      #printable-certificate {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: white !important;
+        color: black !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+
+    /* Google Docs Mockup Styles */
+    .gdocs-menu-item {
+      padding: 4px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .gdocs-menu-item:hover {
+      background-color: #e2e8f0;
+      color: #1e293b;
+    }
+    .gdocs-toolbar-btn {
+      padding: 6px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+    .gdocs-toolbar-btn:hover {
+      background-color: #cbd5e1;
+      color: #0f172a;
+    }
+    .gdocs-toolbar-btn.active {
+      background-color: #93c5fd;
+      color: #1e3a8a;
+    }
+
+    /* Grid Selection for Table Insertion */
+    .grid-square {
+      width: 22px;
+      height: 22px;
+      border: 1px solid #94a3b8;
+      background: #f8fafc;
+      transition: background 0.1s;
+    }
+    .grid-square.highlighted {
+      background: #93c5fd;
+      border-color: #2563eb;
+    }
+
+    /* Interactive Table Cell Styling */
+    .quest-table-cell {
+      border: 2px solid #475569;
+      min-height: 48px;
+      padding: 8px;
+      text-align: center;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .quest-table-cell.selected {
+      outline: 3px solid #3b82f6;
+      background-color: #dbeafe !important;
+      color: #1e3a8a !important;
+    }
+  </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+  <!-- TOP HEADER / GAME BAR -->
+  <header class="bg-slate-900/90 border-b border-purple-500/30 backdrop-blur sticky top-0 z-40 px-4 py-3 shadow-lg no-print">
+    <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <!-- Game Logo / Title -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-purple-600 flex items-center justify-center text-xl shadow-md glow-gold">
+          🐉
+        </div>
+        <div>
+          <h1 class="text-lg font-bold text-amber-300 leading-tight">Пригода у Зачарованому Замку</h1>
+          <p class="text-xs text-purple-300">Порятунок Срібного Дракона • Google Документи</p>
+        </div>
+      </div>
+
+      <!-- Player Stats & Progress -->
+      <div id="stats-container" class="hidden flex items-center gap-4 bg-slate-800/80 px-4 py-1.5 rounded-2xl border border-slate-700">
+        <!-- Player Info -->
+        <div class="flex items-center gap-2 border-r border-slate-700 pr-4">
+          <span id="player-avatar-badge" class="text-2xl">🛡️</span>
+          <div>
+            <div id="player-name-display" class="text-sm font-bold text-amber-400">Гравець</div>
+            <div class="text-[10px] text-slate-400">Учень 5-го класу</div>
+          </div>
+        </div>
+
+        <!-- Score -->
+        <div class="flex items-center gap-1.5 border-r border-slate-700 pr-4">
+          <i class="fa-solid font-bold fa-star text-amber-400"></i>
+          <span id="score-display" class="text-sm font-bold text-white">0</span>
+          <span class="text-xs text-slate-400">балів</span>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="w-28 sm:w-36">
+          <div class="flex justify-between text-[10px] text-purple-300 mb-1">
+            <span>Прогрес</span>
+            <span id="stage-counter">1/5</span>
+          </div>
+          <div class="w-full h-2.5 bg-slate-700 rounded-full overflow-hidden p-0.5 border border-slate-600">
+            <div id="progress-bar-fill" class="h-full bg-gradient-to-r from-amber-400 to-emerald-400 rounded-full transition-all duration-500" style="width: 20%;"></div>
+          </div>
+        </div>
+
+        <!-- Sound Toggle -->
+        <button id="sound-toggle-btn" class="p-2 rounded-xl bg-slate-700/60 hover:bg-slate-700 text-slate-300 hover:text-white transition">
+          <i id="sound-icon" class="fa-solid fa-volume-high text-amber-400"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="flex-grow flex flex-col justify-center max-w-5xl w-full mx-auto p-4 sm:p-6 my-2 relative">
+
+    <!-- CHARACTER COMPANION BANNER (SOVENYA) -->
+    <div id="companion-container" class="hidden mb-6 bg-slate-800/90 border border-purple-500/40 rounded-2xl p-4 shadow-xl flex items-start sm:items-center gap-4 transition-all duration-300 relative no-print">
+      <!-- Owlet SVG Avatar -->
+      <div class="relative shrink-0 animate-float">
+        <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-indigo-900 to-purple-900 rounded-2xl border-2 border-amber-400/60 flex items-center justify-center shadow-lg relative overflow-hidden">
+          <svg class="w-12 h-12 text-amber-300 drop-shadow" viewBox="0 0 64 64" fill="none">
+            <!-- Owlet Body & Wizard Hat -->
+            <path d="M32 10C20 10 12 20 12 36C12 48 20 56 32 56C44 56 52 48 52 36C52 20 44 10 32 10Z" fill="#8B5CF6"/>
+            <path d="M32 18C24 18 18 25 18 36C18 45 24 50 32 50C40 50 46 45 46 36C46 25 40 18 32 18Z" fill="#DDD6FE"/>
+            <!-- Eyes -->
+            <circle cx="25" cy="30" r="7" fill="white"/>
+            <circle cx="39" cy="30" r="7" fill="white"/>
+            <circle cx="25" cy="30" r="3.5" fill="#1E1B4B"/>
+            <circle cx="39" cy="30" r="3.5" fill="#1E1B4B"/>
+            <circle cx="27" cy="28" r="1.5" fill="white"/>
+            <circle cx="41" cy="28" r="1.5" fill="white"/>
+            <!-- Glasses -->
+            <circle cx="25" cy="30" r="8" stroke="#F59E0B" stroke-width="2" fill="none"/>
+            <circle cx="39" cy="30" r="8" stroke="#F59E0B" stroke-width="2" fill="none"/>
+            <line x1="33" y1="30" x2="31" y2="30" stroke="#F59E0B" stroke-width="2"/>
+            <!-- Beak -->
+            <polygon points="32,34 28,39 36,39" fill="#F59E0B"/>
+            <!-- Wizard Hat -->
+            <path d="M16 16L32 2L48 16" stroke="#F59E0B" stroke-width="3" stroke-linecap="round"/>
+            <polygon points="32,2 20,16 44,16" fill="#4C1D95"/>
+            <polygon points="32,2 30,12 34,12" fill="#F59E0B"/>
+          </svg>
+        </div>
+        <span class="absolute -bottom-1 -right-1 bg-amber-500 text-slate-950 text-[10px] font-bold px-1.5 py-0.5 rounded-full border border-slate-900">IT</span>
+      </div>
+
+      <!-- Dialogue Bubble -->
+      <div class="flex-grow bg-slate-900/90 border border-slate-700 rounded-xl p-3 sm:p-4 text-slate-200 text-sm sm:text-base relative shadow-inner">
+        <div class="font-bold text-amber-400 text-xs mb-1 flex items-center justify-between">
+          <span>🦉 Мудре Совеня-Айтішник</span>
+          <span id="hint-tag" class="text-[10px] text-purple-300 bg-purple-950 px-2 py-0.5 rounded-md border border-purple-800/50">Підказка</span>
+        </div>
+        <p id="dialogue-text" class="leading-relaxed">
+          Вітаю, юний досліднику! Злий чаклун заблокував Срібного Дракона в замку! Нам потрібні знання з Google Документів, щоб розчарувати замок!
+        </p>
+      </div>
+    </div>
+
+    <!-- VIEW STAGES CONTAINER -->
+    <div id="game-stage-card" class="bg-slate-900/80 border border-purple-500/30 rounded-3xl p-5 sm:p-8 shadow-2xl backdrop-blur relative overflow-hidden">
+
+      <!-- STAGE 0: WELCOME & HERO CREATION -->
+      <div id="stage-0" class="space-y-6 text-center max-w-xl mx-auto py-4">
+        <div class="inline-block p-4 rounded-3xl bg-purple-950/80 border border-purple-500/40 glow-gold mb-2">
+          <span class="text-5xl">🏰</span>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-bold text-amber-300">Вітаємо у Зачарованому Замку!</h2>
+        <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+          Темний Маг запечатав вежу Срібного Дракона за допомогою магічних таблиць! Використовуй свої знання з <span class="text-amber-400 font-semibold">Google Документів</span>, щоб розгадати секрети та визволити дракона!
+        </p>
+
+        <!-- Player Setup Form -->
+        <div class="bg-slate-800/90 border border-slate-700 rounded-2xl p-5 text-left space-y-4 shadow-lg">
+          <div>
+            <label class="block text-xs font-bold text-purple-300 uppercase tracking-wider mb-2">
+              <i class="fa-solid fa-user-ninja mr-1"></i> Твоє Ім'я або Псевдонім:
+            </label>
+            <input type="text" id="player-name-input" value="Відважний Лицар" placeholder="Введіть ваше ім'я..." 
+              class="w-full px-4 py-3 bg-slate-900 border border-purple-500/50 rounded-xl text-amber-300 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-400 font-bold">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-purple-300 uppercase tracking-wider mb-2">
+              <i class="fa-solid fa-shield-halved mr-1"></i> Оберіть аватар героя:
+            </label>
+            <div class="grid grid-cols-4 gap-2">
+              <button type="button" onclick="selectAvatar('🧙‍♂️', this)" class="avatar-opt p-3 rounded-xl border border-purple-500/30 bg-slate-900/50 hover:bg-purple-900/40 text-2xl transition text-center active-avatar border-amber-400 bg-purple-900/60">
+                🧙‍♂️<div class="text-[10px] text-slate-300 mt-1">Маг</div>
+              </button>
+              <button type="button" onclick="selectAvatar('🛡️', this)" class="avatar-opt p-3 rounded-xl border border-purple-500/30 bg-slate-900/50 hover:bg-purple-900/40 text-2xl transition text-center">
+                🛡️<div class="text-[10px] text-slate-300 mt-1">Лицар</div>
+              </button>
+              <button type="button" onclick="selectAvatar('🧝‍♀️', this)" class="avatar-opt p-3 rounded-xl border border-purple-500/30 bg-slate-900/50 hover:bg-purple-900/40 text-2xl transition text-center">
+                🧝‍♀️<div class="text-[10px] text-slate-300 mt-1">Ельфійка</div>
+              </button>
+              <button type="button" onclick="selectAvatar('🤖', this)" class="avatar-opt p-3 rounded-xl border border-purple-500/30 bg-slate-900/50 hover:bg-purple-900/40 text-2xl transition text-center">
+                🤖<div class="text-[10px] text-slate-300 mt-1">Робо-Ніндзя</div>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <button onclick="startGame()" class="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-lg shadow-xl hover:shadow-amber-500/20 transform hover:-translate-y-0.5 transition active:translate-y-0 flex items-center justify-center gap-2">
+          <span>Розпочати пригоду</span>
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+        </button>
+      </div>
+
+      <!-- STAGE 1: БРАМА ЗАМКУ (Вставка таблиці) -->
+      <div id="stage-1" class="hidden space-y-6">
+        <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl p-2 bg-purple-950 rounded-xl border border-purple-600">🌉</span>
+            <div>
+              <h3 class="text-lg font-bold text-amber-300">Етап 1: Замковий Рів (Побудова Мосту)</h3>
+              <p class="text-xs text-slate-400">Створи таблицю потрібного розміру, щоб побудувати міст через глибокий рів.</p>
+            </div>
+          </div>
+          <span class="text-xs font-bold px-3 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded-full">Завдання 1 з 5</span>
+        </div>
+
+        <!-- Task Scene -->
+        <div class="bg-slate-950 rounded-2xl p-4 border border-slate-800 text-center relative overflow-hidden">
+          <div class="text-slate-400 text-xs mb-2">Нам потрібно побудувати міст розміром <strong class="text-amber-300 text-sm">4 стовпці на 4 рядки (4×4)</strong>.</div>
+
+          <!-- Google Docs Interface Mockup -->
+          <div class="bg-white rounded-xl text-slate-800 text-left shadow-2xl border border-slate-300 overflow-visible max-w-2xl mx-auto my-3">
+            <!-- Menu Bar -->
+            <div class="bg-slate-100 border-b border-slate-300 px-3 py-2 flex items-center gap-2 text-xs font-medium text-slate-700 select-none relative">
+              <span class="gdocs-menu-item">Файл</span>
+              <span class="gdocs-menu-item">Редагувати</span>
+              <span class="gdocs-menu-item">Вигляд</span>
+              
+              <!-- Target Menu Item -->
+              <div class="relative inline-block">
+                <span id="insert-menu-btn" onclick="toggleDocsDropdown('insert-dropdown')" class="gdocs-menu-item font-bold text-blue-600 bg-blue-50 border border-blue-200">
+                  Вставка <i class="fa-solid fa-caret-down text-[10px] ml-1"></i>
+                </span>
+
+                <!-- Insert Dropdown Menu -->
+                <div id="insert-dropdown" class="hidden absolute left-0 top-full mt-1 bg-white border border-slate-300 rounded-lg shadow-2xl py-1 w-48 z-50 text-xs text-slate-800">
+                  <div class="px-3 py-1.5 hover:bg-slate-100 cursor-pointer flex items-center justify-between opacity-60">
+                    <span><i class="fa-regular fa-image mr-2"></i>Зображення</span>
+                    <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                  </div>
+                  
+                  <!-- Table Option -->
+                  <div id="table-option-btn" onmouseenter="showTablePicker()" class="px-3 py-2 bg-blue-50 text-blue-700 font-bold hover:bg-blue-100 cursor-pointer flex items-center justify-between border-y border-blue-100">
+                    <span><i class="fa-solid fa-table mr-2"></i>Таблиця</span>
+                    <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                  </div>
+
+                  <div class="px-3 py-1.5 hover:bg-slate-100 cursor-pointer opacity-60">
+                    <i class="fa-solid fa-paint-brush mr-2"></i>Малюнок
+                  </div>
+                  <div class="px-3 py-1.5 hover:bg-slate-100 cursor-pointer opacity-60">
+                    <i class="fa-solid fa-chart-pie mr-2"></i>Діаграма
+                  </div>
+                </div>
+
+                <!-- Table Grid Picker Submenu -->
+                <div id="table-grid-picker" class="hidden absolute left-48 top-6 bg-white border border-slate-300 rounded-xl shadow-2xl p-3 z-50 w-56 text-slate-800">
+                  <div class="text-[11px] font-bold text-slate-600 mb-2 text-center" id="grid-size-label">Виберіть розмір: 1×1</div>
+                  
+                  <!-- 5x5 Grid Container -->
+                  <div id="grid-container" class="grid grid-cols-5 gap-1 justify-center bg-slate-50 p-2 rounded-lg border border-slate-200">
+                    <!-- JS generated 25 squares -->
+                  </div>
+
+                  <div class="text-[10px] text-slate-500 mt-2 text-center italic">
+                    Натисніть на сітку 4×4
+                  </div>
+                </div>
+
+              </div>
+
+              <span class="gdocs-menu-item">Формат</span>
+              <span class="gdocs-menu-item">Інструменти</span>
+            </div>
+
+            <!-- Docs Canvas Area -->
+            <div class="p-6 bg-white min-h-[160px] flex items-center justify-center border-t border-slate-200">
+              <div id="bridge-result-area" class="w-full flex justify-center">
+                <div class="text-slate-400 text-xs italic border-2 border-dashed border-slate-300 p-6 rounded-xl text-center w-full">
+                  <i class="fa-solid fa-arrow-up text-blue-500 text-base mb-1 block"></i>
+                  Клацніть меню <strong class="text-blue-600">Вставка ➔ Таблиця</strong> вище та оберіть сітку <strong>4×4</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-end">
+          <button id="stage1-next-btn" disabled onclick="nextStage()" class="py-3 px-6 rounded-xl bg-slate-700 text-slate-400 font-bold transition flex items-center gap-2 cursor-not-allowed">
+            <span>Пройти дальше</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- STAGE 2: ЗАКЛЯТІ СХОДИНКИ (Додавання та видалення) -->
+      <div id="stage-2" class="hidden space-y-6">
+        <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl p-2 bg-purple-950 rounded-xl border border-purple-600">🪜</span>
+            <div>
+              <h3 class="text-lg font-bold text-amber-300">Етап 2: Закляті Сходинки</h3>
+              <p class="text-xs text-slate-400">Відремонтуй магічні сходи: додай новий рядок та видали зламаний стовпець.</p>
+            </div>
+          </div>
+          <span class="text-xs font-bold px-3 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded-full">Завдання 2 з 5</span>
+        </div>
+
+        <!-- Task Box -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Step 2A: Add Row -->
+          <div class="bg-slate-800/90 border border-slate-700 rounded-2xl p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-amber-400 uppercase tracking-wide">Крок 1: Додати сходинку</span>
+              <span id="step2a-status" class="text-xs bg-slate-700 text-slate-300 px-2 py-0.5 rounded-full">Не виконано</span>
+            </div>
+            <p class="text-xs text-slate-300">
+              Нам не вистачає одного рядка внизу сходинок! Клацни правою кнопкою миші по таблиці нижче і вибери правильну команду:
+            </p>
+
+            <!-- Table 2A Mockup -->
+            <div class="bg-white p-3 rounded-xl border border-slate-300 text-slate-900 relative">
+              <table class="w-full border-collapse border border-slate-400 text-xs text-center" id="stairs-table-2a">
+                <tr class="bg-indigo-100 font-bold">
+                  <td class="border border-slate-400 p-2">Сходинка 1</td>
+                  <td class="border border-slate-400 p-2">Висота 10 см</td>
+                </tr>
+                <tr class="bg-indigo-50">
+                  <td class="border border-slate-400 p-2">Сходинка 2</td>
+                  <td class="border border-slate-400 p-2">Висота 20 см</td>
+                </tr>
+              </table>
+
+              <!-- Interactive Context Menu Trigger Button -->
+              <button onclick="openContextMenuStage2(event)" class="mt-3 w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg text-xs transition flex items-center justify-center gap-1">
+                <i class="fa-solid fa-mouse-pointer"></i> Відкрити контекстне меню (Права кнопка)
+              </button>
+
+              <!-- Context Menu Mockup -->
+              <div id="context-menu-2a" class="hidden absolute left-1/2 top-10 transform -translate-x-1/2 bg-slate-900 text-white border border-purple-500 rounded-xl shadow-2xl p-2 w-56 z-50 text-xs space-y-1">
+                <div class="text-[10px] text-slate-400 px-2 py-1 border-b border-slate-800">Оберіть дію:</div>
+                <button onclick="checkStage2A('above')" class="w-full text-left px-2 py-1.5 hover:bg-purple-900/60 rounded text-slate-200">Вставити рядок вище</button>
+                <button onclick="checkStage2A('below')" class="w-full text-left px-2 py-1.5 hover:bg-purple-900/60 rounded text-amber-300 font-bold">Вставити рядок нижче</button>
+                <button onclick="checkStage2A('left')" class="w-full text-left px-2 py-1.5 hover:bg-purple-900/60 rounded text-slate-200">Вставити стовпець зліва</button>
+                <button onclick="checkStage2A('del')" class="w-full text-left px-2 py-1.5 hover:bg-purple-900/60 rounded text-slate-200">Видалити таблицю</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2B: Delete Column -->
+          <div class="bg-slate-800/90 border border-slate-700 rounded-2xl p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-amber-400 uppercase tracking-wide">Крок 2: Прибрати перешкоду</span>
+              <span id="step2b-status" class="text-xs bg-slate-700 text-slate-300 px-2 py-0.5 rounded-full">Не виконано</span>
+            </div>
+            <p class="text-xs text-slate-300">
+              Правий стовпець "Зламаний камінь" заважає нам пройти! Яка команда вилучить цей стовпець?
+            </p>
+
+            <div class="bg-white p-3 rounded-xl border border-slate-300 text-slate-900">
+              <table class="w-full border-collapse border border-slate-400 text-xs text-center mb-3">
+                <tr class="bg-emerald-100 font-bold">
+                  <td class="border border-slate-400 p-2">Прохід</td>
+                  <td class="border border-slate-400 p-2 bg-red-100 text-red-700">⚠️ Зламаний камінь</td>
+                </tr>
+              </table>
+
+              <div class="grid grid-cols-1 gap-2 text-xs">
+                <button onclick="checkStage2B('del_col')" class="p-2 bg-slate-100 hover:bg-emerald-100 border border-slate-300 rounded-lg text-left font-medium transition text-slate-800 flex items-center justify-between">
+                  <span>Видалити стовпець</span>
+                  <i class="fa-solid fa-circle-check text-slate-400"></i>
+                </button>
+                <button onclick="checkStage2B('del_row')" class="p-2 bg-slate-100 hover:bg-red-50 border border-slate-300 rounded-lg text-left font-medium transition text-slate-800 flex items-center justify-between">
+                  <span>Видалити рядок</span>
+                  <i class="fa-solid fa-circle-xmark text-slate-400"></i>
+                </button>
+                <button onclick="checkStage2B('clear')" class="p-2 bg-slate-100 hover:bg-red-50 border border-slate-300 rounded-lg text-left font-medium transition text-slate-800 flex items-center justify-between">
+                  <span>Очистити вміст клітинки</span>
+                  <i class="fa-solid fa-circle-xmark text-slate-400"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-end">
+          <button id="stage2-next-btn" disabled onclick="nextStage()" class="py-3 px-6 rounded-xl bg-slate-700 text-slate-400 font-bold transition flex items-center gap-2 cursor-not-allowed">
+            <span>Продовжити шлях</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- STAGE 3: МАГІЧНИЙ МІСТ (Об'єднання клітинок) -->
+      <div id="stage-3" class="hidden space-y-6">
+        <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl p-2 bg-purple-950 rounded-xl border border-purple-600">💎</span>
+            <div>
+              <h3 class="text-lg font-bold text-amber-300">Етап 3: Кристальний Моноліт</h3>
+              <p class="text-xs text-slate-400">Об'єднай 3 окремі дрібні кристали в одну суцільну плиту!</p>
+            </div>
+          </div>
+          <span class="text-xs font-bold px-3 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded-full">Завдання 3 з 5</span>
+        </div>
+
+        <div class="bg-slate-950 rounded-2xl p-5 border border-slate-800 text-center space-y-4">
+          <p class="text-xs sm:text-sm text-slate-300">
+            <strong>Інструкція:</strong> Клацни по кожній із 3 клітинок, щоб виділити їх, а потім натисни кнопку <strong class="text-amber-400">«Об'єднати клітинки»</strong>!
+          </p>
+
+          <!-- Interactive Table to Merge -->
+          <div class="max-w-md mx-auto bg-white p-4 rounded-2xl border border-slate-300 text-slate-900 shadow-xl">
+            <div id="merge-table" class="grid grid-cols-3 gap-2 mb-4">
+              <div onclick="toggleCellSelection(0)" id="merge-cell-0" class="quest-table-cell bg-indigo-50 rounded-lg flex items-center justify-center font-bold text-indigo-900 border-2 border-indigo-200">
+                💎 Кристал 1
+              </div>
+              <div onclick="toggleCellSelection(1)" id="merge-cell-1" class="quest-table-cell bg-indigo-50 rounded-lg flex items-center justify-center font-bold text-indigo-900 border-2 border-indigo-200">
+                💎 Кристал 2
+              </div>
+              <div onclick="toggleCellSelection(2)" id="merge-cell-2" class="quest-table-cell bg-indigo-50 rounded-lg flex items-center justify-center font-bold text-indigo-900 border-2 border-indigo-200">
+                💎 Кристал 3
+              </div>
+            </div>
+
+            <div id="merged-result-view" class="hidden bg-gradient-to-r from-amber-200 via-amber-300 to-amber-200 p-4 rounded-xl border-2 border-amber-500 text-amber-950 font-bold text-base shadow-lg animate-pulse">
+              ✨ Суцільний Магічний Моноліт (Об'єднано!) ✨
+            </div>
+
+            <!-- Context Menu Button Simulation -->
+            <button id="merge-action-btn" onclick="applyMergeCells()" class="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl text-sm transition shadow-md flex items-center justify-center gap-2">
+              <i class="fa-solid fa-object-group"></i>
+              <span>Об'єднати клітинки</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="flex justify-end">
+          <button id="stage3-next-btn" disabled onclick="nextStage()" class="py-3 px-6 rounded-xl bg-slate-700 text-slate-400 font-bold transition flex items-center gap-2 cursor-not-allowed">
+            <span>Йти далі</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- STAGE 4: ЩИТ ЗАХИСТУ (Заливка / Колір фону) -->
+      <div id="stage-4" class="hidden space-y-6">
+        <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl p-2 bg-purple-950 rounded-xl border border-purple-600">🛡️</span>
+            <div>
+              <h3 class="text-lg font-bold text-amber-300">Етап 4: Зарядка Щита Світла</h3>
+              <p class="text-xs text-slate-400">Зміни колір фону клітинок щита на Золотий за допомогою панелі інструментів.</p>
+            </div>
+          </div>
+          <span class="text-xs font-bold px-3 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded-full">Завдання 4 з 5</span>
+        </div>
+
+        <!-- Toolbar & Shield Interaction -->
+        <div class="bg-slate-950 rounded-2xl p-4 border border-slate-800 space-y-4">
+          
+          <!-- Full Google Docs Toolbar Simulation -->
+          <div class="bg-slate-100 p-2 rounded-xl border border-slate-300 flex flex-wrap items-center gap-1 text-slate-700 shadow-md">
+            <button class="gdocs-toolbar-btn" title="Скасувати"><i class="fa-solid fa-rotate-left"></i></button>
+            <button class="gdocs-toolbar-btn" title="Повторити"><i class="fa-solid fa-rotate-right"></i></button>
+            <button class="gdocs-toolbar-btn" title="Друк"><i class="fa-solid fa-print"></i></button>
+            <div class="h-5 w-px bg-slate-300 mx-1"></div>
+            
+            <span class="text-xs font-bold px-2 py-1 bg-white border border-slate-300 rounded">100%</span>
+            <div class="h-5 w-px bg-slate-300 mx-1"></div>
+
+            <button class="gdocs-toolbar-btn font-bold">B</button>
+            <button class="gdocs-toolbar-btn italic">I</button>
+            <button class="gdocs-toolbar-btn underline">U</button>
+            <button class="gdocs-toolbar-btn text-red-600"><i class="fa-solid fa-font"></i></button>
+            
+            <div class="h-5 w-px bg-slate-300 mx-1"></div>
+
+            <!-- Targeted Paint Bucket Tool -->
+            <div class="relative inline-block">
+              <button id="paint-bucket-btn" onclick="toggleColorPalette()" class="gdocs-toolbar-btn bg-amber-200 text-amber-900 border border-amber-400 font-bold px-2 py-1 rounded" title="Колір фону (Заливка)">
+                <i class="fa-solid fa-fill-drip text-base mr-1 text-amber-700"></i>
+                <span class="text-xs hidden sm:inline">Колір фону</span>
+              </button>
+
+              <!-- Color Palette Popup -->
+              <div id="color-palette-popup" class="hidden absolute left-0 top-full mt-2 bg-white border border-slate-300 rounded-xl shadow-2xl p-3 z-50 w-48 text-slate-800">
+                <div class="text-[11px] font-bold text-slate-600 mb-2">Оберіть колір фону:</div>
+                <div class="grid grid-cols-4 gap-2">
+                  <button onclick="applyShieldColor('#ef4444')" class="w-8 h-8 rounded-lg bg-red-500 border hover:scale-110 transition" title="Червоний"></button>
+                  <button onclick="applyShieldColor('#3b82f6')" class="w-8 h-8 rounded-lg bg-blue-500 border hover:scale-110 transition" title="Синій"></button>
+                  <button onclick="applyShieldColor('#10b981')" class="w-8 h-8 rounded-lg bg-emerald-500 border hover:scale-110 transition" title="Зелений"></button>
+                  <button onclick="applyShieldColor('#fbbf24')" class="w-8 h-8 rounded-lg bg-amber-400 border-2 border-amber-600 hover:scale-110 transition glow-gold" title="Магічний Золотий"></button>
+                </div>
+              </div>
+            </div>
+
+            <div class="h-5 w-px bg-slate-300 mx-1"></div>
+            <button class="gdocs-toolbar-btn"><i class="fa-solid fa-align-center"></i></button>
+          </div>
+
+          <!-- Interactive Shield Table -->
+          <div class="max-w-xs mx-auto p-4 bg-slate-900 rounded-2xl border border-purple-500/40 text-center">
+            <div class="text-xs text-purple-300 mb-2">Захисний Талісман:</div>
+            
+            <table class="w-full border-collapse border-2 border-amber-400/80 rounded-xl overflow-hidden shadow-2xl">
+              <tr>
+                <td id="shield-cell-1" class="border-2 border-slate-600 p-6 bg-slate-800 text-2xl transition-all duration-500">
+                  🛡️
+                </td>
+                <td id="shield-cell-2" class="border-2 border-slate-600 p-6 bg-slate-800 text-2xl transition-all duration-500">
+                  ⚡
+                </td>
+              </tr>
+              <tr>
+                <td id="shield-cell-3" class="border-2 border-slate-600 p-6 bg-slate-800 text-2xl transition-all duration-500">
+                  ✨
+                </td>
+                <td id="shield-cell-4" class="border-2 border-slate-600 p-6 bg-slate-800 text-2xl transition-all duration-500">
+                  👑
+                </td>
+              </tr>
+            </table>
+
+            <p id="shield-hint-msg" class="text-xs text-amber-400 mt-3">
+              Натисни інструмент <strong class="text-white">«Колір фону»</strong> (Відро з фарбою) вище та обери <strong>Золотий колір</strong>!
+            </p>
+          </div>
+        </div>
+
+        <div class="flex justify-end">
+          <button id="stage4-next-btn" disabled onclick="nextStage()" class="py-3 px-6 rounded-xl bg-slate-700 text-slate-400 font-bold transition flex items-center gap-2 cursor-not-allowed">
+            <span>До Вежі Дракона</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- STAGE 5: РУНА СИЛИ (Вирівнювання та Межі) -->
+      <div id="stage-5" class="hidden space-y-6">
+        <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl p-2 bg-purple-950 rounded-xl border border-purple-600">🐲</span>
+            <div>
+              <h3 class="text-lg font-bold text-amber-300">Фінальний Етап: Зламати Закляття Ланцюгів</h3>
+              <p class="text-xs text-slate-400">Налаштуй вирівнювання тексту та товщину меж заклинання, щоб звільнити Дракона!</p>
+            </div>
+          </div>
+          <span class="text-xs font-bold px-3 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded-full">Завдання 5 з 5</span>
+        </div>
+
+        <div class="bg-slate-950 rounded-2xl p-4 border border-slate-800 space-y-4">
+          
+          <!-- Docs Formatting Toolbar -->
+          <div class="bg-slate-100 p-2 rounded-xl border border-slate-300 flex flex-wrap items-center justify-center gap-2 text-slate-800">
+            <!-- Text Alignment Tools -->
+            <div class="flex items-center bg-white border border-slate-300 rounded-lg p-0.5">
+              <button onclick="setTextAlign('left')" class="gdocs-toolbar-btn text-xs px-2" title="За лівим краєм"><i class="fa-solid fa-align-left"></i></button>
+              <button id="align-center-btn" onclick="setTextAlign('center')" class="gdocs-toolbar-btn text-xs px-2 font-bold" title="За центром"><i class="fa-solid fa-align-center"></i></button>
+              <button onclick="setTextAlign('right')" class="gdocs-toolbar-btn text-xs px-2" title="За правим краєм"><i class="fa-solid fa-align-right"></i></button>
+            </div>
+
+            <div class="h-5 w-px bg-slate-300"></div>
+
+            <!-- Border Width Dropdown -->
+            <div class="flex items-center gap-1">
+              <span class="text-[11px] font-bold text-slate-600">Товщина межі:</span>
+              <select id="border-width-select" onchange="applyBorderWidth(this.value)" class="bg-white border border-slate-300 rounded px-2 py-1 text-xs font-bold focus:outline-none">
+                <option value="1px">1 пт (Тонка)</option>
+                <option value="2px">2 пт</option>
+                <option value="3px">3 пт (Товста Магічна)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Dragon Spell Table Rune -->
+          <div class="max-w-md mx-auto my-4 p-4 bg-slate-900/90 rounded-2xl border border-slate-700 text-center">
+            <div class="text-slate-400 text-xs mb-3">Магічна Руна Звільнення:</div>
+
+            <div id="rune-table-container" class="transition-all duration-500 p-1">
+              <table id="rune-table" class="w-full border-collapse border border-red-500 bg-slate-800 transition-all duration-300">
+                <tr>
+                  <td id="rune-cell" class="p-4 text-left text-amber-300 font-bold text-sm tracking-widest transition-all duration-300">
+                    ✨ ВОЛЯ СРІБНОМУ ДРАКОНУ ✨
+                  </td>
+                </tr>
+              </table>
+            </div>
+
+            <div class="mt-4 flex flex-col sm:flex-row justify-center gap-3 text-xs">
+              <div id="check-req-align" class="flex items-center gap-2 bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700 text-slate-400">
+                <i class="fa-solid fa-circle-xmark text-red-400"></i>
+                <span>Текст за центром</span>
+              </div>
+              <div id="check-req-border" class="flex items-center gap-2 bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700 text-slate-400">
+                <i class="fa-solid fa-circle-xmark text-red-400"></i>
+                <span>Товщина межі 3 пт</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-end">
+          <button id="stage5-finish-btn" disabled onclick="finishQuest()" class="py-3 px-8 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-bold text-base shadow-xl transition flex items-center gap-2 cursor-not-allowed">
+            <span>Знімати чари!</span>
+            <i class="fa-solid fa-dragon"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- STAGE 6: VICTORY & CERTIFICATE -->
+      <div id="stage-victory" class="hidden space-y-6 text-center py-4">
+        <!-- Canvas Fireworks Background -->
+        <canvas id="fireworks-canvas" class="absolute inset-0 pointer-events-none z-10"></canvas>
+
+        <div class="relative z-20 space-y-4">
+          <div class="inline-block p-4 rounded-full bg-gradient-to-tr from-amber-400 to-emerald-400 text-slate-950 text-6xl shadow-2xl animate-bounce">
+            🏆
+          </div>
+
+          <h2 class="text-3xl font-bold text-amber-300">Перемога! Дракона Визволено!</h2>
+          <p class="text-slate-300 text-sm max-w-lg mx-auto">
+            Ти чудово впорався зі всіма випробуваннями! Завдяки твоїм знанням Google Документів Срібний Дракон знову вільний!
+          </p>
+
+          <!-- Score Summary Badges -->
+          <div class="flex justify-center items-center gap-4 py-2">
+            <div class="bg-slate-800/90 border border-slate-700 px-4 py-2 rounded-2xl">
+              <div class="text-xs text-slate-400">Твій результат:</div>
+              <div class="text-2xl font-bold text-amber-400"><span id="final-score-val">100</span> балів</div>
+            </div>
+            <div class="bg-slate-800/90 border border-slate-700 px-4 py-2 rounded-2xl">
+              <div class="text-xs text-slate-400">Звання:</div>
+              <div class="text-sm font-bold text-emerald-400">Майстер Таблиць 🥇</div>
+            </div>
+          </div>
+
+          <!-- PLAYER NAME EDIT BEFORE CERTIFICATE -->
+          <div class="bg-slate-800/90 border border-amber-500/40 rounded-2xl p-4 max-w-md mx-auto space-y-2 text-left shadow-lg no-print">
+            <label class="block text-xs font-bold text-amber-300 uppercase tracking-wider">
+              <i class="fa-solid fa-id-card mr-1"></i> Перевір Прізвище та Ім'я для грамоти:
+            </label>
+            <div class="flex gap-2">
+              <input type="text" id="final-name-input" class="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-xl text-amber-300 font-bold text-sm focus:outline-none focus:border-amber-400" placeholder="Наприклад: Петренко Іван">
+              <button onclick="updateCertName()" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-xs whitespace-nowrap shadow transition flex items-center gap-1">
+                <i class="fa-solid fa-arrows-rotate"></i>
+                <span>Оновити</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- CANVAS CERTIFICATE DISPLAY -->
+          <div class="my-6 max-w-3xl mx-auto overflow-hidden rounded-2xl shadow-2xl border-4 border-amber-500/80 bg-slate-950">
+            <canvas id="cert-canvas" width="1200" height="850" class="w-full h-auto block"></canvas>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-wrap items-center justify-center gap-3 no-print">
+            <button onclick="downloadCertificatePNG()" class="py-3 px-6 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-sm shadow-lg transition flex items-center gap-2">
+              <i class="fa-solid fa-download"></i>
+              <span>Завантажити грамоту (PNG)</span>
+            </button>
+
+            <button onclick="printCertificate()" class="py-3 px-6 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-bold text-sm shadow-lg transition flex items-center gap-2">
+              <i class="fa-solid fa-print"></i>
+              <span>Роздрукувати грамоту</span>
+            </button>
+            
+            <button onclick="restartQuest()" class="py-3 px-6 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold text-sm border border-slate-700 shadow-lg transition flex items-center gap-2">
+              <i class="fa-solid fa-rotate-right"></i>
+              <span>Пройти знову</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="text-center py-4 text-xs text-slate-500 border-t border-slate-800/80 no-print">
+    Інтерактивна навчальна гра з інформатики для 5 класу • Google Документи: Таблиці
+  </footer>
+
+  <!-- JAVASCRIPT GAME LOGIC & AUDIO SYNTHESIZER -->
+  <script>
+    // Game State Object
+    const gameState = {
+      playerName: 'Відважний Лицар',
+      avatar: '🧙‍♂️',
+      score: 0,
+      currentStage: 0,
+      soundEnabled: true,
+      stageCompleted: [false, false, false, false, false, false],
+      // Sub-task flags
+      stage2A: false,
+      stage2B: false,
+      stage3SelectedCells: [],
+      stage5Align: false,
+      stage5Border: false
+    };
+
+    // Web Audio API Synthesizer
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function playSound(type) {
+      if (!gameState.soundEnabled) return;
+      initAudio();
+      if (!audioCtx) return;
+
+      const now = audioCtx.currentTime;
+
+      if (type === 'click') {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(400, now);
+        osc.frequency.exponentialRampToValueAtTime(800, now + 0.08);
+        gain.gain.setValueAtTime(0.15, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.08);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.08);
+      } 
+      else if (type === 'success') {
+        const freqs = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+        freqs.forEach((f, index) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(f, now + index * 0.08);
+          gain.gain.setValueAtTime(0.2, now + index * 0.08);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + index * 0.08 + 0.25);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now + index * 0.08);
+          osc.stop(now + index * 0.08 + 0.25);
+        });
+      }
+      else if (type === 'error') {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(220, now);
+        osc.frequency.linearRampToValueAtTime(110, now + 0.2);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.2);
+      }
+      else if (type === 'fanfare') {
+        const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51];
+        notes.forEach((f, index) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(f, now + index * 0.12);
+          gain.gain.setValueAtTime(0.25, now + index * 0.12);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + index * 0.12 + 0.4);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now + index * 0.12);
+          osc.stop(now + index * 0.12 + 0.4);
+        });
+      }
+    }
+
+    // Sound toggle listener
+    document.getElementById('sound-toggle-btn').addEventListener('click', () => {
+      gameState.soundEnabled = !gameState.soundEnabled;
+      const icon = document.getElementById('sound-icon');
+      if (gameState.soundEnabled) {
+        icon.className = 'fa-solid fa-volume-high text-amber-400';
+      } else {
+        icon.className = 'fa-solid fa-volume-xmark text-slate-500';
+      }
+    });
+
+    // Avatar Selection Logic
+    function selectAvatar(emoji, element) {
+      playSound('click');
+      gameState.avatar = emoji;
+      document.querySelectorAll('.avatar-opt').forEach(btn => {
+        btn.classList.remove('active-avatar', 'border-amber-400', 'bg-purple-900/60');
+      });
+      element.classList.add('active-avatar', 'border-amber-400', 'bg-purple-900/60');
+    }
+
+    // Companion Speech Bubble Updater
+    function updateDialogue(text) {
+      const dialogueEl = document.getElementById('dialogue-text');
+      dialogueEl.innerHTML = text;
+    }
+
+    // Start Quest Logic
+    function startGame() {
+      playSound('click');
+      const nameInput = document.getElementById('player-name-input').value.trim();
+      if (nameInput) {
+        gameState.playerName = nameInput;
+      }
+
+      document.getElementById('player-name-display').innerText = gameState.playerName;
+      document.getElementById('player-avatar-badge').innerText = gameState.avatar;
+
+      // Unhide stats bar and companion banner
+      document.getElementById('stats-container').classList.remove('hidden');
+      document.getElementById('companion-container').classList.remove('hidden');
+
+      nextStage();
+    }
+
+    // Navigation Between Stages
+    function nextStage() {
+      playSound('click');
+      
+      // Hide all stage containers
+      for (let i = 0; i <= 6; i++) {
+        const stageEl = document.getElementById(`stage-${i}`);
+        if (stageEl) stageEl.classList.add('hidden');
+      }
+
+      gameState.currentStage++;
+      
+      const currentEl = document.getElementById(`stage-${gameState.currentStage}`);
+      if (currentEl) {
+        currentEl.classList.remove('hidden');
+      }
+
+      // Update progress bar
+      if (gameState.currentStage <= 5) {
+        document.getElementById('stage-counter').innerText = `${gameState.currentStage}/5`;
+        document.getElementById('progress-bar-fill').style.width = `${(gameState.currentStage / 5) * 100}%`;
+      }
+
+      // Stage Dialogues
+      if (gameState.currentStage === 1) {
+        updateDialogue("Перше випробування — Замковий Рів! Щоб побудувати міст, нам потрібна таблиця <strong class='text-amber-300'>4×4</strong>. Клацни меню <span class='text-blue-400'>Вставка ➔ Таблиця</span> та вибери необхідну сітку!");
+        initStage1Grid();
+      } else if (gameState.currentStage === 2) {
+        updateDialogue("Сходинки зламані! Додай 1 рядок внизу через контекстне меню (Крок 1) та видали пошкоджений стовпець (Крок 2)!");
+      } else if (gameState.currentStage === 3) {
+        updateDialogue("Попереду кристальний міст! Клацни по всіх трьох кристалах, щоб виділити їх, а потім обірий команду <strong class='text-amber-300'>«Об'єднати клітинки»</strong>!");
+      } else if (gameState.currentStage === 4) {
+        updateDialogue("Захисний щит знеструмлено! Оберіть інструмент <strong class='text-amber-300'>«Колір фону»</strong> (Відро з фарбою) на панелі інструментів та розфарбуйте його Золотим кольором!");
+      } else if (gameState.currentStage === 5) {
+        updateDialogue("Ми у вежі Дракона! Вирівняй текст за центром та встанови товщину меж таблиці 3 пт, щоб розірвати темні ланцюги!");
+      } else if (gameState.currentStage === 6) {
+        updateDialogue("Ура! Дракон вільний! Ти справжній Майстер Google Документів! Збережи або роздрукуй свою нагородну грамоту!");
+        document.getElementById('final-name-input').value = gameState.playerName;
+        drawCertificateCanvas();
+        triggerFireworks();
+      }
+    }
+
+    // Add Score
+    function addScore(pts) {
+      gameState.score += pts;
+      document.getElementById('score-display').innerText = gameState.score;
+      document.getElementById('final-score-val').innerText = gameState.score;
+    }
+
+    /* ---------------------------------------------------
+       STAGE 1 LOGIC: Insert Table (4x4)
+    --------------------------------------------------- */
+    function toggleDocsDropdown(id) {
+      playSound('click');
+      const el = document.getElementById(id);
+      el.classList.toggle('hidden');
+    }
+
+    function showTablePicker() {
+      document.getElementById('table-grid-picker').classList.remove('hidden');
+    }
+
+    function initStage1Grid() {
+      const container = document.getElementById('grid-container');
+      container.innerHTML = '';
+
+      for (let r = 1; r <= 5; r++) {
+        for (let c = 1; c <= 5; c++) {
+          const square = document.createElement('div');
+          square.className = 'grid-square cursor-pointer rounded-sm';
+          square.dataset.row = r;
+          square.dataset.col = c;
+
+          square.addEventListener('mouseenter', () => highlightGrid(r, c));
+          square.addEventListener('click', () => selectGridSize(r, c));
+
+          container.appendChild(square);
+        }
+      }
+    }
+
+    function highlightGrid(maxR, maxC) {
+      document.getElementById('grid-size-label').innerText = `Виберіть розмір: ${maxC}×${maxR}`;
+      document.querySelectorAll('.grid-square').forEach(sq => {
+        const r = parseInt(sq.dataset.row);
+        const c = parseInt(sq.dataset.col);
+        if (r <= maxR && c <= maxC) {
+          sq.classList.add('highlighted');
+        } else {
+          sq.classList.remove('highlighted');
+        }
+      });
+    }
+
+    function selectGridSize(r, c) {
+      if (r === 4 && c === 4) {
+        playSound('success');
+        addScore(20);
+
+        // Hide menus
+        document.getElementById('insert-dropdown').classList.add('hidden');
+        document.getElementById('table-grid-picker').classList.add('hidden');
+
+        // Render Bridge Table
+        const resultArea = document.getElementById('bridge-result-area');
+        resultArea.innerHTML = `
+          <div class="w-full animate-bounce duration-500">
+            <div class="text-xs font-bold text-emerald-600 mb-1">✨ Міст успішно побудовано! (Таблиця 4×4) ✨</div>
+            <table class="w-full border-collapse border-2 border-amber-500 bg-amber-100 rounded-lg overflow-hidden shadow-xl">
+              ${'<tr>' + '<td class="border border-amber-400 p-2 text-center text-amber-900 font-bold text-xs">🧱 Камінь</td>'.repeat(4) + '</tr>' .repeat(4)}
+            </table>
+          </div>
+        `;
+
+        updateDialogue("Відмінно! Таблицю 4×4 створено, і міст через рів побудовано! Можемо йти далі!");
+        
+        const nextBtn = document.getElementById('stage1-next-btn');
+        nextBtn.disabled = false;
+        nextBtn.className = "py-3 px-6 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold shadow-lg transition flex items-center gap-2 cursor-pointer glow-gold";
+      } else {
+        playSound('error');
+        updateDialogue(`Нам потрібна таблиця <strong class="text-amber-300">4×4</strong> (4 рядки та 4 стовпці). Ви обрали ${c}×${r}. Спробуйте ще раз!`);
+      }
+    }
+
+    /* ---------------------------------------------------
+       STAGE 2 LOGIC: Add Row / Delete Column
+    --------------------------------------------------- */
+    function openContextMenuStage2(e) {
+      e.preventDefault();
+      playSound('click');
+      document.getElementById('context-menu-2a').classList.toggle('hidden');
+    }
+
+    function checkStage2A(action) {
+      document.getElementById('context-menu-2a').classList.add('hidden');
+      if (action === 'below') {
+        playSound('success');
+        gameState.stage2A = true;
+        document.getElementById('step2a-status').innerText = 'Виконано ✓';
+        document.getElementById('step2a-status').className = 'text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded-full';
+        
+        // Append Row to table mockup
+        const table = document.getElementById('stairs-table-2a');
+        const newRow = table.insertRow(-1);
+        newRow.className = "bg-indigo-200 font-bold text-indigo-950";
+        newRow.innerHTML = '<td class="border border-slate-400 p-2">Сходинка 3</td><td class="border border-slate-400 p-2">Висота 30 см</td>';
+
+        addScore(10);
+        checkStage2Complete();
+      } else {
+        playSound('error');
+        updateDialogue("Щоб додати сходинку нижче поточного рядка, потрібно обрати саме <strong class='text-amber-300'>«Вставити рядок нижче»</strong>!");
+      }
+    }
+
+    function checkStage2B(action) {
+      if (action === 'del_col') {
+        playSound('success');
+        gameState.stage2B = true;
+        document.getElementById('step2b-status').innerText = 'Виконано ✓';
+        document.getElementById('step2b-status').className = 'text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded-full';
+        addScore(10);
+        checkStage2Complete();
+      } else {
+        playSound('error');
+        updateDialogue("Щоб повністю прибрати пошкоджений стовпець, виберіть команду <strong class='text-amber-300'>«Видалити стовпець»</strong>!");
+      }
+    }
+
+    function checkStage2Complete() {
+      if (gameState.stage2A && gameState.stage2B) {
+        updateDialogue("Чудово! Сходинки відремонтовано, а перешкоду усунуто! Дорога відкрита!");
+        const nextBtn = document.getElementById('stage2-next-btn');
+        nextBtn.disabled = false;
+        nextBtn.className = "py-3 px-6 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold shadow-lg transition flex items-center gap-2 cursor-pointer glow-gold";
+      }
+    }
+
+    /* ---------------------------------------------------
+       STAGE 3 LOGIC: Merge Cells
+    --------------------------------------------------- */
+    function toggleCellSelection(idx) {
+      playSound('click');
+      const cell = document.getElementById(`merge-cell-${idx}`);
+      
+      if (gameState.stage3SelectedCells.includes(idx)) {
+        gameState.stage3SelectedCells = gameState.stage3SelectedCells.filter(i => i !== idx);
+        cell.classList.remove('selected');
+      } else {
+        gameState.stage3SelectedCells.push(idx);
+        cell.classList.add('selected');
+      }
+    }
+
+    function applyMergeCells() {
+      if (gameState.stage3SelectedCells.length === 3) {
+        playSound('success');
+        addScore(20);
+
+        document.getElementById('merge-table').classList.add('hidden');
+        document.getElementById('merged-result-view').classList.remove('hidden');
+        document.getElementById('merge-action-btn').classList.add('hidden');
+
+        updateDialogue("Прекрасно! Всі 3 клітинки об'єднано в один монолітний кристал за допомогою команди <strong class='text-amber-300'>«Об'єднати клітинки»</strong>!");
+        
+        const nextBtn = document.getElementById('stage3-next-btn');
+        nextBtn.disabled = false;
+        nextBtn.className = "py-3 px-6 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold shadow-lg transition flex items-center gap-2 cursor-pointer glow-gold";
+      } else {
+        playSound('error');
+        updateDialogue("Виділіть спочатку <strong>всі 3 клітинки</strong> (клацніть по кожній із них), перш ніж натискати «Об'єднати клітинки»!");
+      }
+    }
+
+    /* ---------------------------------------------------
+       STAGE 4 LOGIC: Background Fill Color
+    --------------------------------------------------- */
+    function toggleColorPalette() {
+      playSound('click');
+      document.getElementById('color-palette-popup').classList.toggle('hidden');
+    }
+
+    function applyShieldColor(color) {
+      playSound('click');
+      document.getElementById('color-palette-popup').classList.add('hidden');
+
+      if (color === '#fbbf24') {
+        playSound('success');
+        addScore(20);
+
+        for (let i = 1; i <= 4; i++) {
+          const cell = document.getElementById(`shield-cell-${i}`);
+          cell.style.backgroundColor = '#fbbf24';
+          cell.style.borderColor = '#d97706';
+          cell.style.boxShadow = '0 0 15px #fbbf24';
+        }
+
+        document.getElementById('shield-hint-msg').innerText = "✨ Щит Заряджено Золотим Світлом! ✨";
+        updateDialogue("Супер! Ви використали кнопку <strong class='text-amber-300'>«Колір фону»</strong> (Заливка) на панелі інструментів і зарядили щит!");
+
+        const nextBtn = document.getElementById('stage4-next-btn');
+        nextBtn.disabled = false;
+        nextBtn.className = "py-3 px-6 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold shadow-lg transition flex items-center gap-2 cursor-pointer glow-gold";
+      } else {
+        playSound('error');
+        updateDialogue("Цей колір не підходить! Нам потрібен саме <strong class='text-amber-300'>Золотий колір</strong>, щоб зарядити магічний щит!");
+      }
+    }
+
+    /* ---------------------------------------------------
+       STAGE 5 LOGIC: Text Align & Border Width
+    --------------------------------------------------- */
+    function setTextAlign(align) {
+      playSound('click');
+      const cell = document.getElementById('rune-cell');
+      cell.style.textAlign = align;
+
+      if (align === 'center') {
+        gameState.stage5Align = true;
+        document.getElementById('align-center-btn').classList.add('active');
+        document.getElementById('check-req-align').innerHTML = '<i class="fa-solid fa-circle-check text-emerald-400"></i><span class="text-emerald-300">Текст за центром ✓</span>';
+        checkStage5Complete();
+      }
+    }
+
+    function applyBorderWidth(val) {
+      playSound('click');
+      const table = document.getElementById('rune-table');
+      table.style.borderWidth = val;
+
+      if (val === '3px') {
+        table.style.borderColor = '#fbbf24';
+        gameState.stage5Border = true;
+        document.getElementById('check-req-border').innerHTML = '<i class="fa-solid fa-circle-check text-emerald-400"></i><span class="text-emerald-300">Товщина межі 3 пт ✓</span>';
+        checkStage5Complete();
+      }
+    }
+
+    function checkStage5Complete() {
+      if (gameState.stage5Align && gameState.stage5Border) {
+        playSound('success');
+        addScore(20);
+
+        updateDialogue("Заклинання сформовано ідеально! Текст за центром, а межі 3пт сяють золотом! Готові визволити Дракона!");
+
+        const finishBtn = document.getElementById('stage5-finish-btn');
+        finishBtn.disabled = false;
+        finishBtn.className = "py-3 px-8 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-base shadow-xl transition flex items-center gap-2 cursor-pointer glow-gold";
+      }
+    }
+
+    function finishQuest() {
+      playSound('fanfare');
+      nextStage();
+    }
+
+    /* ---------------------------------------------------
+       STAGE 6 LOGIC: DYNAMIC CANVAS CERTIFICATE GENERATOR
+    --------------------------------------------------- */
+    function updateCertName() {
+      const input = document.getElementById('final-name-input');
+      if (input && input.value.trim()) {
+        gameState.playerName = input.value.trim();
+        document.getElementById('player-name-display').innerText = gameState.playerName;
+        drawCertificateCanvas();
+        playSound('click');
+      }
+    }
+
+    function drawCertificateCanvas() {
+      const canvas = document.getElementById('cert-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+
+      // 1. Background Fill (Warm Parchment Gradient)
+      const bgGrad = ctx.createRadialGradient(w/2, h/2, 100, w/2, h/2, 700);
+      bgGrad.addColorStop(0, '#ffffff');
+      bgGrad.addColorStop(0.7, '#fffdfa');
+      bgGrad.addColorStop(1, '#fef3c7');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, w, h);
+
+      // Subtle linear background grid design
+      ctx.strokeStyle = 'rgba(217, 119, 6, 0.04)';
+      ctx.lineWidth = 1;
+      for (let i = 0; i < w; i += 30) {
+        ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, h); ctx.stroke();
+      }
+
+      // 2. Ornate Multi-layer Borders
+      // Outer Amber Border
+      ctx.strokeStyle = '#d97706';
+      ctx.lineWidth = 14;
+      ctx.strokeRect(25, 25, w - 50, h - 50);
+
+      // Inner Purple Border
+      ctx.strokeStyle = '#4c1d95';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(42, 42, w - 84, h - 84);
+
+      // Corner Ornaments
+      const corners = [
+        [42, 42], [w - 42, 42], [42, h - 42], [w - 42, h - 42]
+      ];
+      corners.forEach(([cx, cy]) => {
+        ctx.fillStyle = '#b45309';
+        ctx.beginPath(); ctx.arc(cx, cy, 14, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#fef3c7';
+        ctx.beginPath(); ctx.arc(cx, cy, 6, 0, Math.PI * 2); ctx.fill();
+      });
+
+      // 3. Header Icons & Subtitle
+      ctx.textAlign = 'center';
+      ctx.font = '38px sans-serif';
+      ctx.fillText('🐉   🦉   📜', w / 2, 110);
+
+      ctx.fillStyle = '#b45309';
+      ctx.font = 'bold 22px "Fredoka", sans-serif';
+      ctx.fillText('ОФІЦІЙНА НАГОРОДНА ГРАМОТА', w / 2, 150);
+
+      // Main Title
+      ctx.fillStyle = '#2e1065';
+      ctx.font = 'bold 44px "Fredoka", sans-serif';
+      ctx.fillText('СВІДОЦТВО МАЙСТРА GOOGLE ДОКУМЕНТІВ', w / 2, 210);
+
+      // Decorative Line
+      ctx.strokeStyle = '#f59e0b';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.moveTo(w / 2 - 260, 230); ctx.lineTo(w / 2 + 260, 230); ctx.stroke();
+
+      // Subtext
+      ctx.fillStyle = '#475569';
+      ctx.font = '22px "Fredoka", sans-serif';
+      ctx.fillText('Цією грамотою за високі досягнення нагороджується:', w / 2, 280);
+
+      // Student Name
+      const nameToDraw = gameState.playerName || 'Відважний Лицар';
+      ctx.fillStyle = '#d97706';
+      ctx.font = 'bold 48px "Fredoka", sans-serif';
+      ctx.fillText(nameToDraw, w / 2, 345);
+
+      // Name Underline
+      const nameWidth = Math.max(320, ctx.measureText(nameToDraw).width + 60);
+      ctx.strokeStyle = '#f59e0b';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(w / 2 - nameWidth / 2, 360);
+      ctx.lineTo(w / 2 + nameWidth / 2, 360);
+      ctx.stroke();
+
+      // Narrative Text
+      ctx.fillStyle = '#1e293b';
+      ctx.font = '20px "Fredoka", sans-serif';
+      ctx.fillText('За успішне подолання інтерактивного квесту «Порятунок Срібного Дракона»', w / 2, 415);
+      ctx.fillText('та відмінне володіння прийомами роботи з таблицями в Google Документах:', w / 2, 445);
+
+      // Skills Badge Container Box
+      ctx.fillStyle = '#f3e8ff';
+      ctx.strokeStyle = '#c084fc';
+      ctx.lineWidth = 2;
+      
+      if (ctx.roundRect) {
+        ctx.beginPath();
+        ctx.roundRect(140, 475, w - 280, 105, 16);
+        ctx.fill(); ctx.stroke();
+      } else {
+        ctx.fillRect(140, 475, w - 280, 105);
+        ctx.strokeRect(140, 475, w - 280, 105);
+      }
+
+      ctx.fillStyle = '#581c87';
+      ctx.font = 'bold 18px "Fredoka", sans-serif';
+      ctx.fillText('✓ Вставка таблиць • ✓ Додавання та видалення рядків і стовпців', w / 2, 512);
+      ctx.fillText('✓ Об\'єднання клітинок • ✓ Колір фону (заливка) • ✓ Форматування меж', w / 2, 548);
+
+      // 4. Gold Magic Seal (Right Side Stamp)
+      const sealX = w - 200;
+      const sealY = 690;
+      
+      ctx.save();
+      ctx.translate(sealX, sealY);
+      ctx.fillStyle = '#f59e0b';
+      ctx.beginPath();
+      for (let i = 0; i < 16; i++) {
+        const angle = (i * Math.PI) / 8;
+        const r = i % 2 === 0 ? 65 : 55;
+        ctx.lineTo(Math.cos(angle) * r, Math.sin(angle) * r);
+      }
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = '#6d28d9';
+      ctx.beginPath(); ctx.arc(0, 0, 48, 0, Math.PI * 2); ctx.fill();
+
+      ctx.strokeStyle = '#fbbf24';
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(0, 0, 42, 0, Math.PI * 2); ctx.stroke();
+
+      ctx.fillStyle = '#fef3c7';
+      ctx.font = 'bold 12px "Fredoka", sans-serif';
+      ctx.fillText('СЛУЖБА', 0, -18);
+      ctx.font = 'bold 18px sans-serif';
+      ctx.fillText('🐉 100%', 0, 5);
+      ctx.font = 'bold 12px "Fredoka", sans-serif';
+      ctx.fillText('МАЙСТЕР', 0, 25);
+      ctx.restore();
+
+      // 5. Score & Details (Left Side)
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#1e293b';
+      ctx.font = 'bold 20px "Fredoka", sans-serif';
+      ctx.fillText(`Результат: ${gameState.score} / 100 балів`, 120, 665);
+      
+      ctx.fillStyle = '#059669';
+      ctx.font = 'bold 22px "Fredoka", sans-serif';
+      ctx.fillText('Оцінка: Відмінно (12 балів) 🏆', 120, 700);
+
+      const today = new Date().toLocaleDateString('uk-UA');
+      ctx.fillStyle = '#64748b';
+      ctx.font = '18px "Fredoka", sans-serif';
+      ctx.fillText(`Дата: ${today}`, 120, 740);
+
+      // Signature (Center Right)
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#334155';
+      ctx.font = 'italic 20px serif';
+      ctx.fillText('Мудре Совеня-Айтішник 🦉', w - 460, 710);
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(w - 580, 720); ctx.lineTo(w - 340, 720); ctx.stroke();
+      ctx.font = '14px "Fredoka", sans-serif';
+      ctx.fillStyle = '#64748b';
+      ctx.fillText('Вчитель інформатики', w - 460, 742);
+    }
+
+    function downloadCertificatePNG() {
+      playSound('click');
+      const canvas = document.getElementById('cert-canvas');
+      if (!canvas) return;
+
+      const link = document.createElement('a');
+      const cleanName = (gameState.playerName || 'Учень').replace(/[^a-zA-Zа-яА-ЯіІїЇєЄґҐ0-9]/g, '_');
+      link.download = `Грамота_${cleanName}_GoogleDocs.png`;
+      link.href = canvas.toDataURL('image/png');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function printCertificate() {
+      playSound('click');
+      const canvas = document.getElementById('cert-canvas');
+      if (!canvas) return;
+
+      const dataUrl = canvas.toDataURL('image/png');
+      const printWindow = window.open('', '_blank');
+      if (printWindow) {
+        printWindow.document.write(`
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>Грамота - ${gameState.playerName}</title>
+            <style>
+              body { margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #fff; }
+              img { max-width: 100%; max-height: 98vh; object-fit: contain; }
+              @page { size: landscape; margin: 0; }
+            </style>
+          </head>
+          <body>
+            <img src="${dataUrl}" />
+            <script>
+              window.onload = function() {
+                setTimeout(function() {
+                  window.print();
+                  window.close();
+                }, 300);
+              };
+            <\/script>
+          </body>
+          </html>
+        `);
+        printWindow.document.close();
+      } else {
+        window.print();
+      }
+    }
+
+    // Restart Game
+    function restartQuest() {
+      location.reload();
+    }
+
+    /* ---------------------------------------------------
+       VICTORY CANVAS FIREWORKS ANIMATION
+    --------------------------------------------------- */
+    function triggerFireworks() {
+      const canvas = document.getElementById('fireworks-canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = canvas.parentElement.clientWidth;
+      canvas.height = canvas.parentElement.clientHeight;
+
+      const particles = [];
+      const colors = ['#fbbf24', '#34d399', '#60a5fa', '#f472b6', '#a78bfa'];
+
+      for (let i = 0; i < 90; i++) {
+        particles.push({
+          x: canvas.width / 2,
+          y: canvas.height / 2,
+          dx: (Math.random() - 0.5) * 8,
+          dy: (Math.random() - 0.5) * 8,
+          radius: Math.random() * 4 + 2,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: 1,
+          decay: Math.random() * 0.02 + 0.01
+        });
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach((p, idx) => {
+          p.x += p.dx;
+          p.y += p.dy;
+          p.alpha -= p.decay;
+
+          if (p.alpha <= 0) {
+            particles.splice(idx, 1);
+          } else {
+            ctx.save();
+            ctx.globalAlpha = p.alpha;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            ctx.fillStyle = p.color;
+            ctx.fill();
+            ctx.restore();
+          }
+        });
+
+        if (particles.length > 0) {
+          requestAnimationFrame(animate);
+        }
+      }
+
+      animate();
+    }
+  </script>
+</body>
+</html>
