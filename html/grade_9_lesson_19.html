@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="uk" class="h-full bg-slate-900 text-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест: Вступ до тривимірного моделювання у Blockbench</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(30, 41, 59, 0.5);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #4f46e5;
+            border-radius: 9999px;
+        }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-slate-100 antialiased selection:bg-indigo-500 selection:text-white">
+
+    <!-- Header Section -->
+    <header class="sticky top-0 z-30 glass-panel border-b border-slate-800/80 shadow-lg">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/30 ring-1 ring-white/20">
+                    <i class="fa-solid font-bold fa-cube text-white text-lg"></i>
+                </div>
+                <div>
+                    <span class="text-xs font-semibold tracking-wider uppercase text-indigo-400 block">Інформатика 9 клас</span>
+                    <h1 class="text-base sm:text-lg font-bold text-white tracking-tight leading-none">Урок 19: Blockbench 3D</h1>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 sm:gap-3">
+                <span class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-indigo-950/80 text-indigo-300 border border-indigo-700/50">
+                    <i class="fa-solid fa-graduation-cap text-indigo-400"></i>
+                    12-бальна система
+                </span>
+                <button id="toggle-view-btn" onclick="toggleViewMode()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-list-check" id="view-icon"></i>
+                    <span id="view-btn-text" class="hidden md:inline">Усі питання</span>
+                </button>
+            </div>
+        </div>
+        <!-- Progress Bar Container -->
+        <div class="w-full bg-slate-800/60 h-1.5 relative overflow-hidden">
+            <div id="progress-bar" class="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 transition-all duration-300 ease-out" style="width: 8.33%;"></div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-5xl w-full mx-auto px-4 sm:px-6 py-6 flex flex-col gap-6">
+
+        <!-- QUIZ CONTAINER -->
+        <div id="quiz-screen" class="flex flex-col gap-6">
+
+            <!-- Question Navigation Dots / Grid -->
+            <div class="glass-panel rounded-2xl p-4 shadow-xl">
+                <div class="flex items-center justify-between mb-3 text-xs text-slate-400 font-medium">
+                    <span>Навігація за запитаннями:</span>
+                    <span id="answered-count-badge" class="text-indigo-400 font-semibold">0 з 12 дано відповідей</span>
+                </div>
+                <div class="grid grid-cols-6 sm:grid-cols-12 gap-2" id="question-nav-grid">
+                    <!-- Dynamic Question Buttons generated via JS -->
+                </div>
+            </div>
+
+            <!-- Single Question Card Container -->
+            <div id="single-question-container" class="glass-panel rounded-2xl p-5 sm:p-8 shadow-2xl relative border border-slate-800/80 transition-all duration-300">
+                <!-- Question Header -->
+                <div class="flex flex-wrap items-center justify-between gap-2 pb-4 mb-5 border-b border-slate-800">
+                    <div class="flex items-center gap-2">
+                        <span id="current-q-num-badge" class="px-3 py-1 rounded-lg text-xs font-bold bg-indigo-600/30 text-indigo-300 border border-indigo-500/30">
+                            Запитання 1 з 12
+                        </span>
+                        <span id="question-type-badge" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700">
+                            Одиночний вибір
+                        </span>
+                    </div>
+                    <span id="question-hint" class="text-xs text-amber-400/90 font-medium flex items-center gap-1 hidden">
+                        <i class="fa-solid fa-circle-info"></i> (Оберіть декілька правильних відповідей)
+                    </span>
+                </div>
+
+                <!-- Question Text -->
+                <h2 id="question-title" class="text-lg sm:text-xl font-bold text-slate-100 leading-snug mb-6">
+                    <!-- Question text injected here -->
+                </h2>
+
+                <!-- Answer Options Container -->
+                <div id="options-container" class="space-y-3">
+                    <!-- Options injected here -->
+                </div>
+            </div>
+
+            <!-- All Questions Container (Hidden by default, used when user toggles "View All") -->
+            <div id="all-questions-container" class="space-y-6 hidden">
+                <!-- All questions rendered here -->
+            </div>
+
+            <!-- Navigation Controls -->
+            <div class="flex items-center justify-between gap-4 pt-2">
+                <button id="prev-btn" onclick="prevQuestion()" class="px-5 py-2.5 rounded-xl text-sm font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>Назад</span>
+                </button>
+
+                <div class="flex items-center gap-3">
+                    <button id="finish-btn" onclick="confirmFinishQuiz()" class="px-5 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-lg shadow-emerald-900/30 transition flex items-center gap-2">
+                        <i class="fa-solid fa-check-double"></i>
+                        <span>Завершити тест</span>
+                    </button>
+
+                    <button id="next-btn" onclick="nextQuestion()" class="px-6 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-lg shadow-indigo-600/30 transition flex items-center gap-2">
+                        <span>Далі</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESULTS SCREEN (Hidden by default) -->
+        <div id="results-screen" class="hidden flex-col gap-8 my-auto py-4">
+
+            <!-- Result Summary Card -->
+            <div class="glass-panel rounded-3xl p-6 sm:p-10 shadow-2xl border border-indigo-500/20 text-center relative overflow-hidden">
+                <div class="absolute -top-24 -right-24 w-72 h-72 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -bottom-24 -left-24 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="inline-flex p-3 rounded-2xl bg-indigo-950/60 text-indigo-400 mb-4 ring-1 ring-indigo-500/30">
+                    <i class="fa-solid fa-award text-3xl"></i>
+                </div>
+
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-white mb-2">Результат тестування</h2>
+                <p class="text-sm text-slate-400 mb-6">Тест: Урок 19. Вступ до тривимірного моделювання у Blockbench</p>
+
+                <!-- Grade Display -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-xl mx-auto mb-8">
+                    <div class="p-4 rounded-2xl bg-slate-800/80 border border-slate-700/60 flex flex-col items-center justify-center">
+                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Оцінка</span>
+                        <span id="final-grade" class="text-3xl font-black text-indigo-400">0 / 12</span>
+                        <span class="text-xs text-slate-400 mt-0.5">балів</span>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-slate-800/80 border border-slate-700/60 flex flex-col items-center justify-center">
+                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Успішність</span>
+                        <span id="final-percent" class="text-3xl font-black text-violet-400">0%</span>
+                        <span class="text-xs text-slate-400 mt-0.5">правильних дій</span>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-slate-800/80 border border-slate-700/60 flex flex-col items-center justify-center">
+                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Рівень знань</span>
+                        <span id="final-level" class="text-base font-bold text-emerald-400 mt-2">Високий</span>
+                    </div>
+                </div>
+
+                <!-- Action Button -->
+                <button onclick="restartQuiz()" class="px-8 py-3.5 rounded-2xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:to-pink-500 text-white shadow-xl shadow-indigo-600/30 transition transform hover:-translate-y-0.5 flex items-center gap-2 mx-auto">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span>Пройти знову</span>
+                </button>
+            </div>
+
+            <!-- Detailed Breakdown Section -->
+            <div class="glass-panel rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-800">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-800">
+                    <div>
+                        <h3 class="text-lg font-bold text-white">Детальний аналіз відповідей</h3>
+                        <p class="text-xs text-slate-400">Перевірте свої помилки та вірні відповіді</p>
+                    </div>
+
+                    <!-- Filter Tabs -->
+                    <div class="flex items-center gap-1 bg-slate-800/90 p-1 rounded-xl border border-slate-700/60 self-start sm:self-auto text-xs font-medium">
+                        <button onclick="filterResults('all')" id="filter-all" class="px-3 py-1.5 rounded-lg transition bg-indigo-600 text-white font-semibold">Усі (12)</button>
+                        <button onclick="filterResults('correct')" id="filter-correct" class="px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white">Вірно</button>
+                        <button onclick="filterResults('incorrect')" id="filter-incorrect" class="px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white">З помилками</button>
+                    </div>
+                </div>
+
+                <!-- List of Reviewed Questions -->
+                <div id="review-list" class="space-y-4">
+                    <!-- Injected dynamically via JS -->
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Confirmation Modal -->
+    <div id="confirm-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="glass-panel rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-slate-700 text-center animate-fade-in">
+            <div class="w-14 h-14 rounded-full bg-amber-500/20 border border-amber-500/30 text-amber-400 flex items-center justify-center mx-auto mb-4 text-2xl">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2">Завершити тест?</h3>
+            <p id="modal-unanswered-warning" class="text-sm text-slate-300 mb-6 leading-relaxed">
+                Ви відповіли не на всі запитання. Пропущені питання будуть зараховані як неправильні!
+            </p>
+            <div class="flex items-center justify-center gap-3">
+                <button onclick="closeConfirmModal()" class="px-5 py-2.5 rounded-xl text-sm font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition">
+                    Повернутися
+                </button>
+                <button onclick="submitQuiz()" class="px-6 py-2.5 rounded-xl text-sm font-semibold bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-900/30 transition">
+                    Підтвердити
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="py-4 text-center text-xs text-slate-500 border-t border-slate-800/60 mt-auto">
+        <p>Інформатика 9 клас • 3D-моделювання у Blockbench © 2026</p>
+    </footer>
+
+    <!-- JavaScript logic -->
+    <script>
+        // Master Questions Dataset
+        const masterQuestions = [
+            {
+                id: 1,
+                type: "single",
+                question: "Яка вісь у тривимірному просторі відповідає за глибину?",
+                options: [
+                    { text: "Вісь Z", isCorrect: true },
+                    { text: "Вісь X", isCorrect: false },
+                    { text: "Вісь Y", isCorrect: false },
+                    { text: "Вісь W", isCorrect: false }
+                ]
+            },
+            {
+                id: 2,
+                type: "single",
+                question: "Процес розгортання 3D-поверхні на 2D-площину для накладання текстури називається:",
+                options: [
+                    { text: "UV-розгортка", isCorrect: true },
+                    { text: "Рендеринг", isCorrect: false },
+                    { text: "Моделювання", isCorrect: false },
+                    { text: "Скелетна анімація", isCorrect: false }
+                ]
+            },
+            {
+                id: 3,
+                type: "single",
+                question: "Яка комбінація клавіш у Blockbench дублює обраний елемент?",
+                options: [
+                    { text: "Ctrl + D", isCorrect: true },
+                    { text: "Ctrl + C", isCorrect: false },
+                    { text: "Ctrl + V", isCorrect: false },
+                    { text: "Ctrl + Z", isCorrect: false }
+                ]
+            },
+            {
+                id: 4,
+                type: "single",
+                question: "Елемент інтерфейсу Blockbench, у якому відображається ієрархічний список усіх кубів та груп моделі, називається:",
+                options: [
+                    { text: "Outliner", isCorrect: true },
+                    { text: "Viewport", isCorrect: false },
+                    { text: "Textures", isCorrect: false },
+                    { text: "Toolbar", isCorrect: false }
+                ]
+            },
+            {
+                id: 5,
+                type: "single",
+                question: "Який вид 3D-моделей будується з тривимірних пікселів або елементарних кубів і є базовим для ігор Minecraft та Roblox?",
+                options: [
+                    { text: "Воксельні та кубоїдні моделі", isCorrect: true },
+                    { text: "Полігональні High-Poly моделі", isCorrect: false },
+                    { text: "Каркасні (Wireframe) моделі", isCorrect: false },
+                    { text: "Твердотілі (Solid) моделі", isCorrect: false }
+                ]
+            },
+            {
+                id: 6,
+                type: "single",
+                question: "Яка гаряча клавіша відповідає за активацію інструмента зміщення точки обертання (Pivot Tool) у Blockbench?",
+                options: [
+                    { text: "P", isCorrect: true },
+                    { text: "V", isCorrect: false },
+                    { text: "S", isCorrect: false },
+                    { text: "R", isCorrect: false }
+                ]
+            },
+            {
+                id: 7,
+                type: "single",
+                question: "На якому етапі створення 3D-зображення виконується обчислення підсумкового 2D-зображення з урахуванням освітлення, матеріалів та текстур?",
+                options: [
+                    { text: "Візуалізація (Рендеринг)", isCorrect: true },
+                    { text: "Геометричне моделювання", isCorrect: false },
+                    { text: "Концепт-арт", isCorrect: false },
+                    { text: "Створення текстур", isCorrect: false }
+                ]
+            },
+            {
+                id: 8,
+                type: "single",
+                question: "Яка дія мишею відповідає за панорамування (переміщення камери в площині екрана) в області 3D-перегляду Blockbench?",
+                options: [
+                    { text: "Затискання правої кнопки миші (ПКМ) або колеса миші", isCorrect: true },
+                    { text: "Затискання лівої кнопки миші (ЛКМ)", isCorrect: false },
+                    { text: "Прокручування колеса миші вгору/вниз", isCorrect: false },
+                    { text: "Подвійний клік ЛКМ", isCorrect: false }
+                ]
+            },
+            {
+                id: 9,
+                type: "single",
+                question: "У якому режимі перемикача Modes у Blockbench відбувається розфарбовування поверхні моделі пензлями та заливкою?",
+                options: [
+                    { text: "Paint", isCorrect: true },
+                    { text: "Model", isCorrect: false },
+                    { text: "Animate", isCorrect: false },
+                    { text: "Render", isCorrect: false }
+                ]
+            },
+            {
+                id: 10,
+                type: "single",
+                question: "Яке розширення має стандартний робочий файл проєкту, створеного та збереженого в програмі Blockbench?",
+                options: [
+                    { text: ".bbmodel", isCorrect: true },
+                    { text: ".obj", isCorrect: false },
+                    { text: ".gltf", isCorrect: false },
+                    { text: ".json", isCorrect: false }
+                ]
+            },
+            {
+                id: 11,
+                type: "multiple",
+                question: "Які з наведених тверджень описують переваги середовища Blockbench?",
+                options: [
+                    { text: "Безкоштовність та відкритий код", isCorrect: true },
+                    { text: "Кросплатформеність (працює на Windows, macOS, Linux та в браузері)", isCorrect: true },
+                    { text: "Пряма інтеграція та спрощений експорт у .json, .gltf, .obj", isCorrect: true },
+                    { text: "Вимога обов'язкової платної підписки для збереження файлів", isCorrect: false },
+                    { text: "Потребує багаторічного навчання для створення найпростішої моделі", isCorrect: false }
+                ]
+            },
+            {
+                id: 12,
+                type: "multiple",
+                question: "Які комбінації клавіш та інструменти в Blockbench вказано ВІРНО?",
+                options: [
+                    { text: "V — Інструмент Переміщення (Position)", isCorrect: true },
+                    { text: "S — Інструмент Розмір (Resize)", isCorrect: true },
+                    { text: "R — Інструмент Обертання (Rotate)", isCorrect: true },
+                    { text: "F — Видалення вибраного об'єкта", isCorrect: false },
+                    { text: "Ctrl + D — Скасування останньої дії", isCorrect: false }
+                ]
+            }
+        ];
+
+        // State Variables
+        let activeQuestions = [];
+        let currentQuestionIndex = 0;
+        let userAnswers = {}; // { qIndex: "SelectedOptionText" OR ["Text1", "Text2"] }
+        let isSingleView = true; // true = step-by-step slider, false = show all on one page
+        let currentFilter = 'all';
+
+        // Fisher-Yates Shuffle Algorithm
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // Initialize / Reset Quiz
+        function initQuiz() {
+            // Deep copy and shuffle options for EVERY question independently
+            activeQuestions = masterQuestions.map(q => {
+                return {
+                    ...q,
+                    shuffledOptions: shuffleArray(q.options)
+                };
+            });
+
+            currentQuestionIndex = 0;
+            userAnswers = {};
+            isSingleView = true;
+
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            document.getElementById('results-screen').classList.add('hidden');
+            document.getElementById('single-question-container').classList.remove('hidden');
+            document.getElementById('all-questions-container').classList.add('hidden');
+            document.getElementById('view-btn-text').innerText = "Усі питання";
+            document.getElementById('view-icon').className = "fa-solid fa-list-check";
+
+            renderNavGrid();
+            renderCurrentQuestion();
+            updateProgress();
+        }
+
+        // Render Quick Navigation Buttons Grid
+        function renderNavGrid() {
+            const grid = document.getElementById('question-nav-grid');
+            grid.innerHTML = '';
+
+            activeQuestions.forEach((q, index) => {
+                const btn = document.createElement('button');
+                btn.onclick = () => jumpToQuestion(index);
+                btn.className = `h-9 rounded-xl text-xs font-bold transition flex items-center justify-center border `;
+                
+                const isAnswered = isQuestionAnswered(index);
+                const isCurrent = (index === currentQuestionIndex && isSingleView);
+
+                if (isCurrent) {
+                    btn.className += `bg-indigo-600 text-white border-indigo-400 ring-2 ring-indigo-500/50 shadow-md shadow-indigo-600/30`;
+                } else if (isAnswered) {
+                    btn.className += `bg-indigo-950/80 text-indigo-300 border-indigo-700/60 hover:bg-indigo-900`;
+                } else {
+                    btn.className += `bg-slate-800/80 text-slate-400 border-slate-700 hover:bg-slate-700 hover:text-slate-200`;
+                }
+
+                btn.innerText = index + 1;
+                grid.appendChild(btn);
+            });
+
+            // Update Answered Badge Count
+            const answeredCount = Object.keys(userAnswers).filter(k => isQuestionAnswered(k)).length;
+            document.getElementById('answered-count-badge').innerText = `${answeredCount} з 12 дано відповідей`;
+        }
+
+        function isQuestionAnswered(qIdx) {
+            const ans = userAnswers[qIdx];
+            if (!ans) return false;
+            if (Array.isArray(ans)) return ans.length > 0;
+            return true;
+        }
+
+        // Render Current Question (Step-by-step view)
+        function renderCurrentQuestion() {
+            const q = activeQuestions[currentQuestionIndex];
+
+            document.getElementById('current-q-num-badge').innerText = `Запитання ${currentQuestionIndex + 1} з ${activeQuestions.length}`;
+            document.getElementById('question-type-badge').innerText = q.type === 'single' ? 'Одиночний вибір' : 'Множинний вибір';
+            
+            const hintElem = document.getElementById('question-hint');
+            if (q.type === 'multiple') {
+                hintElem.classList.remove('hidden');
+            } else {
+                hintElem.classList.add('hidden');
+            }
+
+            document.getElementById('question-title').innerText = q.question;
+
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            q.shuffledOptions.forEach((opt, optIdx) => {
+                const isSelected = isOptionSelected(currentQuestionIndex, opt.text);
+                const optCard = document.createElement('div');
+                optCard.onclick = () => handleOptionClick(currentQuestionIndex, opt.text, q.type);
+
+                optCard.className = `p-4 rounded-xl border transition-all duration-200 cursor-pointer flex items-center justify-between gap-4 ${
+                    isSelected 
+                        ? 'bg-indigo-900/40 border-indigo-500 text-white shadow-lg shadow-indigo-500/10 ring-1 ring-indigo-500/40' 
+                        : 'bg-slate-800/50 border-slate-700/70 text-slate-200 hover:bg-slate-800 hover:border-slate-600'
+                }`;
+
+                let iconHtml = '';
+                if (q.type === 'single') {
+                    iconHtml = `
+                        <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${isSelected ? 'border-indigo-400 bg-indigo-600' : 'border-slate-500'}">
+                            ${isSelected ? '<div class="w-2 h-2 rounded-full bg-white"></div>' : ''}
+                        </div>
+                    `;
+                } else {
+                    iconHtml = `
+                        <div class="w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 ${isSelected ? 'border-indigo-400 bg-indigo-600' : 'border-slate-500'}">
+                            ${isSelected ? '<i class="fa-solid fa-check text-xs text-white"></i>' : ''}
+                        </div>
+                    `;
+                }
+
+                optCard.innerHTML = `
+                    <span class="text-sm sm:text-base font-medium leading-relaxed">${opt.text}</span>
+                    ${iconHtml}
+                `;
+
+                optionsContainer.appendChild(optCard);
+            });
+
+            // Update Navigation Button States
+            document.getElementById('prev-btn').disabled = (currentQuestionIndex === 0);
+            
+            const nextBtn = document.getElementById('next-btn');
+            if (currentQuestionIndex === activeQuestions.length - 1) {
+                nextBtn.classList.add('hidden');
+            } else {
+                nextBtn.classList.remove('hidden');
+            }
+
+            renderNavGrid();
+            updateProgress();
+        }
+
+        // Check if an option is selected by the user
+        function isOptionSelected(qIdx, optionText) {
+            const ans = userAnswers[qIdx];
+            if (!ans) return false;
+            if (Array.isArray(ans)) {
+                return ans.includes(optionText);
+            }
+            return ans === optionText;
+        }
+
+        // Option Click Handler
+        function handleOptionClick(qIdx, optionText, type) {
+            if (type === 'single') {
+                userAnswers[qIdx] = optionText;
+            } else {
+                let current = userAnswers[qIdx] || [];
+                if (!Array.isArray(current)) current = [];
+
+                if (current.includes(optionText)) {
+                    userAnswers[qIdx] = current.filter(t => t !== optionText);
+                } else {
+                    userAnswers[qIdx] = [...current, optionText];
+                }
+            }
+
+            if (isSingleView) {
+                renderCurrentQuestion();
+            } else {
+                renderAllQuestionsView();
+                renderNavGrid();
+                updateProgress();
+            }
+        }
+
+        // Switch Question via Navigation
+        function jumpToQuestion(index) {
+            currentQuestionIndex = index;
+            if (!isSingleView) {
+                toggleViewMode(); // Switch back to step-by-step slider view when clicking a specific question
+            } else {
+                renderCurrentQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < activeQuestions.length - 1) {
+                currentQuestionIndex++;
+                renderCurrentQuestion();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderCurrentQuestion();
+            }
+        }
+
+        // Update Top Progress Bar
+        function updateProgress() {
+            const answered = Object.keys(userAnswers).filter(k => isQuestionAnswered(k)).length;
+            const percentage = Math.round((answered / activeQuestions.length) * 100);
+            document.getElementById('progress-bar').style.width = `${Math.max(percentage, 8.33)}%`;
+        }
+
+        // Toggle View Mode (Single step vs All questions)
+        function toggleViewMode() {
+            isSingleView = !isSingleView;
+            const singleContainer = document.getElementById('single-question-container');
+            const allContainer = document.getElementById('all-questions-container');
+            const btnText = document.getElementById('view-btn-text');
+            const btnIcon = document.getElementById('view-icon');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+
+            if (isSingleView) {
+                singleContainer.classList.remove('hidden');
+                allContainer.classList.add('hidden');
+                btnText.innerText = "Усі питання";
+                btnIcon.className = "fa-solid fa-list-check";
+                prevBtn.classList.remove('hidden');
+                if (currentQuestionIndex < activeQuestions.length - 1) {
+                    nextBtn.classList.remove('hidden');
+                }
+                renderCurrentQuestion();
+            } else {
+                singleContainer.classList.add('hidden');
+                allContainer.classList.remove('hidden');
+                btnText.innerText = "Кроковий режим";
+                btnIcon.className = "fa-solid fa-sliders";
+                prevBtn.classList.add('hidden');
+                nextBtn.classList.add('hidden');
+                renderAllQuestionsView();
+            }
+            renderNavGrid();
+        }
+
+        // Render All Questions View
+        function renderAllQuestionsView() {
+            const container = document.getElementById('all-questions-container');
+            container.innerHTML = '';
+
+            activeQuestions.forEach((q, qIdx) => {
+                const card = document.createElement('div');
+                card.className = "glass-panel rounded-2xl p-5 sm:p-6 shadow-xl border border-slate-800";
+
+                let optionsHtml = '';
+                q.shuffledOptions.forEach(opt => {
+                    const isSelected = isOptionSelected(qIdx, opt.text);
+                    const iconHtml = q.type === 'single'
+                        ? `<div class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${isSelected ? 'border-indigo-400 bg-indigo-600' : 'border-slate-500'}">${isSelected ? '<div class="w-2 h-2 rounded-full bg-white"></div>' : ''}</div>`
+                        : `<div class="w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 ${isSelected ? 'border-indigo-400 bg-indigo-600' : 'border-slate-500'}">${isSelected ? '<i class="fa-solid fa-check text-xs text-white"></i>' : ''}</div>`;
+
+                    optionsHtml += `
+                        <div onclick="handleOptionClick(${qIdx}, '${opt.text.replace(/'/g, "\\'")}', '${q.type}')" 
+                             class="p-3.5 rounded-xl border transition cursor-pointer flex items-center justify-between gap-3 ${
+                                isSelected 
+                                    ? 'bg-indigo-900/40 border-indigo-500 text-white' 
+                                    : 'bg-slate-800/40 border-slate-700/60 text-slate-300 hover:bg-slate-800'
+                            }">
+                            <span class="text-sm font-medium">${opt.text}</span>
+                            ${iconHtml}
+                        </div>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between gap-2 mb-3 pb-3 border-b border-slate-800">
+                        <span class="px-2.5 py-0.5 rounded-md text-xs font-bold bg-indigo-600/30 text-indigo-300">
+                            Запитання ${qIdx + 1}
+                        </span>
+                        ${q.type === 'multiple' ? '<span class="text-xs text-amber-400 font-medium">(Оберіть декілька)</span>' : ''}
+                    </div>
+                    <h3 class="text-base font-bold text-white mb-4">${q.question}</h3>
+                    <div class="space-y-2.5">${optionsHtml}</div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        // Confirmation Modal Logic
+        function confirmFinishQuiz() {
+            const answeredCount = Object.keys(userAnswers).filter(k => isQuestionAnswered(k)).length;
+            const modal = document.getElementById('confirm-modal');
+            const warningText = document.getElementById('modal-unanswered-warning');
+
+            if (answeredCount < activeQuestions.length) {
+                warningText.innerText = `Ви відповіли на ${answeredCount} з ${activeQuestions.length} запитань. Пропущені питання будуть оцінені як неправильні!`;
+            } else {
+                warningText.innerText = `Ви відповіли на всі ${activeQuestions.length} запитань! Бажаєте завершити тестування та переглянути результат?`;
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirm-modal').classList.add('hidden');
+        }
+
+        // Calculate and Submit Quiz Results
+        function submitQuiz() {
+            closeConfirmModal();
+
+            let score = 0;
+
+            activeQuestions.forEach((q, qIdx) => {
+                const userAns = userAnswers[qIdx];
+                const correctOpts = q.options.filter(o => o.isCorrect).map(o => o.text);
+
+                if (q.type === 'single') {
+                    if (userAns && userAns === correctOpts[0]) {
+                        score += 1;
+                    }
+                } else {
+                    // Multiple Choice Evaluation
+                    if (Array.isArray(userAns)) {
+                        const isAllCorrect = correctOpts.every(text => userAns.includes(text));
+                        const noExtraIncorrect = userAns.every(text => correctOpts.includes(text));
+                        if (isAllCorrect && noExtraIncorrect && userAns.length === correctOpts.length) {
+                            score += 1;
+                        }
+                    }
+                }
+            });
+
+            // Calculate percentage and Ukrainian 12-point scale grade
+            const total = activeQuestions.length;
+            const grade = score; // Direct 1-to-1 mapping as there are exactly 12 questions
+            const percent = Math.round((score / total) * 100);
+
+            let levelText = "Початковий";
+            let levelColorClass = "text-rose-400";
+
+            if (grade >= 10) {
+                levelText = "Високий 🎉";
+                levelColorClass = "text-emerald-400";
+            } else if (grade >= 7) {
+                levelText = "Достатній 👍";
+                levelColorClass = "text-indigo-400";
+            } else if (grade >= 4) {
+                levelText = "Середній 📚";
+                levelColorClass = "text-amber-400";
+            }
+
+            document.getElementById('final-grade').innerText = `${grade} / 12`;
+            document.getElementById('final-percent').innerText = `${percent}%`;
+            
+            const levelElem = document.getElementById('final-level');
+            levelElem.innerText = levelText;
+            levelElem.className = `text-base font-bold mt-2 ${levelColorClass}`;
+
+            // Show Results Screen
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('results-screen').classList.remove('hidden');
+            document.getElementById('results-screen').classList.add('flex');
+
+            renderReviewList();
+        }
+
+        // Render Detailed Results Breakdown
+        function renderReviewList() {
+            const reviewContainer = document.getElementById('review-list');
+            reviewContainer.innerHTML = '';
+
+            activeQuestions.forEach((q, qIdx) => {
+                const userAns = userAnswers[qIdx];
+                const correctOpts = q.options.filter(o => o.isCorrect).map(o => o.text);
+
+                let isCorrect = false;
+                if (q.type === 'single') {
+                    isCorrect = (userAns === correctOpts[0]);
+                } else {
+                    if (Array.isArray(userAns)) {
+                        isCorrect = correctOpts.every(t => userAns.includes(t)) && userAns.every(t => correctOpts.includes(t)) && (userAns.length === correctOpts.length);
+                    }
+                }
+
+                // Filter condition
+                if (currentFilter === 'correct' && !isCorrect) return;
+                if (currentFilter === 'incorrect' && isCorrect) return;
+
+                const card = document.createElement('div');
+                card.className = `p-5 rounded-2xl border transition-all ${
+                    isCorrect 
+                        ? 'bg-emerald-950/20 border-emerald-500/30' 
+                        : 'bg-rose-950/20 border-rose-500/30'
+                }`;
+
+                let optionsReviewHtml = '';
+                q.shuffledOptions.forEach(opt => {
+                    const isUserSelected = isOptionSelected(qIdx, opt.text);
+                    const isOptionCorrect = opt.isCorrect;
+
+                    let statusBadge = '';
+                    let itemStyle = 'bg-slate-800/40 border-slate-700/50 text-slate-300';
+
+                    if (isOptionCorrect && isUserSelected) {
+                        statusBadge = '<span class="text-xs font-bold text-emerald-400 flex items-center gap-1"><i class="fa-solid fa-circle-check"></i> Ваша правильна відповідь</span>';
+                        itemStyle = 'bg-emerald-900/30 border-emerald-500/60 text-emerald-200';
+                    } else if (isOptionCorrect && !isUserSelected) {
+                        statusBadge = '<span class="text-xs font-bold text-amber-400 flex items-center gap-1"><i class="fa-solid fa-circle-info"></i> Правильний варіант</span>';
+                        itemStyle = 'bg-amber-950/30 border-amber-500/50 text-amber-200';
+                    } else if (!isOptionCorrect && isUserSelected) {
+                        statusBadge = '<span class="text-xs font-bold text-rose-400 flex items-center gap-1"><i class="fa-solid fa-circle-xmark"></i> Ваша помилкова відповідь</span>';
+                        itemStyle = 'bg-rose-900/30 border-rose-500/60 text-rose-200';
+                    }
+
+                    optionsReviewHtml += `
+                        <div class="p-3 rounded-xl border ${itemStyle} flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-sm font-medium">
+                            <span>${opt.text}</span>
+                            ${statusBadge}
+                        </div>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between gap-3 mb-3 pb-2 border-b border-slate-800">
+                        <span class="text-xs font-bold text-slate-400">Запитання ${qIdx + 1} з ${activeQuestions.length}</span>
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold ${isCorrect ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'}">
+                            ${isCorrect ? 'Вірно (+1 бал)' : 'Помилка (0 балів)'}
+                        </span>
+                    </div>
+                    <h4 class="text-base font-bold text-white mb-4">${q.question}</h4>
+                    <div class="space-y-2">${optionsReviewHtml}</div>
+                `;
+
+                reviewContainer.appendChild(card);
+            });
+
+            if (reviewContainer.children.length === 0) {
+                reviewContainer.innerHTML = `
+                    <div class="text-center py-8 text-slate-400">
+                        <i class="fa-solid fa-inbox text-3xl mb-2 block"></i>
+                        <p>За цим фільтром немає запитань.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Filter Breakdown Results
+        function filterResults(type) {
+            currentFilter = type;
+
+            document.getElementById('filter-all').className = type === 'all' ? 'px-3 py-1.5 rounded-lg transition bg-indigo-600 text-white font-semibold' : 'px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white';
+            document.getElementById('filter-correct').className = type === 'correct' ? 'px-3 py-1.5 rounded-lg transition bg-emerald-600 text-white font-semibold' : 'px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white';
+            document.getElementById('filter-incorrect').className = type === 'incorrect' ? 'px-3 py-1.5 rounded-lg transition bg-rose-600 text-white font-semibold' : 'px-3 py-1.5 rounded-lg transition text-slate-400 hover:text-white';
+
+            renderReviewList();
+        }
+
+        // Restart Quiz with fresh Fisher-Yates shuffle
+        function restartQuiz() {
+            initQuiz();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Launch on Page Load
+        window.onload = function() {
+            initQuiz();
+        };
+    </script>
+</body>
+</html>
