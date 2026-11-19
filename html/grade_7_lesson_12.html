@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Інтерв'ю з кібербезпеки | 7 клас</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 100%);
+            min-height: 100vh;
+        }
+        h1, h2, h3, .font-heading {
+            font-family: 'Nunito', sans-serif;
+        }
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .chat-bubble-teacher {
+            background-color: #ffffff;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .option-btn {
+            transition: all 0.2s ease;
+        }
+        .option-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .option-btn:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center p-4">
+
+    <!-- Головний контейнер додатку -->
+    <div id="app-container" class="bg-white/50 backdrop-blur-lg w-full max-w-lg rounded-3xl shadow-xl overflow-hidden relative border border-white">
+        
+        <!-- Шапка -->
+        <header class="bg-indigo-600 text-white p-4 text-center rounded-t-3xl shadow-md z-10 relative">
+            <h1 class="text-xl font-bold font-heading flex items-center justify-center gap-2">
+                <span>🛡️</span> Урок Кібербезпеки
+            </h1>
+            <p class="text-indigo-200 text-sm mt-1">Твій особистий вчитель інформатики</p>
+        </header>
+
+        <!-- Екран 1: Привітання -->
+        <div id="screen-intro" class="p-6 flex flex-col items-center text-center fade-in">
+            <div class="w-24 h-24 bg-indigo-100 rounded-full flex items-center justify-center text-5xl mb-4 shadow-inner">
+                👨‍🏫
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-3 font-heading">Привіт, семикласнику!</h2>
+            <p class="text-gray-600 mb-6 leading-relaxed">
+                Сьогодні ми поговоримо про твою безпеку в Інтернеті. Уяви, що це невеличке інтерв'ю. Я опишу кілька життєвих ситуацій, а ти обереш, як би вчинив(ла). <br><br>
+                Наприкінці я дам оцінку твоїм навичкам. Готовий(а)?
+            </p>
+            <button onclick="startInterview()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-xl transition-all font-heading text-lg flex items-center gap-2">
+                Поїхали! 🚀
+            </button>
+        </div>
+
+        <!-- Екран 2: Запитання (Інтерв'ю) -->
+        <div id="screen-interview" class="hidden flex-col h-[500px] fade-in relative">
+            
+            <!-- Прогрес -->
+            <div class="px-6 pt-4">
+                <div class="flex justify-between text-xs font-semibold text-gray-500 mb-1">
+                    <span>Запитання <span id="current-q-num">1</span> з <span id="total-q-num">5</span></span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div id="progress-bar" class="bg-indigo-500 h-2 rounded-full transition-all duration-300" style="width: 20%"></div>
+                </div>
+            </div>
+
+            <!-- Чат з вчителем -->
+            <div class="flex-1 p-6 overflow-y-auto flex flex-col gap-4" id="chat-area">
+                <div class="flex items-start gap-3">
+                    <div class="text-3xl">👨‍🏫</div>
+                    <div class="chat-bubble-teacher p-4 rounded-2xl rounded-tl-none text-gray-800 leading-relaxed text-sm sm:text-base border border-gray-100" id="question-text">
+                        <!-- Текст питання з'явиться тут -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Варіанти відповідей -->
+            <div class="p-4 bg-gray-50 border-t border-gray-100 flex flex-col gap-2" id="options-area">
+                <!-- Кнопки відповідей з'являться тут -->
+            </div>
+        </div>
+
+        <!-- Екран 3: Результати -->
+        <div id="screen-result" class="hidden p-6 flex-col items-center text-center fade-in">
+            <div id="result-icon" class="text-6xl mb-4">🏆</div>
+            <h2 id="result-title" class="text-3xl font-bold text-gray-800 mb-2 font-heading">Вердикт</h2>
+            <div class="bg-white py-2 px-4 rounded-full shadow-sm text-indigo-600 font-bold mb-4 border border-indigo-100">
+                Правильних відповідей: <span id="score-display">0</span>/5
+            </div>
+            
+            <div id="result-advice" class="text-gray-700 bg-white p-5 rounded-2xl shadow-sm border border-gray-100 text-left w-full mb-6 text-sm leading-relaxed">
+                <!-- Порада з'явиться тут -->
+            </div>
+
+            <button onclick="resetInterview()" class="text-indigo-600 font-semibold hover:text-indigo-800 transition-colors flex items-center gap-1 underline underline-offset-4 mt-2">
+                <span>🔄</span> Пройти ще раз
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        // Дані для інтерв'ю
+        const questions = [
+            {
+                text: "Уяви, ти реєструєшся в новій крутій онлайн-грі. Вона просить вказати твоє справжнє ім'я, прізвище, домашню адресу та номер школи. Що ти зробиш?",
+                options: [
+                    { text: "Напишу все чесно, це ж просто гра.", isCorrect: false },
+                    { text: "Придумаю нікнейм, а адресу і школу вказувати не буду.", isCorrect: true },
+                    { text: "Вкажу адресу свого друга.", isCorrect: false }
+                ]
+            },
+            {
+                text: "Тобі в Telegram приходить повідомлення: «Вітаємо! Ти виграв новенький iPhone 15! Перейди за посиланням і введи свій пароль від Instagram, щоб підтвердити особу». Твої дії?",
+                options: [
+                    { text: "Клікну по посиланню і введу дані! Халява!", isCorrect: false },
+                    { text: "Перешлю друзям, щоб вони теж виграли.", isCorrect: false },
+                    { text: "Проігнорую, видалю повідомлення і заблокую відправника. Це фішинг.", isCorrect: true }
+                ]
+            },
+            {
+                text: "Нам треба створити надійний пароль для твоєї пошти. Який з цих варіантів найкращий?",
+                options: [
+                    { text: "Моє ім'я і рік народження (наприклад, Sasha2011). Легко запам'ятати.", isCorrect: false },
+                    { text: "Комбінація великих і малих літер, цифр і символів (наприклад, mY!c@t98B$).", isCorrect: true },
+                    { text: "12345678 — класика, ніколи не підведе.", isCorrect: false }
+                ]
+            },
+            {
+                text: "Ти зробив(ла) класне селфі з друзями біля школи. На фото чітко видно табличку з номером школи і розкладом. Чи варто викладати його в публічний доступ у TikTok чи Instagram?",
+                options: [
+                    { text: "Так, хай всі бачать, які ми круті!", isCorrect: false },
+                    { text: "Ні, краще замалювати номер школи перед публікацією, щоб незнайомці не знали, де я навчаюсь.", isCorrect: true },
+                    { text: "Так, і ще додам точну геолокацію.", isCorrect: false }
+                ]
+            },
+            {
+                text: "Ти сидиш у кафе і підключаєшся до безкоштовного відкритого Wi-Fi (без пароля). Чого КАТЕГОРИЧНО не можна робити в такій мережі?",
+                options: [
+                    { text: "Читати новини про ігри.", isCorrect: false },
+                    { text: "Дивитися відео на YouTube.", isCorrect: false },
+                    { text: "Вводити паролі від соцмереж або заходити в онлайн-банкінг.", isCorrect: true }
+                ]
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        // Елементи DOM
+        const screenIntro = document.getElementById('screen-intro');
+        const screenInterview = document.getElementById('screen-interview');
+        const screenResult = document.getElementById('screen-result');
+        const questionText = document.getElementById('question-text');
+        const optionsArea = document.getElementById('options-area');
+        const currentQNum = document.getElementById('current-q-num');
+        const totalQNum = document.getElementById('total-q-num');
+        const progressBar = document.getElementById('progress-bar');
+        
+        // Ініціалізація
+        totalQNum.textContent = questions.length;
+
+        function startInterview() {
+            screenIntro.classList.add('hidden');
+            screenInterview.classList.remove('hidden');
+            screenInterview.classList.add('flex');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const q = questions[currentQuestion];
+            
+            // Оновлюємо прогрес-бар
+            currentQNum.textContent = currentQuestion + 1;
+            progressBar.style.width = `${((currentQuestion) / questions.length) * 100}%`;
+            
+            // Анімація друкування питання (проста імітація)
+            questionText.innerHTML = `<span class="animate-pulse">✍️ Вчитель друкує...</span>`;
+            optionsArea.innerHTML = ''; // Очищаємо варіанти
+            
+            setTimeout(() => {
+                questionText.innerHTML = q.text;
+                
+                // Створюємо кнопки відповідей
+                q.options.forEach((opt, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn w-full text-left bg-white border border-indigo-200 hover:border-indigo-500 hover:bg-indigo-50 text-gray-700 font-medium py-3 px-4 rounded-xl text-sm sm:text-base';
+                    btn.innerHTML = `<strong>${String.fromCharCode(65 + index)}.</strong> ${opt.text}`;
+                    btn.onclick = () => handleAnswer(opt.isCorrect);
+                    
+                    // Затримка появи кнопок для ефекту чату
+                    btn.style.opacity = '0';
+                    btn.style.transform = 'translateY(10px)';
+                    optionsArea.appendChild(btn);
+                    
+                    setTimeout(() => {
+                        btn.style.transition = 'all 0.3s ease';
+                        btn.style.opacity = '1';
+                        btn.style.transform = 'translateY(0)';
+                    }, index * 150 + 100);
+                });
+                
+                progressBar.style.width = `${((currentQuestion + 1) / questions.length) * 100}%`;
+            }, 800); // Затримка "друкування"
+        }
+
+        function handleAnswer(isCorrect) {
+            if (isCorrect) {
+                score++;
+            }
+            
+            currentQuestion++;
+            
+            if (currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                finishInterview();
+            }
+        }
+
+        function finishInterview() {
+            screenInterview.classList.add('hidden');
+            screenInterview.classList.remove('flex');
+            screenResult.classList.remove('hidden');
+            screenResult.classList.add('flex');
+            
+            document.getElementById('score-display').textContent = score;
+            
+            const titleEl = document.getElementById('result-title');
+            const iconEl = document.getElementById('result-icon');
+            const adviceEl = document.getElementById('result-advice');
+            
+            if (score === 5) {
+                iconEl.textContent = '🥷';
+                titleEl.textContent = 'Кібер-ніндзя!';
+                titleEl.className = 'text-3xl font-bold text-green-600 mb-2 font-heading';
+                adviceEl.innerHTML = `
+                    <p class="font-bold text-green-700 mb-2">Блискучий результат!</p>
+                    <p>Ти чудово знаєш правила безпеки в Інтернеті. Тебе не надуриш фейковими розіграшами, і твої дані під надійним замком. <br><br> <strong>Порада від вчителя:</strong> Продовжуй в тому ж дусі! Допоможи своїм друзям або молодшим братам/сестрам налаштувати безпеку їхніх акаунтів. Вони потребують твого досвіду!</p>
+                `;
+            } else if (score >= 3) {
+                iconEl.textContent = '🧐';
+                titleEl.textContent = 'Обережний користувач';
+                titleEl.className = 'text-3xl font-bold text-yellow-500 mb-2 font-heading';
+                adviceEl.innerHTML = `
+                    <p class="font-bold text-yellow-700 mb-2">Непогано, але є над чим працювати!</p>
+                    <p>Ти знаєш базові правила, але в деяких ситуаціях шахраї ще можуть зловити тебе на гачок. <br><br> <strong>Порада від вчителя:</strong> Зверни увагу на створення складніших паролів (без імен та дат народження) та будь обережнішим(ою) з тим, яку інформацію ти викладаєш у соцмережі. Пам'ятай: те, що потрапило в Інтернет, залишається там назавжди.</p>
+                `;
+            } else {
+                iconEl.textContent = '🚨';
+                titleEl.textContent = 'У зоні кібер-ризику';
+                titleEl.className = 'text-3xl font-bold text-red-600 mb-2 font-heading';
+                adviceEl.innerHTML = `
+                    <p class="font-bold text-red-700 mb-2">Обережно! Твої дані під загрозою.</p>
+                    <p>Схоже, ти занадто довіряєш людям в Інтернеті. Це може призвести до крадіжки твоїх акаунтів, особистих фотографій або навіть грошей з карток батьків. <br><br> <strong>Термінова порада від вчителя:</strong> <br>1. Ніколи не переходь за підозрілими посиланнями.<br>2. Зміни паролі від соцмереж на складні прямо сьогодні.<br>3. Не ділися особистою адресою та номером школи в мережі.</p>
+                `;
+            }
+        }
+
+        function resetInterview() {
+            currentQuestion = 0;
+            score = 0;
+            screenResult.classList.add('hidden');
+            screenResult.classList.remove('flex');
+            startInterview();
+        }
+    </script>
+</body>
+</html>
